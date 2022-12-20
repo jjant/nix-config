@@ -9,7 +9,7 @@
   programs = {
     home-manager.enable = true;
     fish.shellInit = ''
-      fish_add_path --apend --path "$HOME/.toolbox/bin"
+      fish_add_path --append --path "$HOME/.toolbox/bin"
     '';
     git = {
       userEmail = lib.mkForce "jjantdev@amazon.co.uk";
