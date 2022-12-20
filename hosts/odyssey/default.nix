@@ -18,6 +18,9 @@
     };
     zsh = {
       initExtra = ''
+        source $HOME/.nix-profile/etc/profile.d/nix.sh
+        export PATH=$HOME/.nix-profile/bin:$PATH
+
         export SHELL="$(realpath "$(which fish)")"
         exec fish --login
       '';
