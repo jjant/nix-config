@@ -1,0 +1,30 @@
+{ self, ... }:
+system:
+let
+  inherit (self.pkgs.${system}) lib linkFarm;
+
+  hosts = import ./hosts.nix;
+
+  # nixosDrvs = lib.mapAttrs (_: nixos: nixos.config.system.build.toplevel)
+  #   self.nixosConfigurations;
+  nixosDrvs = { };
+
+  # darwinDrvs =
+  #   lib.mapAttrs (_: darwin: darwin.system) self.darwinConfigurations;
+  darwinDrvs = { };
+
+  homeDrvs =
+    lib.mapAttrs (_: home: home.activationPackage) self.homeConfigurations;
+
+  hostDrvs = nixosDrvs // homeDrvs // darwinDrvs;
+
+  structuredHostDrvs = lib.mapAttrsRecursiveCond (as:
+    !(as ? "type" && (lib.elem as.type [ "darwin" "home-manager" "nixos" ])))
+    (path: _: hostDrvs.${lib.last path}) hosts;
+
+  structuredHostFarms = lib.mapAttrsRecursiveCond
+    (as: !(lib.any lib.isDerivation (lib.attrValues as))) (path: values:
+      (linkFarm (lib.concatStringsSep "-" path)
+        (lib.mapAttrsToList (name: path: { inherit name path; }) values))
+      // values) structuredHostDrvs;
+in structuredHostFarms
