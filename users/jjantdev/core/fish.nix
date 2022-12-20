@@ -3,7 +3,8 @@
     fish = {
       enable = true;
       interactiveShellInit = ''
-        echo "Hello from Nix!"
+        # Disable fish greeting
+        set -g fish_greeting
       '';
     };
   };
