@@ -32,6 +32,7 @@ let
         };
         configFile."nix/nix.conf".text = ''
           flake-registry = ${config.xdg.configHome}/nix/registry.json
+          experimental-features = nix-command flakes
         '';
       };
     };
