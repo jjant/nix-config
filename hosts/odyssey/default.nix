@@ -16,5 +16,11 @@
       # ^ mkForce gives priority to this value in case of multiple definitions
       # or at least, that's my understanding.
     };
+    zsh = {
+      initExtra = ''
+        export SHELL="$(realpath "$(which fish)")"
+        exec fish --login
+      '';
+    };
   };
 }
