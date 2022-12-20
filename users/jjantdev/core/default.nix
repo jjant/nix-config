@@ -1,6 +1,7 @@
 { pkgs, ... }: {
 
-  imports = [ ./fish.nix ./xdg.nix ./starship.nix ./tmux.nix ./zsh.nix ];
+  imports =
+    [ ./fish.nix ./xdg.nix ./starship.nix ./tmux.nix ./zsh.nix ./git.nix ];
 
   home = {
     username = "jjantdev";
