@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, lunarVimDarkPlusNvim, ... }: {
   home = {
     sessionVariables = {
       EDITOR = "nvim";
@@ -20,6 +20,10 @@
         vim-fish
         vim-nix
         plenary-nvim
+        (pkgs.vimUtils.buildVimPlugin {
+          name = "darkplus.nvim";
+          src = lunarVimDarkPlusNvim;
+        })
       ];
     };
   };

@@ -101,6 +101,22 @@
         "type": "github"
       }
     },
+    "lunarVimDarkPlusNvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1667750753,
+        "narHash": "sha256-6dHDZeDI69af/E9WgQJRdc4fBT4W1+GEmvjLtyO/Aa8=",
+        "owner": "LunarVim",
+        "repo": "darkplus.nvim",
+        "rev": "d308e9538f0e50cc3e80afc4ed904ab8b8e10fe6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "LunarVim",
+        "repo": "darkplus.nvim",
+        "type": "github"
+      }
+    },
     "nixos-hardware": {
       "locked": {
         "lastModified": 1671467847,
@@ -163,6 +179,7 @@
         "flake-compat": "flake-compat",
         "flake-utils": "flake-utils",
         "home-manager": "home-manager",
+        "lunarVimDarkPlusNvim": "lunarVimDarkPlusNvim",
         "nixos-hardware": "nixos-hardware",
         "nixpkgs": "nixpkgs",
         "ragenix": "ragenix",

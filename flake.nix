@@ -37,6 +37,11 @@
     templates.url = "github:NixOS/templates";
 
     flake-utils.url = "github:numtide/flake-utils";
+
+    lunarVimDarkPlusNvim = {
+      url = "github:LunarVim/darkplus.nvim";
+      flake = false;
+    };
   };
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:

@@ -1,4 +1,4 @@
-{ self, home-manager, nixpkgs, templates, ... }:
+{ self, home-manager, nixpkgs, templates, lunarVimDarkPlusNvim, ... }:
 let
   inherit (nixpkgs) lib;
   hosts = (import ./hosts.nix).homeManager.all;
@@ -42,5 +42,6 @@ let
     home-manager.lib.homeManagerConfiguration {
       pkgs = self.pkgs.${hostPlatform};
       modules = [ (genModules hostName attrs) ];
+      extraSpecialArgs = { inherit lunarVimDarkPlusNvim; };
     };
 in lib.mapAttrs genConfiguration hosts
