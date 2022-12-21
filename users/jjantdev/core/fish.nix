@@ -9,7 +9,9 @@
 
       shellAbbrs = {
         gst = "git status";
+        gco = "git checkout";
         gd = "git diff";
+        gl = "git pull";
 
         bz = "brazil";
         bw = "brazil workspace";
