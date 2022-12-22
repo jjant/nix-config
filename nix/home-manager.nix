@@ -37,11 +37,15 @@ let
       };
     };
 
+  vimPlugins = inputs:
+    lib.mapAttrs (name: _: lib.removePrefix "vim-plugin:" name)
+    (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:") inputs);
+
   genConfiguration = hostName:
     { hostPlatform, ... }@attrs:
     home-manager.lib.homeManagerConfiguration {
       pkgs = self.pkgs.${hostPlatform};
       modules = [ (genModules hostName attrs) ];
-      extraSpecialArgs = { inherit lunarVimDarkPlusNvim; };
+      extraSpecialArgs = { vimPlugins = vimPlugins inputs; };
     };
 in lib.mapAttrs genConfiguration hosts

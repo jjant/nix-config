@@ -1,4 +1,11 @@
-{ lib, pkgs, lunarVimDarkPlusNvim, ... }: {
+{ lib, pkgs, vimPlugins, ... }:
+let
+  extraVimPlugins = lib.mapAttrsToList (name: value:
+    pkgs.vimUtils.buildVimPlugin {
+      name = name;
+      src = value;
+    }) vimPlugins;
+in {
   home = {
     sessionVariables = {
       EDITOR = "nvim";
