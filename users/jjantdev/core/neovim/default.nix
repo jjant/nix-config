@@ -3,6 +3,7 @@
     sessionVariables = {
       EDITOR = "nvim";
       VISUAL = "nvim";
+      LS_COLORS = "";
     };
     shellAliases = {
       vi = "nvim";
