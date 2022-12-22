@@ -24,7 +24,13 @@ in {
     neovim = {
       enable = true;
       plugins = with pkgs.vimPlugins;
-        [ telescope-nvim vim-fish vim-nix plenary-nvim ] ++ extraVimPlugins;
+        [
+          telescope-nvim
+          vim-fish
+          vim-nix
+          plenary-nvim
+          (nvim-treesitter.withPlugins (_: [ ]))
+        ] ++ extraVimPlugins;
     };
   };
 

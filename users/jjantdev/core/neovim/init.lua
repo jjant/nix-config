@@ -1,4 +1,4 @@
 require('user.options')
 require('user.lsp')
 
-vim.cmd.colorscheme("darkplus")
+vim.cmd.colorscheme('darkplus')
