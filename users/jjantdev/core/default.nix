@@ -20,6 +20,7 @@
     shellAliases = {
       ls = "exa --binary --header --long --classify";
       la = "ls --all";
+      lg = "la --grid";
     };
   };
 
