@@ -29,7 +29,7 @@ in {
           vim-fish
           vim-nix
           plenary-nvim
-          (nvim-treesitter.withPlugins (_: [ ]))
+          nvim-treesitter.withAllGrammars
         ] ++ extraVimPlugins;
     };
   };
