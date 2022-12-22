@@ -13,6 +13,9 @@
         gd = "git diff";
         gl = "git pull";
 
+        vi = "nvim";
+        vim = "nvim";
+
         bz = "brazil";
         bw = "brazil workspace";
         bb = "brazil-build";
