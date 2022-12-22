@@ -41,7 +41,7 @@ let
     lib.mapAttrs' (name: value: {
       name = lib.removePrefix "vim-plugin:" name;
       value = value;
-    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:") myInputs);
+    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) myInputs);
 
   genConfiguration = hostName:
     { hostPlatform, ... }@attrs:
