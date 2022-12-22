@@ -15,9 +15,15 @@
 
     stateVersion = "22.11";
 
-    packages = with pkgs; [ pkgs.exa pkgs.neofetch pkgs.fd ];
+    packages = with pkgs; [ exa neofetch fd ripgrep ];
 
+    shellAliases = {
+      ls = "exa --binary --header --long --classify";
+      la = "ls --all";
+    };
   };
+
+  programs = { bat.enable = true; };
 
   xdg.configFile."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
 }
