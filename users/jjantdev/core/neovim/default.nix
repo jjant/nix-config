@@ -23,16 +23,8 @@ in {
 
     neovim = {
       enable = true;
-      plugins = with pkgs.vimPlugins; [
-        telescope-nvim
-        vim-fish
-        vim-nix
-        plenary-nvim
-        (pkgs.vimUtils.buildVimPlugin {
-          name = "darkplus.nvim";
-          src = lunarVimDarkPlusNvim;
-        })
-      ];
+      plugins = with pkgs.vimPlugins;
+        [ telescope-nvim vim-fish vim-nix plenary-nvim ] ++ extraVimPlugins;
     };
   };
 

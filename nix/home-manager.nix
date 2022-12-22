@@ -38,8 +38,10 @@ let
     };
 
   vimPlugins = inputs:
-    lib.mapAttrs (name: _: lib.removePrefix "vim-plugin:" name)
-    (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:") inputs);
+    lib.mapAttrs' (name: value: {
+      name = lib.removePrefix "vim-plugin:" name;
+      value = value;
+    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:") inputs);
 
   genConfiguration = hostName:
     { hostPlatform, ... }@attrs:
