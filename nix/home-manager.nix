@@ -1,4 +1,4 @@
-{ self, home-manager, nixpkgs, templates, lunarVimDarkPlusNvim, ... }:
+{ self, home-manager, nixpkgs, templates, ... }@inputs:
 let
   inherit (nixpkgs) lib;
   hosts = (import ./hosts.nix).homeManager.all;
@@ -37,11 +37,11 @@ let
       };
     };
 
-  vimPlugins = inputs:
+  vimPlugins = myInputs:
     lib.mapAttrs' (name: value: {
       name = lib.removePrefix "vim-plugin:" name;
       value = value;
-    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:") inputs);
+    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:") myInputs);
 
   genConfiguration = hostName:
     { hostPlatform, ... }@attrs:
