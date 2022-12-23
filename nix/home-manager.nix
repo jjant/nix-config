@@ -21,6 +21,7 @@ let
           "nixpkgs=${config.xdg.dataHome}/nixpkgs"
           "nixpkgs-overlays=${config.xdg.dataHome}/overlays"
         ];
+        sessionVariables.LS_COLORS = "";
       };
 
       programs.fish.plugins = [ ];

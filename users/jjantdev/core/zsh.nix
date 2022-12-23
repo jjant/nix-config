@@ -5,6 +5,6 @@
     autocd = true;
     dotDir = ".config/zsh";
 
-    sessionVariables = { LS_COLORS = "MY_COLORS"; };
+    sessionVariables = { LS_COLORS = ""; };
   };
 }
