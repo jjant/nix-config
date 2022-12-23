@@ -10,6 +10,8 @@
     home-manager.enable = true;
     fish.shellInit = ''
       fish_add_path --append --path "$HOME/.toolbox/bin"
+
+      set --erase LS_COLORS
     '';
     git = {
       userEmail = lib.mkForce "jjantdev@amazon.co.uk";
