@@ -38,6 +38,8 @@ let
       };
     };
 
+  # Filters all inputs with name `vim-plugin:owner/repo`
+  # and removes the `vim-plugin:` prefix from the name.
   vimPlugins = myInputs:
     lib.mapAttrs' (name: value: {
       name = lib.removePrefix "vim-plugin:" name;
