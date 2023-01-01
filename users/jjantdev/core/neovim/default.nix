@@ -30,6 +30,7 @@ in {
           vim-nix
           plenary-nvim
           nvim-treesitter.withAllGrammars
+          harpoon
         ] ++ extraVimPlugins;
     };
   };
