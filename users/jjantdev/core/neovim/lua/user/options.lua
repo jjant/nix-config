@@ -39,3 +39,7 @@ vim.opt.undolevels = 1000
 vim.opt.history = 1000
 
 vim.opt.cursorline = true -- Highlight the line that the cursor is on
+
+-- Automatically use spaces instead of tabs
+vim.opt.expandtab = true
+vim.opt.smarttab = true
