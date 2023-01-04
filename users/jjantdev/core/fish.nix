@@ -11,6 +11,7 @@
         gst = "git status";
         gco = "git checkout";
         gd = "git diff";
+        gds = "git diff --staged";
         gl = "git pull";
 
         vi = "nvim";
