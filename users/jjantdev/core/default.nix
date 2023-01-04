@@ -24,7 +24,13 @@
     };
   };
 
-  programs = { bat.enable = true; };
+  programs = {
+    bat.enable = true;
+    atuin = {
+      enable = true;
+      enableFishIntegration = true;
+    };
+  };
 
   xdg.configFile."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
 }
