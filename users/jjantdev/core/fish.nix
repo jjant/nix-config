@@ -8,8 +8,10 @@
       '';
 
       shellAbbrs = {
+        ga = "git add";
         gst = "git status";
         gco = "git checkout";
+        gcm = "git chekout -m";
         gd = "git diff";
         gds = "git diff --staged";
         gl = "git pull";
