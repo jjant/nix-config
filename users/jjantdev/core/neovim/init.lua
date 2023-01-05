@@ -6,3 +6,5 @@ require('user.harpoon')
 require('user.telescope')
 
 vim.cmd.colorscheme('darkplus')
+
+require('marks').setup()
