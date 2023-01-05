@@ -14,6 +14,7 @@
         gcm = "git chekout -m";
         gd = "git diff";
         gds = "git diff --staged";
+        gp = "git push";
         gl = "git pull";
 
         vi = "nvim";
