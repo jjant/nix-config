@@ -11,7 +11,8 @@
         ga = "git add";
         gst = "git status";
         gco = "git checkout";
-        gcm = "git chekout -m";
+        gcm = "git commit -m";
+        gcv = "git commit";
         gd = "git diff";
         gds = "git diff --staged";
         gp = "git push";
