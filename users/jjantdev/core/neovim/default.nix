@@ -32,6 +32,7 @@ in {
           nvim-treesitter.withAllGrammars
           harpoon
           marks-nvim
+          gitsigns-nvim
         ] ++ extraVimPlugins;
     };
   };
