@@ -31,6 +31,7 @@ in {
           plenary-nvim
           nvim-treesitter.withAllGrammars
           harpoon
+          marks-nvim
         ] ++ extraVimPlugins;
     };
   };
