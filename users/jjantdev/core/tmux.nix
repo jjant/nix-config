@@ -17,6 +17,10 @@ in {
     keyMode = "vi";
     plugins = [ dracula ];
     extraConfig = ''
+      # Start window and pane indices at 1
+      set -g base-index 1
+      set -g pane-base-index 1
+
       bind '"' split-window -c "#{pane_current_path}"
       bind % split-window -h -c "#{pane_current_path}"
       bind c new-window -c "#{pane_current_path}"
