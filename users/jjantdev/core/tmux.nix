@@ -16,6 +16,8 @@ in {
     clock24 = true;
     keyMode = "vi";
     plugins = [ dracula ];
+    historyLimit = 30000;
+    escapeTime = 0;
     extraConfig = ''
       # Start window and pane indices at 1
       set -g base-index 1
