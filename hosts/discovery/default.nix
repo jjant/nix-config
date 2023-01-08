@@ -1,5 +1,5 @@
 { lib, pkgs, ... }: {
-  imports = [ ../../users/jjantdev/core ./skhd.nix ];
+  imports = [ ../../users/jjantdev/core ./skhd.nix ./yabai ];
 
   home = { packages = [ ]; };
 
