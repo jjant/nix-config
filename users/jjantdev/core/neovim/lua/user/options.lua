@@ -3,7 +3,11 @@ vim.opt.backup = false
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
+-- Always show tab line
 vim.opt.showtabline = 2
+
+-- Always show the left gutter
+vim.opt.signcolumn = "yes"
 
 vim.opt.swapfile = false
 
@@ -41,5 +45,12 @@ vim.opt.history = 1000
 vim.opt.cursorline = true -- Highlight the line that the cursor is on
 
 -- Automatically use spaces instead of tabs
+vim.opt.expandtab = true
+vim.opt.smarttab = true
+
+vim.opt.softtabstop = 2
+vim.opt.tabstop = 2
+vim.opt.shiftwidth = 2
+
 vim.opt.expandtab = true
 vim.opt.smarttab = true
