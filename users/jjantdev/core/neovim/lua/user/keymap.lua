@@ -10,3 +10,7 @@ vim.keymap.set('n', '<Leader>d', '\'_d')
 vim.keymap.set('v', '<Leader>d', '\'_d')
 
 vim.keymap.set('n', '<Leader><Leader>', '<C-^>')
+
+-- Use ' to go to line and column with a mark,
+-- intead of just to the line
+vim.keymap.set('n', "'", '`')
