@@ -4,8 +4,7 @@ lsp.preset('recommended')
 lsp.nvim_workspace()
 lsp.setup()
 
-lsp.on_attach(function(client, bufnr)
-  print("Attached")
+lsp.on_attach(function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
 
   vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
