@@ -5,6 +5,9 @@
       interactiveShellInit = ''
         # Disable fish greeting
         set -g fish_greeting
+
+        # Ctrl-s: move cursor to edit command
+        bind \cs beginning-of-line forward-bigword
       '';
 
       shellAbbrs = {
