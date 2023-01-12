@@ -8,6 +8,17 @@
 
         # Ctrl-s: move cursor to edit command
         bind \cs beginning-of-line forward-bigword
+
+        # Disable default keybindings.
+        # See: https://github.com/ellie/atuin/blob/main/docs/key-binding.md#fish
+        # This could be simplified after https://github.com/ellie/atuin/issues/660
+        # is resolved
+        set -gx ATUIN_NOBIND "true"
+        atuin init fish | source
+
+        # bind to ctrl-r in normal and insert mode, add any other bindings you want here too
+        bind \cr _atuin_search
+        bind -M insert \cr _atuin_search
       '';
 
       shellAbbrs = {

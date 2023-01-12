@@ -26,10 +26,7 @@
 
   programs = {
     bat.enable = true;
-    atuin = {
-      enable = true;
-      enableFishIntegration = true;
-    };
+    atuin.enable = true;
   };
 
   xdg.configFile."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
