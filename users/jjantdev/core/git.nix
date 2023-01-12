@@ -15,10 +15,4 @@
       };
     };
   };
-
-  home.shellAliases = {
-    ga = "git add";
-    gco = "git checkout";
-    gcm = "git commit -m";
-  };
 }
