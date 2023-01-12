@@ -2,6 +2,9 @@
   programs = {
     fish = {
       enable = true;
+      loginShellInit = ''
+        fish_add_path --append $HOME/.nix-profile/bin
+      '';
       interactiveShellInit = ''
         # Disable fish greeting
         set -g fish_greeting
