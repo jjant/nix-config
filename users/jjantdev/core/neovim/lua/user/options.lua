@@ -54,3 +54,5 @@ vim.opt.shiftwidth = 2
 
 vim.opt.expandtab = true
 vim.opt.smarttab = true
+
+vim.opt.colorcolumn = '80'
