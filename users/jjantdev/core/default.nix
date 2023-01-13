@@ -27,6 +27,7 @@
   programs = {
     bat.enable = true;
     atuin.enable = true;
+    fzf.enable = true;
   };
 
   xdg.configFile."nixpkgs/config.nix".text = "{ allowUnfree = true; }";
