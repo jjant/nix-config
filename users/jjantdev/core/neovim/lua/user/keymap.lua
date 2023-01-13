@@ -16,3 +16,5 @@ vim.keymap.set('n', '<Leader>x', '<Cmd>!chmod +x %<CR>', { silent = true })
 -- Use ' to go to line and column with a mark,
 -- intead of just to the line
 vim.keymap.set('n', "'", '`')
+
+vim.keymap.set('n', '<Leader>pv', '<Cmd>Ex<CR>')
