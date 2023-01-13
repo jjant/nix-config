@@ -8,6 +8,7 @@
     ./zsh.nix
     ./git.nix
     ./neovim
+    ./bin
   ];
 
   home = {

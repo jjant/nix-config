@@ -1,13 +1,16 @@
-{ lib, pkgs, ... }: {
+{ lib, pkgs, config, ... }: {
   programs = {
     fish = {
       enable = true;
       loginShellInit = ''
         fish_add_path --append $HOME/.nix-profile/bin
+        fish_add_path --append ${config.xdg.configHome}/bin
       '';
       interactiveShellInit = ''
         # Disable fish greeting
         set -g fish_greeting
+
+        # TODO: Should I use `function fish_user_key_bindings` for these bindings?
 
         # Ctrl-s: move cursor to edit command
         bind \cs beginning-of-line forward-bigword
@@ -22,6 +25,8 @@
         # bind to ctrl-r in normal and insert mode, add any other bindings you want here too
         bind \cr _atuin_search
         bind -M insert \cr _atuin_search
+
+        bind \cf tmux-sessionizer
       '';
 
       shellAbbrs = {
