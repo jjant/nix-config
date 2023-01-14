@@ -27,6 +27,8 @@
         bind -M insert \cr _atuin_search
 
         bind \cf tmux-sessionizer
+
+        abbr --add gcm --set-cursor="%" "git commit -m \"%\""
       '';
 
       shellAbbrs = {
@@ -34,7 +36,6 @@
         ga = "git add";
         gst = "git status";
         gco = "git checkout";
-        gcm = "git commit -m";
         gcv = "git commit";
         gd = "git diff";
         gds = "git diff --staged";
