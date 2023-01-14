@@ -34,6 +34,10 @@
     hyper - 3 : yabai -m window --space 3
     hyper - 4 : yabai -m window --space 4
     hyper - 5 : yabai -m window --space 5
+    hyper - 6 : yabai -m window --space 6
+    hyper - 7 : yabai -m window --space 7
+    hyper - 8 : yabai -m window --space 8
+    hyper - 9 : yabai -m window --space 9
 
     alt - r : yabai -m space --rotate 270
     shift + alt - r : yabai -m space --rotate 90

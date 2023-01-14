@@ -30,6 +30,7 @@
       '';
 
       shellAbbrs = {
+        # Maybe move these to the `git.nix` file?
         ga = "git add";
         gst = "git status";
         gco = "git checkout";
@@ -39,6 +40,7 @@
         gds = "git diff --staged";
         gp = "git push";
         gl = "git pull";
+        gam = "git commit --amend";
 
         vi = "nvim";
         vim = "nvim";
