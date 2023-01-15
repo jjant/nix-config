@@ -19,9 +19,13 @@ in {
     historyLimit = 30000;
     escapeTime = 0;
     extraConfig = ''
+      set-option -g default-terminal "screen-256color"
+      set-option -ga terminal-overrides ",xterm-256color:RGB"
+      set-option -ga terminal-overrides ",alacritty:RGB""
+
       # Start window and pane indices at 1
-      set -g base-index 1
-      set -g pane-base-index 1
+      set-option -g base-index 1
+      set-option -g pane-base-index 1
 
       bind '"' split-window -c "#{pane_current_path}"
       bind % split-window -h -c "#{pane_current_path}"
