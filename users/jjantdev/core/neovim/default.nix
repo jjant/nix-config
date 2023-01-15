@@ -30,6 +30,7 @@ in {
           vim-nix
           plenary-nvim
           nvim-treesitter.withAllGrammars
+          playground
           harpoon
           marks-nvim
           gitsigns-nvim
