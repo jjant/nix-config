@@ -42,6 +42,7 @@
         gp = "git push";
         gl = "git pull";
         gam = "git commit --amend";
+        glog = "git log --oneline --decorate --reverse -10";
 
         vi = "nvim";
         vim = "nvim";
