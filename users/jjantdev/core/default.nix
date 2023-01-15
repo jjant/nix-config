@@ -16,7 +16,7 @@
 
     stateVersion = "22.11";
 
-    packages = with pkgs; [ exa neofetch fd ripgrep rustup pre-commit ];
+    packages = with pkgs; [ exa neofetch fd ripgrep rustup pre-commit git-secrets ];
 
     shellAliases = {
       ls = "exa --binary --header --long --classify";
