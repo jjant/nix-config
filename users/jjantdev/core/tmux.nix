@@ -21,7 +21,7 @@ in {
     extraConfig = ''
       set-option -g default-terminal "screen-256color"
       set-option -ga terminal-overrides ",xterm-256color:RGB"
-      set-option -ga terminal-overrides ",alacritty:RGB""
+      set-option -ga terminal-overrides ",alacritty:RGB"
 
       # Start window and pane indices at 1
       set-option -g base-index 1
