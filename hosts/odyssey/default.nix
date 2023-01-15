@@ -3,7 +3,7 @@
 
   home = {
     # uid = 504;
-    packages = [ pkgs.btop pkgs.rustup ];
+    packages = [ pkgs.btop ];
   };
 
   programs = {
