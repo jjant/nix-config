@@ -43,6 +43,7 @@
         gl = "git pull";
         gam = "git commit --amend";
         glog = "git log --oneline --decorate --reverse -10";
+        gm = "git merge";
 
         vi = "nvim";
         vim = "nvim";
