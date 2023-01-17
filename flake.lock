@@ -178,6 +178,7 @@
         "vim-plugin:neovim/nvim-lspconfig": "vim-plugin:neovim/nvim-lspconfig",
         "vim-plugin:rafamadriz/friendly-snippets": "vim-plugin:rafamadriz/friendly-snippets",
         "vim-plugin:saadparwaiz1/cmp_luasnip": "vim-plugin:saadparwaiz1/cmp_luasnip",
+        "vim-plugin:simrat39/rust-tools.nvim": "vim-plugin:simrat39/rust-tools.nvim",
         "vim-plugin:williamboman/mason-lspconfig.nvim": "vim-plugin:williamboman/mason-lspconfig.nvim",
         "vim-plugin:williamboman/mason.nvim": "vim-plugin:williamboman/mason.nvim"
       }
@@ -395,6 +396,22 @@
       "original": {
         "owner": "saadparwaiz1",
         "repo": "cmp_luasnip",
+        "type": "github"
+      }
+    },
+    "vim-plugin:simrat39/rust-tools.nvim": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1673136837,
+        "narHash": "sha256-+/kK6MU2EiSBFbfqQJwLkJICXZpf8oiShbcvsls3V8A=",
+        "owner": "simrat39",
+        "repo": "rust-tools.nvim",
+        "rev": "df584e84393ef255f5b8cbd709677d6a3a5bf42f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "simrat39",
+        "repo": "rust-tools.nvim",
         "type": "github"
       }
     },

@@ -1,5 +1,6 @@
 require('user.options')
 require('user.lsp')
+require('user.lsp.rust')
 require('user.treesitter')
 require('user.keymap')
 require('user.harpoon')

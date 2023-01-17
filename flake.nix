@@ -61,6 +61,10 @@
       url = "github:williamboman/mason-lspconfig.nvim";
       flake = false;
     };
+    "vim-plugin:simrat39/rust-tools.nvim" = {
+      url = "github:simrat39/rust-tools.nvim";
+      flake = false;
+    };
 
     # Autocompletion
     "vim-plugin:hrsh7th/nvim-cmp" = {
