@@ -40,6 +40,7 @@
         gd = "git diff";
         gds = "git diff --staged";
         gp = "git push";
+        gpf = "git push --force-with-lease";
         gl = "git pull";
         gam = "git commit --amend";
         glog = "git log --oneline --decorate --reverse -10";
