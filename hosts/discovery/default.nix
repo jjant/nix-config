@@ -1,7 +1,7 @@
 { lib, pkgs, ... }: {
   imports = [ ../../users/jjantdev/core ./skhd.nix ./yabai ./alacritty ];
 
-  home = { packages = [ ]; };
+  home = { packages = [ pkgs.zld ]; };
 
   programs = {
     home-manager.enable = true;
