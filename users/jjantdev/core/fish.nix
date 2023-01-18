@@ -1,4 +1,7 @@
 { lib, pkgs, config, ... }: {
+
+  home.packages = [ pkgs.zoxide ];
+
   programs = {
     fish = {
       enable = true;
@@ -21,6 +24,8 @@
         # is resolved
         set -gx ATUIN_NOBIND "true"
         atuin init fish | source
+
+        zoxide init fish --cmd j | source
 
         # bind to ctrl-r in normal and insert mode, add any other bindings you want here too
         bind \cr _atuin_search
