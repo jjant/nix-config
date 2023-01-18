@@ -8,6 +8,7 @@
       loginShellInit = ''
         fish_add_path --append $HOME/.nix-profile/bin
         fish_add_path --append ${config.xdg.configHome}/bin
+        fish_add_path --append $HOME/.cargo/bin
       '';
       interactiveShellInit = ''
         # Disable fish greeting
