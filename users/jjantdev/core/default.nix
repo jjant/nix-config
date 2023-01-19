@@ -16,7 +16,19 @@
 
     stateVersion = "22.11";
 
-    packages = with pkgs; [ exa neofetch fd ripgrep rustup pre-commit git-secrets ];
+    packages = with pkgs; [
+      exa
+      neofetch
+      fd
+      ripgrep
+      rustup
+      pre-commit
+      git-secrets
+
+      # LSPs
+      sumneko-lua-language-server
+      rnix-lsp
+    ];
 
     shellAliases = {
       ls = "exa --binary --header --long --classify";
