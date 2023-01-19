@@ -4,10 +4,10 @@
     ./fish.nix
     ./xdg.nix
     ./starship.nix
-    ./tmux.nix
     ./zsh.nix
     ./git.nix
     ./neovim
+    ./tmux
     ./bin
   ];
 
