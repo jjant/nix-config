@@ -112,15 +112,16 @@
       "aarch64-darwin"
       "aarch64-linux"
       "x86_64-darwin"
-    ] (localSystem: {
-      # checks = import ./nix/checks.nix inputs localSystem;
-      packages = {
-        default = self.packages.${localSystem}.all;
-      } // (import ./nix/host-drvs.nix inputs localSystem);
+    ]
+      (localSystem: {
+        # checks = import ./nix/checks.nix inputs localSystem;
+        packages = {
+          default = self.packages.${localSystem}.all;
+        } // (import ./nix/host-drvs.nix inputs localSystem);
 
-      pkgs = import nixpkgs {
-        config.allowUnfree = true;
-        config.allowAliases = true;
-      };
-    });
+        pkgs = import nixpkgs {
+          config.allowUnfree = true;
+          config.allowAliases = true;
+        };
+      });
 }
