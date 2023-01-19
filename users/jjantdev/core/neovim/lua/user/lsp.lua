@@ -1,6 +1,7 @@
 local lsp = require('lsp-zero')
 
-lsp.preset('recommended')
+lsp.preset('system-lsp')
+lsp.setup_servers({ 'rust_analyzer', 'rnix', 'sumneko_lua' })
 lsp.nvim_workspace()
 lsp.setup()
 
