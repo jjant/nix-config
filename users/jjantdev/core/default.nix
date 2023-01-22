@@ -17,6 +17,7 @@
     stateVersion = "22.11";
 
     packages = with pkgs; [
+      nodePackages.serve
       exa
       neofetch
       fd
