@@ -1,10 +1,10 @@
 require('user.options')
-require('user.lsp')
-require('user.lsp.rust')
 require('user.treesitter')
 require('user.keymap')
 require('user.harpoon')
 require('user.telescope')
+require('user.lsp')
+require('user.lsp.rust')
 
 require('marks').setup()
 require('gitsigns').setup()
