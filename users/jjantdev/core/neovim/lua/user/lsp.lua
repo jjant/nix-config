@@ -13,7 +13,7 @@ lsp.configure('sumneko_lua', {
   }
 })
 
-lsp.setup_servers({ 'rust_analyzer', 'rnix', 'sumneko_lua' })
+lsp.setup_servers({ 'rnix', 'sumneko_lua' })
 lsp.nvim_workspace()
 lsp.setup()
 
