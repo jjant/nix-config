@@ -1,4 +1,5 @@
 local lsp = require('lsp-zero')
+local rust_tools = require("rust-tools")
 
 lsp.preset('system-lsp')
 
@@ -26,7 +27,7 @@ local create_format_autocmd = function()
   end, desc = 'Autoformat code' })
 end
 
-lsp.on_attach(function(_, bufnr)
+local common_on_attach = function(_, bufnr)
   local opts = { buffer = bufnr, remap = false }
 
   vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
@@ -36,4 +37,13 @@ lsp.on_attach(function(_, bufnr)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
 
   create_format_autocmd()
-end)
+end
+
+lsp.on_attach(common_on_attach)
+
+rust_tools.setup({
+  server = { on_attach = function(client, bufnr)
+    rust_tools.inlay_hints.enable()
+    common_on_attach(client, bufnr)
+  end }
+})
