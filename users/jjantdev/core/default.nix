@@ -25,6 +25,7 @@
       rustup
       pre-commit
       git-secrets
+      hyperfine
 
       # LSPs
       sumneko-lua-language-server
