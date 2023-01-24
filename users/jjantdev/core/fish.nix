@@ -9,6 +9,12 @@
         fish_add_path --append $HOME/.nix-profile/bin
         fish_add_path --append ${config.xdg.configHome}/bin
         fish_add_path --append $HOME/.cargo/bin
+
+        # Export as empty so that the nix-installed `rust-analyzer`
+        # doesn't try to use rust stdlib sources from the nix store,
+        # as this can causes issues when RA tries to use `cargo metadata`
+        # which attempts to write stuff (and nix store files are read-only)
+        export RUST_SRC_PATH=
       '';
       interactiveShellInit = ''
         # Disable fish greeting

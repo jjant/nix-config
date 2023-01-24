@@ -30,6 +30,7 @@
       # LSPs
       sumneko-lua-language-server
       rnix-lsp
+      rust-analyzer
     ];
 
     shellAliases = {
