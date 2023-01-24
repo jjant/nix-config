@@ -27,6 +27,8 @@
       git-secrets
       hyperfine
 
+      awscli2
+
       # LSPs
       sumneko-lua-language-server
       rnix-lsp
