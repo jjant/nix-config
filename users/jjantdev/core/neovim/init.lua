@@ -7,6 +7,7 @@ require('user.lsp')
 
 require('marks').setup()
 require('gitsigns').setup()
+require('nvim-autopairs').setup()
 
 vim.cmd.colorscheme('darkplus')
 

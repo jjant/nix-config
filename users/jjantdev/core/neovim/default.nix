@@ -1,11 +1,14 @@
 { lib, pkgs, vimPlugins, ... }:
 let
-  extraVimPlugins = lib.mapAttrsToList (name: value:
-    pkgs.vimUtils.buildVimPluginFrom2Nix {
-      name = name;
-      src = value;
-    }) vimPlugins;
-in {
+  extraVimPlugins = lib.mapAttrsToList
+    (name: value:
+      pkgs.vimUtils.buildVimPluginFrom2Nix {
+        name = name;
+        src = value;
+      })
+    vimPlugins;
+in
+{
   home = {
     sessionVariables = {
       EDITOR = "nvim";
@@ -25,6 +28,7 @@ in {
       enable = true;
       plugins = with pkgs.vimPlugins;
         [
+          nvim-autopairs
           telescope-nvim
           vim-fish
           vim-nix
