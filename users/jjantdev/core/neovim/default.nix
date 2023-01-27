@@ -28,6 +28,7 @@ in
       enable = true;
       plugins = with pkgs.vimPlugins;
         [
+          nvim-web-devicons
           nvim-autopairs
           telescope-nvim
           vim-fish
