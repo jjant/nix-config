@@ -9,6 +9,7 @@ require('marks').setup()
 require('gitsigns').setup()
 require('nvim-autopairs').setup()
 require('nvim-web-devicons').setup()
+require('lualine').setup()
 
 vim.cmd.colorscheme('darkplus')
 

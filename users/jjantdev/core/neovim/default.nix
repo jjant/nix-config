@@ -28,6 +28,7 @@ in
       enable = true;
       plugins = with pkgs.vimPlugins;
         [
+          lualine-nvim
           nvim-web-devicons
           nvim-autopairs
           telescope-nvim
