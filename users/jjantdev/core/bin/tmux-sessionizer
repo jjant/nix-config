@@ -1,0 +1,21 @@
+#!/bin/bash
+
+directories="$HOME $HOME/work $HOME/personal $HOME/.config $HOME/workplace"
+selected=$(find -L $directories -mindepth 1 -maxdepth 1 -type d | fzf)
+
+if [[ -z $selected ]]; then
+  exit 0
+fi
+
+session_name=$(basename "$selected" | tr "." "_")
+
+if ! tmux has-session -t "$session_name" 2> /dev/null; then
+  tmux new-session -s "$session_name" -c "$selected" -d
+fi
+
+if [[ -z "$TMUX" ]]; then
+  tmux start-server
+  tmux attach
+fi
+
+tmux switch-client -t "$session_name"

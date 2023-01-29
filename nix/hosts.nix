@@ -5,7 +5,12 @@ let
       hostPlatform = "aarch64-linux";
       homeDirectory = "/home/jjantdev";
     };
-    # TODO: Add mac
+    discovery = {
+      # TODO: Use `nix-darwin`
+      type = "home-manager";
+      hostPlatform = "aarch64-darwin";
+      homeDirectory = "/Users/jjantdev";
+    };
   };
 
   inherit (builtins) attrNames concatMap listToAttrs;

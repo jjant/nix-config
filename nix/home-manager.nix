@@ -1,4 +1,4 @@
-{ self, home-manager, nixpkgs, templates, ... }:
+{ self, home-manager, nixpkgs, templates, ... }@inputs:
 let
   inherit (nixpkgs) lib;
   hosts = (import ./hosts.nix).homeManager.all;
@@ -21,6 +21,7 @@ let
           "nixpkgs=${config.xdg.dataHome}/nixpkgs"
           "nixpkgs-overlays=${config.xdg.dataHome}/overlays"
         ];
+        sessionVariables.LS_COLORS = "";
       };
 
       programs.fish.plugins = [ ];
@@ -37,10 +38,19 @@ let
       };
     };
 
+  # Filters all inputs with name `vim-plugin:owner/repo`
+  # and removes the `vim-plugin:` prefix from the name.
+  vimPlugins = myInputs:
+    lib.mapAttrs' (name: value: {
+      name = lib.removePrefix "vim-plugin:" name;
+      value = value;
+    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) myInputs);
+
   genConfiguration = hostName:
     { hostPlatform, ... }@attrs:
     home-manager.lib.homeManagerConfiguration {
       pkgs = self.pkgs.${hostPlatform};
       modules = [ (genModules hostName attrs) ];
+      extraSpecialArgs = { vimPlugins = vimPlugins inputs; };
     };
 in lib.mapAttrs genConfiguration hosts

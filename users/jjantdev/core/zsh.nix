@@ -4,5 +4,7 @@
     enableSyntaxHighlighting = true;
     autocd = true;
     dotDir = ".config/zsh";
+
+    sessionVariables = { LS_COLORS = ""; };
   };
 }

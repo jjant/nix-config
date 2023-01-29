@@ -1,0 +1,17 @@
+env:
+  TERM: xterm-256color
+window:
+  dimensions:
+    columns: 20
+  opacity: 1.0
+  decorations: None
+font:
+  normal:
+    family: SFMono Nerd Font
+    style: Light
+  bold:
+    style: Semibold
+  size: 21
+
+key_bindings:
+  - { key: Key3, mods: Alt, chars: '#' }

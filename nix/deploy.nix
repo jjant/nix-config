@@ -1,5 +1,7 @@
 { self, deploy-rs, nixpkgs, ... }:
 let
+  inherit (nixpkgs) lib;
+
   hosts = (import ./hosts.nix).all;
 
   genNode = hostName: nixosCfg:

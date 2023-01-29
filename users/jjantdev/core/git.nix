@@ -4,11 +4,15 @@
 
     userName = "Julian Antonielli";
     userEmail = "julianantonielli@gmail.com";
-  };
 
-  home.shellAliases = {
-    ga = "git add";
-    gco = "git checkout";
-    gcm = "git commit -m";
+    extraConfig = {
+      color.ui = true;
+      init.defaultBranch = "master";
+      pull.rebase = false;
+      push = {
+        default = "current";
+        autoSetupRemote = true;
+      };
+    };
   };
 }

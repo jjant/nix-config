@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -o pipefail
+set -e # Exit if a command fails
+
+if [[ $# -eq 0 ]]; then
+  echo "Project name required:"
+  echo "    pnew my_cool_project"
+  exit 1
+fi
+
+if [[ $# -ne 1 ]]; then
+  echo "Too many arguments, only 1 is supported"
+  exit $#
+fi
+
+project_name=$1
+project_directory=$HOME/personal/$project_name
+mkdir -p "$project_directory"
+
+echo "Project created at ~/personal/$project_name"
