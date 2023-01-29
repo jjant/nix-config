@@ -8,4 +8,9 @@ require("nvim-treesitter.configs").setup({
     enable = true,
     updatetime = 10,
   },
+  textobjects = {
+    select = {
+      enable = true,
+    },
+  },
 })

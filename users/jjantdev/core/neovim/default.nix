@@ -35,6 +35,7 @@ in
           vim-fish
           vim-nix
           plenary-nvim
+          nvim-treesitter-textobjects
           nvim-treesitter.withAllGrammars
           playground
           harpoon
