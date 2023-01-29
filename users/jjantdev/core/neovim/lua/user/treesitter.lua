@@ -1,5 +1,3 @@
--- Treesitter configuration
--- Parsers must be installed manually via :TSInstall
 require("nvim-treesitter.configs").setup({
   highlight = {
     enable = true,
@@ -11,6 +9,12 @@ require("nvim-treesitter.configs").setup({
   textobjects = {
     select = {
       enable = true,
+      keymaps = {
+        ["af"] = "@function.outer",
+        ["if"] = "@function.inner",
+        ["aF"] = "@block.outer",
+        ["iF"] = "@block.inner",
+      },
     },
   },
 })
