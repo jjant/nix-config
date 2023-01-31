@@ -46,6 +46,7 @@
       shellAbbrs = {
         # Maybe move these to the `git.nix` file?
         ga = "git add";
+        gb = "git branch";
         gst = "git status";
         gco = "git checkout";
         gcv = "git commit";
