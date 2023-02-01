@@ -42,6 +42,8 @@ local common_on_attach = function(client, bufnr)
   vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, opts)
   vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
 
+  vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)
+
   create_format_autocmd(client)
 end
 
