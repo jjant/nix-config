@@ -50,6 +50,11 @@ lsp.on_attach(common_on_attach)
 rust_tools.setup({
   server = { on_attach = function(client, bufnr)
     rust_tools.inlay_hints.enable()
+
     common_on_attach(client, bufnr)
+
+    local opts = { buffer = bufnr, remap = false }
+    local open_cargo_toml = rust_tools.open_cargo_toml.open_cargo_toml
+    vim.keymap.set('n', '<Leader>gc', open_cargo_toml, opts)
   end }
 })
