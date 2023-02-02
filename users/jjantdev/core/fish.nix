@@ -55,7 +55,8 @@
         gp = "git push";
         gpf = "git push --force-with-lease";
         gl = "git pull";
-        gam = "git commit --amend";
+        gam = "git commit --amend --no-edit";
+        game = "git commit --amend";
         glog = "git log --oneline --decorate --reverse -10";
         gm = "git merge";
 
