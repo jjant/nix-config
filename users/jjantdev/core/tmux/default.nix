@@ -9,7 +9,8 @@ let
       set -g @dracula-military-time true
     '';
   };
-in {
+in
+{
   programs.tmux = {
     enable = true;
     sensibleOnTop = true;
