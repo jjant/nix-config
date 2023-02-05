@@ -16,5 +16,16 @@ require("nvim-treesitter.configs").setup({
         ["iF"] = "@block.inner",
       },
     },
+    move = {
+      enable = true,
+      -- Set jumps in the jumplist
+      set_jumps = true,
+      goto_next_start = {
+        ["[f"] = "@function.outer",
+      },
+      goto_previous_start = {
+        ["]f"] = "@function.outer",
+      }
+    }
   },
 })
