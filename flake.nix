@@ -2,15 +2,6 @@
   description = "jjant's Nix Config";
 
   inputs = {
-    deploy-rs = {
-      url = "github:serokell/deploy-rs";
-      inputs = {
-        nixpkgs.follows = "nixpkgs";
-        flake-compat.follows = "flake-compat";
-        utils.follows = "flake-utils";
-      };
-    };
-
     flake-compat = {
       url = "github:edolstra/flake-compat";
       flake = false;
