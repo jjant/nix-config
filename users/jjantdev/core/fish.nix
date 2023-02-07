@@ -70,12 +70,6 @@
         tx = "toolbox";
         wp = "cd ~/workplace";
       };
-      functions = {
-        jr = {
-          description = "`cd` to this git repo's root";
-          body = "cd $(git rev-parse --show-toplevel)";
-        };
-      };
     };
   };
 }
