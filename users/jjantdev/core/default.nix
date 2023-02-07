@@ -23,6 +23,7 @@
       fd
       ripgrep
       rustup
+      tokei
       pre-commit
       git-secrets
       hyperfine
