@@ -69,6 +69,25 @@
         bb = "brazil-build";
         tx = "toolbox";
         wp = "cd ~/workplace";
+        bp = "brazil-workspace-from-package";
+      };
+
+      functions = {
+        brazil-workspace-from-package = {
+          description = "Create a workspace with a single package.";
+          body = ''
+            set package $argv[1]
+
+            if test -z "$package"
+              echo "Package name required"
+              exit 1
+            end
+
+            brazil ws create --name $package
+            and cd $package
+            and brazil ws use -p $package
+          '';
+        };
       };
     };
   };
