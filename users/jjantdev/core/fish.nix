@@ -73,6 +73,18 @@
       };
 
       functions = {
+        jr = {
+          description = "`cd` to this git repo's root";
+          body = ''
+            set repoRoot $(git rev-parse --show-toplevel 2> /dev/null)
+
+            if test $status -ne 0
+              echo "Not a git repository"
+              return 1
+            end
+            cd $repoRoot
+          '';
+        };
         brazil-workspace-from-package = {
           description = "Create a workspace with a single package.";
           body = ''
