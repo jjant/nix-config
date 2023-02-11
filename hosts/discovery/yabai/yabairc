@@ -53,6 +53,7 @@ yabai -m rule --add app="^System Preferences$" manage=off
 yabai -m rule --add app="^Activity Monitor$" manage=off
 yabai -m rule --add app="^System Information$" manage=off
 yabai -m rule --add app="^Runty8$" manage=off
+yabai -m rule --add app="^PICO-8$" manage=off
 yabai -m rule --add app="^Alacritty$" space=2
 
 echo "yabai configuration loaded.."
