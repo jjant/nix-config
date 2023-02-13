@@ -70,6 +70,7 @@
         tx = "toolbox";
         wp = "cd ~/workplace";
         bp = "brazil-workspace-from-package";
+        sms = "go-to-smithy-rs-latest-tmp";
       };
 
       functions = {
@@ -92,12 +93,26 @@
 
             if test -z "$package"
               echo "Package name required"
-              exit 1
+              return 1
             end
 
             brazil ws create --name $package
             and cd $package
             and brazil ws use -p $package
+          '';
+        };
+        go-to-smithy-rs-latest-tmp = {
+          description = "Navigate to the latest code generated smithy test files";
+          body = ''
+            set baseDir "$HOME/.local/share/smithy-test-workspace"
+            set rustProjectDir $(exa --sort modified $baseDir -D | tr " " "\n" | tail -n1)
+
+            if test -z "$rustProjectDir"
+              echo "No code generated directory found"
+              return 1
+            end
+
+            cd "$baseDir/$rustProjectDir"
           '';
         };
       };
