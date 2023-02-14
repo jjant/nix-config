@@ -32,6 +32,7 @@ in
           nvim-web-devicons
           nvim-autopairs
           telescope-nvim
+          telescope-fzf-native-nvim
           vim-fish
           vim-nix
           plenary-nvim
