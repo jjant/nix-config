@@ -71,6 +71,7 @@
         wp = "cd ~/workplace";
         bp = "brazil-workspace-from-package";
         sms = "go-to-smithy-rs-latest-tmp";
+        smt = "smithy-codegen-server-targets";
       };
 
       functions = {
@@ -113,6 +114,21 @@
             end
 
             cd "$baseDir/$rustProjectDir"
+          '';
+        };
+        smithy-codegen-server-targets = {
+          description = "Navigate to codegen-server-test targets";
+          body = ''
+            set codegenServerTargetsDir "codegen-server-test/build/smithyprojections/codegen-server-test/" 
+            set targets $(exa -D $codegenServerTargetsDir)
+            set pickedTarget $(echo $targets | tr " " "\n" | fzf)
+
+            if test -z "$pickedTarget"
+              echo "No target selected"
+              return 1
+            end
+
+            cd "$codegenServerTargetsDir/$pickedTarget/rust-server-codegen"
           '';
         };
       };
