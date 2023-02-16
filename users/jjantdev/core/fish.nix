@@ -120,12 +120,18 @@
           description = "Navigate to codegen-server-test targets";
           body = ''
             set codegenServerTargetsDir "codegen-server-test/build/smithyprojections/codegen-server-test/" 
+
+            if not test -d $codegenServerTargetsDir
+              echo "Not in the smithy-rs repo"
+              return 1
+            end
+
             set targets $(exa -D $codegenServerTargetsDir)
             set pickedTarget $(echo $targets | tr " " "\n" | fzf)
 
             if test -z "$pickedTarget"
               echo "No target selected"
-              return 1
+              return 2
             end
 
             cd "$codegenServerTargetsDir/$pickedTarget/rust-server-codegen"
