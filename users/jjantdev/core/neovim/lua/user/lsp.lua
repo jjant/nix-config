@@ -44,6 +44,8 @@ local common_on_attach = function(client, bufnr)
 
   vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)
 
+  vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, opts)
+
   create_format_autocmd(client)
 end
 
