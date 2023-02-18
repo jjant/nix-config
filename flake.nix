@@ -121,7 +121,6 @@
       # TODO: Add darwin configurations
     } // flake-utils.lib.eachSystem systems
       (localSystem: {
-        # checks = import ./nix/checks.nix allInputs localSystem;
         packages =
           let
             hostDrvs = import ./nix/host-drvs.nix allInputs localSystem;

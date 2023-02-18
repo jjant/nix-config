@@ -1,39 +1,55 @@
 let
   hosts = {
     odyssey = {
-      type = "home-manager";
+      type = "homeManager";
       hostPlatform = "aarch64-linux";
       homeDirectory = "/home/jjantdev";
     };
     discovery = {
       # TODO: Use `nix-darwin`
-      type = "home-manager";
+      type = "homeManager";
       hostPlatform = "aarch64-darwin";
       homeDirectory = "/Users/jjantdev";
     };
   };
 
-  inherit (builtins) attrNames concatMap listToAttrs;
+  inherit (builtins) attrNames concatMap listToAttrs filter;
 
   filterAttrs = pred: set:
-    listToAttrs (concatMap (name:
-      let value = set.${name};
-      in if pred name value then [{ inherit name value; }] else [ ])
+    listToAttrs (concatMap
+      (name:
+        let value = set.${name};
+        in if pred name value then [{ inherit name value; }] else [ ])
       (attrNames set));
 
-  systemPred = system:
-    (_: v: builtins.match ".*${system}.*" v.hostPlatform != null);
+  removeEmptyAttrs = filterAttrs (_: v: v != { });
 
-  genFamily = filter: hosts: rec {
-    all = filterAttrs filter hosts;
+  genSystemGroups = hosts:
+    let
+      systems = [ "aarch64-darwin" "aarch64-linux" "x86_64-darwin" "x86_64-linux" ];
+      systemHostGroup = name: {
+        inherit name;
+        value = filterAttrs (_: host: host.hostPlatform == name) hosts;
+      };
+    in
+    removeEmptyAttrs (listToAttrs (map systemHostGroup systems));
 
-    nixos = genFamily (_: v: v.type == "nixos") all;
-    nix-darwin = genFamily (_: v: v.type == "darwin") all;
-    homeManager = genFamily (_: v: v.type == "home-manager") all;
+  genTypeGroups = hosts:
+    let
+      types = [ "darwin" "nixos" "homeManager" ];
+      typeHostGroup = name: {
+        inherit name;
+        value = filterAttrs (_: host: host.type == name) hosts;
+      };
+    in
+    removeEmptyAttrs (listToAttrs (map typeHostGroup types));
 
-    darwin = genFamily (systemPred "-darwin") all;
-    linux = genFamily (systemPred "-linux") all;
-
-    aarch64-linux = genFamily (systemPred "aarch64-linux") all;
-  };
-in genFamily (_: _: true) hosts
+  genHostGroups = hosts:
+    let
+      all = hosts;
+      systemGroups = genSystemGroups all;
+      typeGroups = genTypeGroups all;
+    in
+    all // systemGroups // typeGroups // { inherit all; };
+in
+genHostGroups hosts
