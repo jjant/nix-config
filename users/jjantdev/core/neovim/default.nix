@@ -3,7 +3,7 @@ let
   extraVimPlugins = lib.mapAttrsToList
     (name: value:
       pkgs.vimUtils.buildVimPluginFrom2Nix {
-        name = name;
+        inherit name;
         src = value;
       })
     vimPlugins;
@@ -32,6 +32,7 @@ in
           nvim-web-devicons
           nvim-autopairs
           telescope-nvim
+          telescope-fzf-native-nvim
           vim-fish
           vim-nix
           plenary-nvim

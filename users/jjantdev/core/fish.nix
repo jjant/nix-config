@@ -69,11 +69,73 @@
         bb = "brazil-build";
         tx = "toolbox";
         wp = "cd ~/workplace";
+        bp = "brazil-workspace-from-package";
+        sms = "go-to-smithy-rs-latest-tmp";
+        smt = "smithy-codegen-server-targets";
       };
+
       functions = {
         jr = {
           description = "`cd` to this git repo's root";
-          body = "cd $(git rev-parse --show-toplevel)";
+          body = ''
+            set repoRoot $(git rev-parse --show-toplevel 2> /dev/null)
+
+            if test $status -ne 0
+              echo "Not a git repository"
+              return 1
+            end
+            cd $repoRoot
+          '';
+        };
+        brazil-workspace-from-package = {
+          description = "Create a workspace with a single package.";
+          body = ''
+            set package $argv[1]
+
+            if test -z "$package"
+              echo "Package name required"
+              return 1
+            end
+
+            brazil ws create --name $package
+            and cd $package
+            and brazil ws use -p $package
+          '';
+        };
+        go-to-smithy-rs-latest-tmp = {
+          description = "Navigate to the latest code generated smithy test files";
+          body = ''
+            set baseDir "$HOME/.local/share/smithy-test-workspace"
+            set rustProjectDir $(exa --sort modified $baseDir -D | tr " " "\n" | tail -n1)
+
+            if test -z "$rustProjectDir"
+              echo "No code generated directory found"
+              return 1
+            end
+
+            cd "$baseDir/$rustProjectDir"
+          '';
+        };
+        smithy-codegen-server-targets = {
+          description = "Navigate to codegen-server-test targets";
+          body = ''
+            set codegenServerTargetsDir "codegen-server-test/build/smithyprojections/codegen-server-test/" 
+
+            if not test -d $codegenServerTargetsDir
+              echo "Not in the smithy-rs repo"
+              return 1
+            end
+
+            set targets $(exa -D $codegenServerTargetsDir)
+            set pickedTarget $(echo $targets | tr " " "\n" | fzf)
+
+            if test -z "$pickedTarget"
+              echo "No target selected"
+              return 2
+            end
+
+            cd "$codegenServerTargetsDir/$pickedTarget/rust-server-codegen"
+          '';
         };
       };
     };

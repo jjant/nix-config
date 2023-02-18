@@ -17,12 +17,15 @@
     stateVersion = "22.11";
 
     packages = with pkgs; [
+      btop
+
       nodePackages.serve
       exa
       neofetch
       fd
       ripgrep
       rustup
+      tokei
       pre-commit
       git-secrets
       hyperfine

@@ -1,7 +1,7 @@
-{ self, home-manager, nixpkgs, templates, ... }@inputs:
+{ self, pkgs, home-manager, nixpkgs, templates, ... }@inputs:
 let
   inherit (nixpkgs) lib;
-  hosts = (import ./hosts.nix).homeManager.all;
+  hosts = (import ./hosts.nix).homeManager;
 
   genModules = hostName:
     { homeDirectory, ... }:
@@ -41,16 +41,19 @@ let
   # Filters all inputs with name `vim-plugin:owner/repo`
   # and removes the `vim-plugin:` prefix from the name.
   vimPlugins = myInputs:
-    lib.mapAttrs' (name: value: {
-      name = lib.removePrefix "vim-plugin:" name;
-      value = value;
-    }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) myInputs);
+    lib.mapAttrs'
+      (name: value: {
+        name = lib.removePrefix "vim-plugin:" name;
+        inherit value;
+      })
+      (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) myInputs);
 
   genConfiguration = hostName:
     { hostPlatform, ... }@attrs:
     home-manager.lib.homeManagerConfiguration {
-      pkgs = self.pkgs.${hostPlatform};
+      pkgs = pkgs.${hostPlatform};
       modules = [ (genModules hostName attrs) ];
       extraSpecialArgs = { vimPlugins = vimPlugins inputs; };
     };
-in lib.mapAttrs genConfiguration hosts
+in
+lib.mapAttrs genConfiguration hosts

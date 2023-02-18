@@ -25,7 +25,7 @@ require("nvim-treesitter.configs").setup({
       },
       goto_previous_start = {
         ["]f"] = "@function.outer",
-      }
-    }
+      },
+    },
   },
 })
