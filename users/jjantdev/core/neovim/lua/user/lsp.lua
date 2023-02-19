@@ -14,7 +14,7 @@ lsp.configure('sumneko_lua', {
   }
 })
 
-lsp.setup_servers({ 'rnix', 'sumneko_lua' })
+lsp.setup_servers({ 'rnix', 'sumneko_lua', 'bashls' })
 lsp.nvim_workspace()
 lsp.setup()
 

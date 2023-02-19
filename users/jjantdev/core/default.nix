@@ -32,10 +32,13 @@
 
       awscli2
 
+      shellcheck
+
       # LSPs
       sumneko-lua-language-server
       rnix-lsp
       rust-analyzer
+      nodePackages.bash-language-server
     ];
 
     shellAliases = {
