@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-
-# `cd` to this git repo's root
-cd $(git rev-parse --show-toplevel)
