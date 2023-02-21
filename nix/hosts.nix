@@ -5,6 +5,11 @@ let
       hostPlatform = "aarch64-linux";
       homeDirectory = "/home/jjantdev";
     };
+    discovery2 = {
+      type = "homeManager";
+      hostPlatform = "x86_64-linux";
+      homeDirectory = "/home/jjantdev";
+    };
     discovery = {
       # TODO: Use `nix-darwin`
       type = "homeManager";
