@@ -1,10 +1,7 @@
 { lib, pkgs, ... }: {
   imports = [ ../../users/jjantdev/core ];
 
-  home = {
-    # uid = 504;
-    packages = [ pkgs.btop ];
-  };
+  home = { };
 
   programs = {
     home-manager.enable = true;
@@ -13,6 +10,10 @@
 
       set --erase LS_COLORS
     '';
+    fish.shellAbbrs = {
+      mw = "mwinit -o";
+    };
+
     git = {
       userEmail = lib.mkForce "jjantdev@amazon.co.uk";
       # ^ mkForce gives priority to this value in case of multiple definitions
