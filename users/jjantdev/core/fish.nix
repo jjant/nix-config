@@ -73,6 +73,8 @@
         bp = "brazil-workspace-from-package";
         sms = "go-to-smithy-rs-latest-tmp";
         smt = "smithy-codegen-server-targets";
+
+        mw = "mwinit";
       };
 
       functions = {

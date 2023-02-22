@@ -11,7 +11,7 @@
       set --erase LS_COLORS
     '';
     fish.shellAbbrs = {
-      mw = "mwinit -o";
+      mw = lib.mkForce "mwinit -o";
     };
 
     git = {
