@@ -67,6 +67,7 @@
         bz = "brazil";
         bw = "brazil workspace";
         bb = "brazil-build";
+        edabb = "eda build brazil-build build";
         tx = "toolbox";
         wp = "cd ~/workplace";
         bp = "brazil-workspace-from-package";
