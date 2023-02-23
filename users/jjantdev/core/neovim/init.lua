@@ -10,6 +10,7 @@ require('gitsigns').setup()
 require('nvim-autopairs').setup()
 require('nvim-web-devicons').setup()
 require('lualine').setup()
+require('nvim-surround').setup()
 
 vim.cmd.colorscheme('darkplus')
 

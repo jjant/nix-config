@@ -35,6 +35,7 @@ in
           telescope-fzf-native-nvim
           vim-fish
           vim-nix
+          nvim-surround
           plenary-nvim
           nvim-treesitter-textobjects
           nvim-treesitter.withAllGrammars
