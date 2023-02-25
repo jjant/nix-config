@@ -28,6 +28,7 @@ in
       enable = true;
       plugins = with pkgs.vimPlugins;
         [
+          quick-scope
           lualine-nvim
           nvim-web-devicons
           nvim-autopairs
