@@ -11,7 +11,7 @@ font:
     style: Light
   bold:
     style: Semibold
-  size: 21
+  size: 15
 
 key_bindings:
   - { key: Key3, mods: Alt, chars: '#' }
