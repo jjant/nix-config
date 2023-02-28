@@ -4,6 +4,7 @@ require('user.keymap')
 require('user.harpoon')
 require('user.telescope')
 require('user.lsp')
+require('user.quickscope')
 
 require('marks').setup()
 require('gitsigns').setup()
