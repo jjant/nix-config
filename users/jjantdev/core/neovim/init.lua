@@ -5,6 +5,7 @@ require('user.harpoon')
 require('user.telescope')
 require('user.lsp')
 require('user.quickscope')
+require('user.smithy')
 
 require('marks').setup()
 require('gitsigns').setup()
