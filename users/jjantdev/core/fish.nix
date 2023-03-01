@@ -124,6 +124,8 @@
           body = ''
             set codegenServerTargetsDir "codegen-server-test/build/smithyprojections/codegen-server-test/" 
 
+            jr
+
             if not test -d $codegenServerTargetsDir
               echo "Not in the smithy-rs repo"
               return 1
