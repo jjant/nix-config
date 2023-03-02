@@ -39,7 +39,15 @@ in
           nvim-surround
           plenary-nvim
           nvim-treesitter-textobjects
-          nvim-treesitter.withAllGrammars
+          (nvim-treesitter.withPlugins (grammars: [
+            grammars.rust
+            grammars.nix
+            grammars.lua
+            grammars.smithy
+            grammars.kotlin
+            grammars.bash
+            grammars.fish
+          ]))
           playground
           harpoon
           marks-nvim
