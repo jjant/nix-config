@@ -72,7 +72,8 @@
         wp = "cd ~/workplace";
         bp = "brazil-workspace-from-package";
         sms = "go-to-smithy-rs-latest-tmp";
-        smt = "smithy-codegen-server-targets";
+        smt = "smithy-codegen-targets server";
+        smc = "smithy-codegen-targets client";
 
         mw = "mwinit";
       };
@@ -119,19 +120,28 @@
             cd "$baseDir/$rustProjectDir"
           '';
         };
-        smithy-codegen-server-targets = {
-          description = "Navigate to codegen-server-test targets";
+        smithy-codegen-targets = {
+          description = "Navigate to smithy-rs's codegen-{server,client}-test targets";
           body = ''
-            set codegenServerTargetsDir "codegen-server-test/build/smithyprojections/codegen-server-test/" 
+            set clientOrServer "$argv[1]"
+
+            if test "$clientOrServer" = "server" -o "$clientOrServer" = "client"
+            else
+              echo "Target must be either `server` or `client`, but it was `$clientOrServer`"
+              return 1
+            end
+
+            set baseDirName "codegen-$clientOrServer-test"
+            set codegenTargetsDir "$baseDirName/build/smithyprojections/$baseDirName/"
 
             jr
 
-            if not test -d $codegenServerTargetsDir
+            if not test -d $codegenTargetsDir
               echo "Not in the smithy-rs repo"
               return 1
             end
 
-            set targets $(exa -D $codegenServerTargetsDir)
+            set targets $(exa -D $codegenTargetsDir)
             set pickedTarget $(echo $targets | tr " " "\n" | fzf)
 
             if test -z "$pickedTarget"
@@ -139,7 +149,8 @@
               return 2
             end
 
-            cd "$codegenServerTargetsDir/$pickedTarget/rust-server-codegen"
+            set srcDir "rust-$clientOrServer-codegen"
+            cd "$codegenTargetsDir/$pickedTarget/$srcDir"
           '';
         };
       };
