@@ -47,6 +47,7 @@ in
             grammars.kotlin
             grammars.bash
             grammars.fish
+            grammars.yaml
           ]))
           playground
           harpoon
