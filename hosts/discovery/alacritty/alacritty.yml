@@ -16,6 +16,8 @@ font:
 
 key_bindings:
   - { key: Key3, mods: Alt, chars: '#' }
+    # Use `{number}` to send `<Ctrl-b>{number}`.
+    # Used to switch tmux windows.
   - { key: Key1, mods: Command, chars: "\x021" }
   - { key: Key2, mods: Command, chars: "\x022" }
   - { key: Key3, mods: Command, chars: "\x023" }
