@@ -14,7 +14,8 @@ lsp.configure('sumneko_lua', {
   }
 })
 
-lsp.setup_servers({ 'rnix', 'sumneko_lua', 'bashls' })
+-- rust-analyzer excluded from this list because it's set up by rust-tools
+lsp.setup_servers({ 'rnix', 'sumneko_lua', 'bashls', 'taplo' })
 lsp.nvim_workspace()
 lsp.setup()
 

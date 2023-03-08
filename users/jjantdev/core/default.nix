@@ -39,6 +39,7 @@
       rnix-lsp
       rust-analyzer
       nodePackages.bash-language-server
+      taplo
     ];
 
     shellAliases = {
