@@ -48,6 +48,7 @@ in
             grammars.bash
             grammars.fish
             grammars.yaml
+            grammars.toml
           ]))
           playground
           harpoon
