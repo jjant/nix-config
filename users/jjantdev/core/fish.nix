@@ -153,6 +153,31 @@
             cd "$codegenTargetsDir/$pickedTarget/$srcDir"
           '';
         };
+        today = {
+          description = ''
+            Create a file with today's date as a name.
+            Use the first argument to
+          '';
+          body = ''
+            set default_extension "md"
+            set base_name $(date "+%Y-%m-%d")
+            set extension $argv[1]
+
+            if test -z "$extension"
+              set extension "$default_extension"
+            end
+
+            set file_name "$base_name.$extension"
+
+            if test -e $file_name
+              echo "File `$file_name` already exists, skipping creation"
+              return 1
+            end
+
+            touch $file_name
+            echo "Created file: $file_name"
+          '';
+        };
       };
     };
   };
