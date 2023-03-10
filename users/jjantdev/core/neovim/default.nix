@@ -49,6 +49,8 @@ in
             grammars.fish
             grammars.yaml
             grammars.toml
+            grammars.javascript
+            grammars.typescript
           ]))
           playground
           harpoon
