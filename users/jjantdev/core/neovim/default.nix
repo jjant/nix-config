@@ -49,6 +49,7 @@ in
             grammars.fish
             grammars.yaml
             grammars.toml
+            grammars.json
             grammars.javascript
             grammars.typescript
           ]))
