@@ -39,6 +39,7 @@
       rnix-lsp
       rust-analyzer
       nodePackages.bash-language-server
+      nodePackages_latest.typescript-language-server
       taplo
     ];
 
