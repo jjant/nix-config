@@ -13,6 +13,7 @@ require('nvim-autopairs').setup()
 require('nvim-web-devicons').setup()
 require('lualine').setup()
 require('nvim-surround').setup()
+require('Comment').setup()
 
 vim.cmd.colorscheme('darkplus')
 

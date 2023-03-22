@@ -57,6 +57,7 @@ in
           harpoon
           marks-nvim
           gitsigns-nvim
+          comment-nvim
         ] ++ extraVimPlugins;
     };
   };
