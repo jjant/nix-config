@@ -60,6 +60,7 @@
         glog = "git log --oneline --decorate --reverse -10";
         glg = "git log --decorate --pretty=format:'%C(auto)%h %C(green)(%as)%C(reset)%C(blue) %<(20,trunc) %an%C(reset) %s%C(auto)%d'";
         gm = "git merge";
+        grs = "git restore --staged";
 
         vi = "nvim";
         vim = "nvim";
