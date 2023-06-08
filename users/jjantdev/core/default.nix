@@ -41,6 +41,8 @@
       nodePackages.bash-language-server
       nodePackages_latest.typescript-language-server
       taplo
+
+      graphviz # dot, neato, etc
     ];
 
     shellAliases = {
