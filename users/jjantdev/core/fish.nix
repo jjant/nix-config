@@ -48,9 +48,11 @@
         ga = "git add";
         gb = "git branch";
         gst = "git status";
+        gstp = "git stash pop";
         gco = "git checkout";
         gcv = "git commit";
         gd = "git diff";
+        gdh = "git diff HEAD^";
         gds = "git diff --staged";
         gp = "git push";
         gpf = "git push --force-with-lease";
@@ -94,6 +96,7 @@
             cd $repoRoot
           '';
         };
+        # TODO: Clean up directories if something fails.
         brazil-workspace-from-package = {
           description = "Create a workspace with a single package.";
           body = ''
@@ -107,6 +110,7 @@
             brazil ws create --name $package
             and cd $package
             and brazil ws use -p $package
+            and cd src/$package
           '';
         };
         go-to-smithy-rs-latest-tmp = {
