@@ -40,7 +40,7 @@
       # LSPs
       sumneko-lua-language-server
       rnix-lsp
-      rust-analyzer
+      # rust-analyzer
       nodePackages.bash-language-server
       nodePackages_latest.typescript-language-server
       taplo
