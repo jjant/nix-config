@@ -19,6 +19,9 @@
     packages = with pkgs; [
       btop
 
+      nodejs
+      jq
+
       nodePackages.serve
       exa
       neofetch
