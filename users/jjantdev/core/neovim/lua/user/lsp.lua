@@ -1,22 +1,12 @@
 local lsp = require('lsp-zero')
+local lspconfig = require('lspconfig')
 local rust_tools = require("rust-tools")
 
 lsp.preset('system-lsp')
 
--- Fix Undefined global 'vim'
-lsp.configure('sumneko_lua', {
-  settings = {
-    Lua = {
-      diagnostics = {
-        globals = { 'vim' }
-      }
-    }
-  }
-})
-
 -- rust-analyzer excluded from this list because it's set up by rust-tools
-lsp.setup_servers({ 'rnix', 'sumneko_lua', 'bashls', 'taplo', 'tsserver' })
-lsp.nvim_workspace()
+lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
+lsp.setup_servers({ 'rnix', 'bashls', 'taplo', 'tsserver' })
 lsp.setup()
 
 local format_augroup = vim.api.nvim_create_augroup('LspFormat', { clear = true })
@@ -54,13 +44,15 @@ end
 lsp.on_attach(common_on_attach)
 
 rust_tools.setup({
-  server = { on_attach = function(client, bufnr)
-    rust_tools.inlay_hints.enable()
+  server = {
+    on_attach = function(client, bufnr)
+      rust_tools.inlay_hints.enable()
 
-    common_on_attach(client, bufnr)
+      common_on_attach(client, bufnr)
 
-    local opts = { buffer = bufnr, remap = false }
-    local open_cargo_toml = rust_tools.open_cargo_toml.open_cargo_toml
-    vim.keymap.set('n', '<Leader>gc', open_cargo_toml, opts)
-  end }
+      local opts = { buffer = bufnr, remap = false }
+      local open_cargo_toml = rust_tools.open_cargo_toml.open_cargo_toml
+      vim.keymap.set('n', '<Leader>gc', open_cargo_toml, opts)
+    end
+  }
 })
