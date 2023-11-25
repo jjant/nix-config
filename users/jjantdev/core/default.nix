@@ -23,7 +23,7 @@
       jq
 
       nodePackages.serve
-      exa
+      eza
       neofetch
       fd
       ripgrep
@@ -49,7 +49,7 @@
     ];
 
     shellAliases = {
-      ls = "exa --binary --header --long --classify";
+      ls = "eza --binary --header --long --classify";
       la = "ls --all";
       lg = "la --grid";
     };

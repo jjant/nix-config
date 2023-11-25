@@ -10,12 +10,16 @@
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.utils.follows = "flake-utils";
+    };
+
+    darwin = {
+      url = "github:LnL7/nix-darwin";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     # TODO: Add impermanence, pre-commit-hooks
 
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
     nixos-hardware.url = "github:NixOS/nixos-hardware";
 
@@ -95,7 +99,7 @@
   };
 
 
-  outputs = { self, nixpkgs, flake-utils, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, home-manager, darwin, ... }@inputs:
     let
       systems = [
         "aarch64-darwin"
@@ -131,5 +135,13 @@
                 { };
           in
           hostDrvs // default;
-      });
+      }) // {
+      darwinConfigurations.darwinOdyssey = darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        modules = [
+          home-manager.darwinModules.home-manager
+          ./hosts/endeavour.nix
+        ];
+      };
+    };
 }
