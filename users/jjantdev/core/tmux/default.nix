@@ -6,7 +6,7 @@ let
       set -g @dracula-show-powerline true
       set -g @dracula-show-fahrenheit false
       set -g @dracula-show-left-icon session
-      set -g @dracula-military-time true
+      set -g @dracula-network-bandwidth false
     '';
   };
 in
