@@ -12,7 +12,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    darwin = {
+    nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -99,7 +99,7 @@
   };
 
 
-  outputs = { self, nixpkgs, flake-utils, home-manager, darwin, ... }@inputs:
+  outputs = { self, nixpkgs, flake-utils, home-manager, nix-darwin, ... }@inputs:
     let
       systems = [
         "aarch64-darwin"
@@ -136,7 +136,7 @@
           in
           hostDrvs // default;
       }) // {
-      darwinConfigurations.darwinOdyssey = darwin.lib.darwinSystem {
+      darwinConfigurations.darwinOdyssey = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           home-manager.darwinModules.home-manager
