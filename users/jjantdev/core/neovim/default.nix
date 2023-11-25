@@ -2,7 +2,7 @@
 let
   extraVimPlugins = lib.mapAttrsToList
     (name: value:
-      pkgs.vimUtils.buildVimPluginFrom2Nix {
+      pkgs.vimUtils.buildVimPlugin {
         inherit name;
         src = value;
       })
