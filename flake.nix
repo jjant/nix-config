@@ -136,7 +136,7 @@
           in
           hostDrvs // default;
       }) // {
-      darwinConfigurations.darwinOdyssey = nix-darwin.lib.darwinSystem {
+      darwinConfigurations.endeavour = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
         modules = [
           home-manager.darwinModules.home-manager
