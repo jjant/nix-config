@@ -3,8 +3,8 @@
     ./tmux
     ./git.nix
     ./starship.nix
+    ./fish.nix
     # TODO:
-    # ./fish.nix
     # ./xdg.nix
     # ./zsh.nix
     # ./neovim
