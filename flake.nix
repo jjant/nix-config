@@ -125,7 +125,12 @@
       # $ darwin-rebuild build --flake .#simple
       darwinConfigurations."simple" = nix-darwin.lib.darwinSystem {
         system = "aarch64-darwin";
-        pkgs = import nixpkgs { system = "aarch64-darwin"; };
+        pkgs = import nixpkgs {
+	  system = "aarch64-darwin";
+	  config = {
+	    allowUnfree = true;
+	  };
+	};
         modules = [
           configuration
           inputs.home-manager.darwinModules.home-manager
@@ -156,6 +161,7 @@
                   ({ pkgs, ... }: {
                     home.packages = [
                       pkgs.htop
+		      pkgs.jetbrains.idea-ultimate
                     ];
                   })
                 ];
