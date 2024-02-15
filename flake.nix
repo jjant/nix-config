@@ -76,9 +76,6 @@
         # $ darwin-rebuild changelog
         system.stateVersion = 4;
 
-        # TODO: For some reason nix thinks this is an x86_64 machine.
-        # nixpkgs.hostPlatform = "aarch64-darwin";
-        nixpkgs.hostPlatform = "x86_64-darwin";
 
         # My configs
         system.defaults.dock.mru-spaces = false;
@@ -123,6 +120,8 @@
       # Build darwin flake using:
       # $ darwin-rebuild build --flake .#simple
       darwinConfigurations."simple" = nix-darwin.lib.darwinSystem {
+        system = "aarch64-darwin";
+        pkgs = import nixpkgs { system = "aarch64-darwin"; };
         modules = [
           configuration
           inputs.home-manager.darwinModules.home-manager
