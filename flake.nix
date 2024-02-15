@@ -52,7 +52,8 @@
         # $ darwin-rebuild changelog
         system.stateVersion = 4;
 
-        # The platform the configuration will be used on.
+        # TODO: For some reason nix thinks this is an x86_64 machine.
+        # nixpkgs.hostPlatform = "aarch64-darwin";
         nixpkgs.hostPlatform = "x86_64-darwin";
 
         # My configs
@@ -75,6 +76,7 @@
 
         homebrew = {
           enable = true;
+          brewPrefix = "/opt/homebrew/bin/";
 
           taps = [
             # See: https://github.com/epk/SF-Mono-Nerd-Font
