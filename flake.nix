@@ -15,6 +15,7 @@
         environment.systemPackages =
           [
             pkgs.vim
+            pkgs.neovim
           ];
 
 
