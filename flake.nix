@@ -43,6 +43,8 @@
         system.defaults.universalaccess.mouseDriverCursorSize = 1.75;
         system.defaults.trackpad.TrackpadRightClick = true;
         system.defaults.dock.autohide = true;
+        # Make Finder killable
+        system.defaults.finder.QuitMenuItem = true;
 
         services.skhd = {
           enable = true;
