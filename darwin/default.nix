@@ -114,6 +114,10 @@
         name = "signal";
         greedy = true;
       }
+      {
+        name = "Docker";
+        greedy = true;
+      }
       # Installs "SFMono Nerd Font" font
       {
         name = "font-sf-mono-nerd-font";
