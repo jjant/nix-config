@@ -37,6 +37,12 @@
 
         # The platform the configuration will be used on.
         nixpkgs.hostPlatform = "x86_64-darwin";
+
+        # My configs
+        system.defaults.dock.mru-spaces = false;
+        system.defaults.universalaccess.mouseDriverCursorSize = 1.75;
+        system.defaults.trackpad.TrackpadRightClick = true;
+        system.defaults.dock.autohide = true;
       };
     in
     {
