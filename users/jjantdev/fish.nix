@@ -1,10 +1,9 @@
-{
-  lib,
-  pkgs,
-  config,
-  ...
+{ lib
+, pkgs
+, config
+, ...
 }: {
-  home.packages = [pkgs.zoxide];
+  home.packages = [ pkgs.zoxide ];
 
   programs = {
     fish = {
@@ -75,6 +74,7 @@
         bw = "brazil workspace";
         bb = "brazil-build";
         bbb = "brazil-build build";
+        bop = "brazil-open-package";
 
         edabb = "eda build brazil-build build";
         tx = "toolbox";

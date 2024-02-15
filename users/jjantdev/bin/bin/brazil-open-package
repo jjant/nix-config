@@ -1,0 +1,15 @@
+#!/usr/bin/env sh
+
+if [ "$#" -eq 0 ]; then
+  packageName=$(brazil-context package name 2> /dev/null)
+else
+  packageName="$1"
+fi
+
+
+if [ -n "$packageName" ]; then
+  open "https://code.amazon.com/packages/$packageName"
+else
+  echo "Usage: brazil-open-package [BRAZIL_PKG_NAME]"
+  exit 1
+fi
