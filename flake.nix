@@ -12,11 +12,13 @@
       configuration = { pkgs, ... }: {
         # List packages installed in system profile. To search by name, run:
         # $ nix-env -qaP | grep wget
-        environment.systemPackages =
-          [
-            pkgs.vim
-            pkgs.neovim
-          ];
+        environment.systemPackages = [
+          pkgs.vim
+          pkgs.neovim
+        ];
+        environment.systemPath = [
+          "/opt/homebrew/bin"
+        ];
 
 
         # Necessary for using flakes on this system.
