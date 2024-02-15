@@ -1,4 +1,4 @@
-{pkgs, ...}: {
+{ pkgs, ... }: {
   imports = [
     ./tmux
     ./git.nix
@@ -6,10 +6,24 @@
     ./fish.nix
     ./alacritty.nix
     ./bin
+    ./neovim
     # TODO:
     # ./xdg.nix
     # ./zsh.nix
-    # ./neovim
+  ];
+
+  home.packages = with pkgs; [
+    ripgrep
+    fd
+    neofetch
+    jq
+    tree
+    rustup
+    tokei
+
+    # LSPs
+    shellcheck
+    rnix-lsp
   ];
 
   programs = {
