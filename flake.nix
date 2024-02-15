@@ -46,17 +46,7 @@
               home.stateVersion = "23.11";
               home.homeDirectory = nixpkgs.lib.mkForce "/Users/jjantdev";
 
-              programs.alacritty = {
-                enable = true;
-              };
-
               programs.eza.enable = true;
-
-              programs.tmux.enable = true;
-              programs.tmux.extraConfig = ''
-                set-option -g default-terminal "alacritty"
-                set-option -ga terminal-overrides ",alacritty:RGB"
-              '';
 
               programs.atuin = {
                 enable = true;
