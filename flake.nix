@@ -66,6 +66,7 @@
               };
 
               imports = [
+                ./users/jjantdev
                 ({pkgs, ...}: {
                   home.packages = [
                     pkgs.htop

@@ -6,7 +6,9 @@
 }: {
   imports = [
     ./skhd.nix
+    ./yabai.nix
   ];
+
   environment = {
     systemPackages = [
       pkgs.vim
@@ -80,9 +82,6 @@
 
   # Auto upgrade nix package and the daemon service.
   services.nix-daemon.enable = true;
-
-  services.yabai.enable = true;
-  services.yabai.enableScriptingAddition = true;
 
   homebrew = {
     enable = true;
