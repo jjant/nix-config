@@ -66,9 +66,8 @@
 
         services.skhd = {
           enable = true;
-          skhdConfig = # Example to check it works
+          skhdConfig = # TODO: Add skhd config.
             ''
-              cmd - return : osascript -e 'display notification "Lorem ipsum dolor sit amet" with title "Title"'
             '';
         };
 
