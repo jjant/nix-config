@@ -53,6 +53,15 @@
               cmd - return : osascript -e 'display notification "Lorem ipsum dolor sit amet" with title "Title"'
             '';
         };
+
+        homebrew = {
+          enable = true;
+
+          casks = [
+            { name = "lunar"; greedy = true; }
+            { name = "raycast"; greedy = true; }
+          ];
+        };
       };
     in
     {
