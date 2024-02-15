@@ -2,10 +2,10 @@
   imports = [
     ./tmux
     ./git.nix
+    ./starship.nix
     # TODO:
     # ./fish.nix
     # ./xdg.nix
-    # ./starship.nix
     # ./zsh.nix
     # ./neovim
     # ./bin
