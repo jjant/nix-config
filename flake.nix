@@ -17,9 +17,6 @@
             pkgs.vim
           ];
 
-        # Auto upgrade nix package and the daemon service.
-        services.nix-daemon.enable = true;
-        # nix.package = pkgs.nix;
 
         # Necessary for using flakes on this system.
         nix.settings.experimental-features = "nix-command flakes";
@@ -37,7 +34,9 @@
           fish_add_path --append "$HOME/.cargo/bin"
 
           # Personal scripts
-          fish_add_path --append "${config.xdg.configHome}/bin"
+          # TODO: set up XDG variables with home-manager.
+          #  then replace $HOME/.config with config.xdg.configHome (nix value).
+          fish_add_path --append "$HOME/.config/bin"
 
           # Amazon stuff
           fish_add_path --append "$HOME/.toolbox/bin"
@@ -60,6 +59,9 @@
         system.defaults.dock.autohide = true;
         # Make Finder killable
         system.defaults.finder.QuitMenuItem = true;
+
+        # Auto upgrade nix package and the daemon service.
+        services.nix-daemon.enable = true;
 
         services.skhd = {
           enable = true;
