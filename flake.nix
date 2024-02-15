@@ -57,12 +57,19 @@
         homebrew = {
           enable = true;
 
+          taps = [
+            # See: https://github.com/epk/SF-Mono-Nerd-Font
+            "epk/epk"
+          ];
+
           casks = [
             { name = "lunar"; greedy = true; }
             { name = "raycast"; greedy = true; }
             { name = "1password"; greedy = true; }
             { name = "1password-cli"; greedy = true; }
             { name = "signal"; greedy = true; }
+            # Installs "SFMono Nerd Font" font
+            { name = "font-sf-mono-nerd-font"; greedy = true; }
           ];
         };
       };
