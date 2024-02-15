@@ -46,15 +46,6 @@
               home.stateVersion = "23.11";
               home.homeDirectory = nixpkgs.lib.mkForce "/Users/jjantdev";
 
-              programs.eza.enable = true;
-
-              programs.atuin = {
-                enable = true;
-                flags = [
-                  "--disable-up-arrow"
-                ];
-              };
-
               imports = [
                 ./users/jjantdev
                 ({pkgs, ...}: {
