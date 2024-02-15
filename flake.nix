@@ -60,6 +60,8 @@
           casks = [
             { name = "lunar"; greedy = true; }
             { name = "raycast"; greedy = true; }
+            { name = "1password"; greedy = true; }
+            { name = "1password-cli"; greedy = true; }
           ];
         };
       };
