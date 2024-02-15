@@ -29,6 +29,9 @@
     tokei
     nodejs_18
 
+    # Pretty markdown in the terminal
+    glow
+
     awscli2
 
     shellcheck
