@@ -26,7 +26,22 @@
 
         # Create /etc/zshrc that loads the nix-darwin environment.
         programs.zsh.enable = true; # default shell on catalina
+
         programs.fish.enable = true;
+        programs.fish.loginShellInit = ''
+          fish_add_path --append "$HOME/.nix-profile/bin"
+          fish_add_path --append "/etc/profiles/per-user/$USER/bin"
+          fish_add_path --append "/nix/var/nix/profiles/default/bin"
+
+          # Rust binaries
+          fish_add_path --append "$HOME/.cargo/bin"
+
+          # Personal scripts
+          fish_add_path --append "${config.xdg.configHome}/bin"
+
+          # Amazon stuff
+          fish_add_path --append "$HOME/.toolbox/bin"
+        '';
 
         # Set Git commit hash for darwin-version.
         system.configurationRevision = self.rev or self.dirtyRev or null;
