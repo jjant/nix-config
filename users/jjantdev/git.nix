@@ -32,6 +32,13 @@ in
         default = "current";
         autoSetupRemote = true;
       };
+      core.excludesFile = "${pkgs.writeTextFile {
+        name = "globalGitExcludeFile";
+        text = ''
+          # IntelliJ files
+          *.iml
+        '';
+      }}";
     };
   };
 }
