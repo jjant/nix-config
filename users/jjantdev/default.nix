@@ -29,6 +29,8 @@
     tokei
     nodejs_18
 
+    awscli2
+
     shellcheck
 
     # LSPs
