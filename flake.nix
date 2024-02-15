@@ -43,6 +43,14 @@
         system.defaults.universalaccess.mouseDriverCursorSize = 1.75;
         system.defaults.trackpad.TrackpadRightClick = true;
         system.defaults.dock.autohide = true;
+
+        services.skhd = {
+          enable = true;
+          skhdConfig = # Example to check it works
+            ''
+              cmd - return : osascript -e 'display notification "Lorem ipsum dolor sit amet" with title "Title"'
+            '';
+        };
       };
     in
     {
@@ -56,3 +64,4 @@
       darwinPackages = self.darwinConfigurations."simple".pkgs;
     };
 }
+
