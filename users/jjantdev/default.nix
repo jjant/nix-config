@@ -26,6 +26,12 @@
     rnix-lsp
   ];
 
+  home.shellAliases = {
+    ls = "eza --binary --header --long --classify";
+    la = "ls --all";
+    lg = "la --grid";
+  };
+
   programs = {
     bat.enable = true;
     fzf.enable = true;
