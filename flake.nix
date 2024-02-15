@@ -19,25 +19,27 @@
     nixpkgs,
     home-manager,
   }: let
+    hosts = import ./hosts;
+
     configuration = {
       pkgs,
       config,
       lib,
       ...
     }: {
-      # List packages installed in system profile. To search by name, run:
-      # $ nix-env -qaP | grep wget
-      environment.systemPackages = [
-        pkgs.vim
-        pkgs.neovim
-      ];
-      environment.systemPath = [
-        "/opt/homebrew/bin"
-      ];
-      environment.shells = [
-        pkgs.zsh
-        pkgs.fish
-      ];
+      environment = {
+        systemPackages = [
+          pkgs.vim
+          pkgs.neovim
+        ];
+        systemPath = [
+          "/opt/homebrew/bin"
+        ];
+        shells = [
+          pkgs.zsh
+          pkgs.fish
+        ];
+      };
 
       # Necessary for using flakes on this system.
       nix.settings.experimental-features = "nix-command flakes";
