@@ -62,6 +62,7 @@
             { name = "raycast"; greedy = true; }
             { name = "1password"; greedy = true; }
             { name = "1password-cli"; greedy = true; }
+            { name = "signal"; greedy = true; }
           ];
         };
       };
