@@ -56,6 +56,11 @@
 
     atuin = {
       enable = true;
+      # TODO: https://github.com/atuinsh/atuin/issues/1724.
+      # settings = {
+      #   # So that atuin doesn't show the "Update available!" message.
+      #   show_help = false;
+      # };
       flags = [
         "--disable-up-arrow"
       ];
