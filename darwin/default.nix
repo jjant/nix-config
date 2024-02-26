@@ -123,6 +123,10 @@
         name = "font-sf-mono-nerd-font";
         greedy = true;
       }
+      {
+        name = "graphiql";
+        greedy = true;
+      }
     ];
   };
 }
