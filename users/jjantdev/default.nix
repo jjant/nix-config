@@ -31,6 +31,8 @@
 
     # Pretty markdown in the terminal
     glow
+    # Pretty logs
+    tailspin
 
     awscli2
 
