@@ -112,7 +112,8 @@
               return 1
             end
 
-            brazil ws create --name $package
+            cd "$HOME/workplace"
+            and brazil ws create --name $package
             and cd $package
             and brazil ws use -p $package
             and cd src/$package
