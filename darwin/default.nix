@@ -64,6 +64,8 @@
 
       # Rust binaries
       fish_add_path --append "$HOME/.cargo/bin"
+      # Rodar
+      fish_add_path --append "$HOME/.rodar/bin"
     '';
   # Used for backwards compatibility, please read the changelog before changing.
   # $ darwin-rebuild changelog
