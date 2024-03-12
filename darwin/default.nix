@@ -93,6 +93,11 @@
     taps = [
       # See: https://github.com/epk/SF-Mono-Nerd-Font
       "epk/epk"
+      "smithy-lang/tap"
+    ];
+
+    brews = [
+      "smithy-cli"
     ];
 
     casks = [
