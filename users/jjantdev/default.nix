@@ -29,6 +29,9 @@
     tokei
     nodejs_18
 
+    # Rust watcher/linter
+    bacon
+
     # Pretty markdown in the terminal
     glow
     # Pretty logs
