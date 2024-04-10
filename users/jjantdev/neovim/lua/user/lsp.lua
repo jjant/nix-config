@@ -4,9 +4,13 @@ local rust_tools = require("rust-tools")
 
 lsp.preset('system-lsp')
 
+local barium_config = require('user.lsp.barium')
+require('lspconfig.configs').barium = barium_config
+lsp.configure('barium', { force_setup = true })
+
 -- rust-analyzer excluded from this list because it's set up by rust-tools
 lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
-lsp.setup_servers({ 'rnix', 'bashls', 'taplo', 'tsserver' })
+lsp.setup_servers({ 'rnix', 'bashls', 'taplo', 'tsserver', 'barium' })
 lsp.setup()
 
 local format_augroup = vim.api.nvim_create_augroup('LspFormat', { clear = true })
