@@ -133,7 +133,7 @@
                   ({ pkgs, ... }: {
                     home.packages = [
                       pkgs.htop
-                      pkgs.jetbrains.idea-ultimate
+                      # pkgs.jetbrains.idea-ultimate
                     ];
                   })
                 ];
