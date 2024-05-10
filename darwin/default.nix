@@ -134,6 +134,10 @@
         name = "graphiql";
         greedy = true;
       }
+      {
+        name = "wireshark";
+        greedy = true;
+      }
     ];
   };
 }
