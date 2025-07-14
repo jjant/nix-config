@@ -80,11 +80,12 @@
     autohide-delay = 0.10;
     autohide-time-modifier = 2.0;
   };
+
+  # Allow using TouchID with sudo.
+  security.pam.services.sudo_local.touchIdAuth = true;
+
   # Make Finder killable
   system.defaults.finder.QuitMenuItem = true;
-
-  # Auto upgrade nix package and the daemon service.
-  services.nix-daemon.enable = true;
 
   homebrew = {
     enable = true;

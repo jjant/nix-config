@@ -12,6 +12,7 @@ in
 {
   programs.git = {
     enable = true;
+    lfs.enable = true;
 
     # Github email
     userName = "Julian Antonielli";

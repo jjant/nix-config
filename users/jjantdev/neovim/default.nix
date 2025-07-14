@@ -58,6 +58,7 @@ in
           marks-nvim
           gitsigns-nvim
           comment-nvim
+          rustaceanvim
         ] ++ extraVimPlugins;
     };
   };

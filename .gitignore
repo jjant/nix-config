@@ -1,2 +1,4 @@
 # Ignore Nix build directory
 result
+
+.DS_Store

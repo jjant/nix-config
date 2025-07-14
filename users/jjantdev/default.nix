@@ -27,7 +27,9 @@
     tree
     rustup
     tokei
-    nodejs_18
+    nodejs_20
+    corepack
+    cmake
 
     # Rust watcher/linter
     bacon
@@ -36,13 +38,15 @@
     glow
     # Pretty logs
     tailspin
+    # Data utilities
+    xan
 
     awscli2
 
     shellcheck
 
     # LSPs
-    rnix-lsp
+    # rnix-lsp
     nodePackages.bash-language-server
     nodePackages_latest.typescript-language-server
     taplo
@@ -59,6 +63,9 @@
 
   programs = {
     bat.enable = true;
+    bat.config = {
+      theme = "Dracula";
+    };
     fzf.enable = true;
     eza.enable = true;
 

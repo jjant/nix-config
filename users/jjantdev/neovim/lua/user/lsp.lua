@@ -1,8 +1,5 @@
 local lsp = require('lsp-zero')
 local lspconfig = require('lspconfig')
-local rust_tools = require("rust-tools")
-
-lsp.preset('system-lsp')
 
 local barium_config = require('user.lsp.barium')
 require('lspconfig.configs').barium = barium_config
@@ -10,7 +7,7 @@ lsp.configure('barium', { force_setup = true })
 
 -- rust-analyzer excluded from this list because it's set up by rust-tools
 lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
-lsp.setup_servers({ 'rnix', 'bashls', 'taplo', 'tsserver', 'barium' })
+lsp.setup_servers({ 'bashls', 'taplo', 'tsserver', 'barium' })
 lsp.setup()
 
 local format_augroup = vim.api.nvim_create_augroup('LspFormat', { clear = true })
@@ -47,16 +44,36 @@ end
 
 lsp.on_attach(common_on_attach)
 
-rust_tools.setup({
-  server = {
-    on_attach = function(client, bufnr)
-      rust_tools.inlay_hints.enable()
+-- rust_tools.setup({
+--   server = {
+--     on_attach = function(client, bufnr)
+--       rust_tools.inlay_hints.enable()
+--
+--       common_on_attach(client, bufnr)
+--
+--       local opts = { buffer = bufnr, remap = false }
+--       local open_cargo_toml = rust_tools.open_cargo_toml.open_cargo_toml
+--       vim.keymap.set('n', '<Leader>gc', open_cargo_toml, opts)
+--     end
+--   }
+-- })
 
-      common_on_attach(client, bufnr)
+local client = vim.lsp.start_client {
+  name = "skhd-lsp",
+  cmd = { "/Users/jjantdev/personal/skhd-lsp/target/debug/skhd-lsp" }
+}
 
-      local opts = { buffer = bufnr, remap = false }
-      local open_cargo_toml = rust_tools.open_cargo_toml.open_cargo_toml
-      vim.keymap.set('n', '<Leader>gc', open_cargo_toml, opts)
-    end
-  }
+if not client then
+  vim.notify "Hey, you didn't do the client thing"
+  return
+end
+
+vim.filetype.add({ extension = { skhd = "skhd" } })
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "skhd",
+  callback = function()
+    vim.lsp.buf_attach_client(0, client)
+  end
 })
+
