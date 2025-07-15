@@ -72,6 +72,7 @@
 
         bz = "brazil";
         bw = "brazil workspace";
+        bta = "brazil-try-again";
         bb = "brazil-build";
         bbb = "brazil-build build";
         bop = "brazil-open-package";
@@ -117,6 +118,13 @@
             and cd $package
             and brazil ws use -p $package
             and cd src/$package
+          '';
+
+        };
+        brazil-try-again = {
+          description = "Amend the commit and run a dry run";
+          body = ''
+            git add . && git commit --amend --no-edit && brazil workspace dryrun | tee /tmp/out && open (grep -Eo 'https?://[^ ]+' /tmp/out | tail -n1)
           '';
         };
         go-to-smithy-rs-latest-tmp = {

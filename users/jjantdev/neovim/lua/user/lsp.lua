@@ -7,7 +7,7 @@ lsp.configure('barium', { force_setup = true })
 
 -- rust-analyzer excluded from this list because it's set up by rust-tools
 lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
-lsp.setup_servers({ 'bashls', 'taplo', 'tsserver', 'barium' })
+lsp.setup_servers({ 'bashls', 'taplo', 'ts_ls', 'barium' })
 lsp.setup()
 
 local format_augroup = vim.api.nvim_create_augroup('LspFormat', { clear = true })
