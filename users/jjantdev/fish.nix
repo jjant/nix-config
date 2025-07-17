@@ -124,7 +124,12 @@
         brazil-try-again = {
           description = "Amend the commit and run a dry run";
           body = ''
-            git add . && git commit --amend --no-edit && brazil workspace dryrun | tee /tmp/out && open (grep -Eo 'https?://[^ ]+' /tmp/out | tail -n1)
+          if brazil-context workspace root > /dev/null 2>&1
+            git add . && git commit --amend --no-edit && brazil workspace dryrun 2>&1 | tee /tmp/out && open -u (grep -Eo 'https?://[^ ]+' /tmp/out | tail -n1)
+          else
+            echo "Directory isn't within a workspace"
+            return 1
+          end
           '';
         };
         go-to-smithy-rs-latest-tmp = {
