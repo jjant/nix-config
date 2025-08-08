@@ -30,6 +30,7 @@
     nodejs_20
     corepack
     cmake
+    duckdb
 
     # Rust watcher/linter
     bacon
