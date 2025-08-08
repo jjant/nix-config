@@ -31,6 +31,7 @@
     corepack
     cmake
     duckdb
+    hyperfine
 
     # Rust watcher/linter
     bacon
