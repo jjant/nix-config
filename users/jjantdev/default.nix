@@ -82,5 +82,12 @@
         "--disable-up-arrow"
       ];
     };
+
+    gh = {
+      enable = true;
+      settings = {
+        git_protocol = "ssh";
+      };
+    };
   };
 }
