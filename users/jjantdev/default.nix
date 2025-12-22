@@ -24,10 +24,11 @@
     fd
     neofetch
     jq
+    yq
     tree
     rustup
     tokei
-    nodejs_20
+    nodejs_22
     corepack
     cmake
     duckdb

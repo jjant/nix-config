@@ -95,10 +95,12 @@
       # See: https://github.com/epk/SF-Mono-Nerd-Font
       "epk/epk"
       "smithy-lang/tap"
+      "eclipse-zenoh/homebrew-zenoh"
     ];
 
     brews = [
       "smithy-cli"
+      "zenoh"
     ];
 
     casks = [
