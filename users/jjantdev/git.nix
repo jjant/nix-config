@@ -15,8 +15,14 @@ in
     lfs.enable = true;
 
     # Github email
-    userName = "Julian Antonielli";
-    userEmail = "julianantonielli@gmail.com";
+    # TODO: Verify what the key in this map should be.
+    settings.userName = {
+      jjant = "Julian Antonielli";
+    };
+    # TODO: Verify the value of this option.
+    settings.userEmail = {
+      "jjant" = "julianantonielli@gmail.com";
+    };
 
     includes = [
       {
@@ -25,7 +31,7 @@ in
       }
     ];
 
-    extraConfig = {
+    settings = {
       color.ui = true;
       init.defaultBranch = "master";
       pull.rebase = false;

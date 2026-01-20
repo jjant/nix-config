@@ -72,6 +72,7 @@
   system.stateVersion = 4;
 
   # My configs
+  system.primaryUser = "jjantdev";
   system.defaults.dock.mru-spaces = false;
   system.defaults.universalaccess.mouseDriverCursorSize = 1.75;
   system.defaults.trackpad.TrackpadRightClick = true;

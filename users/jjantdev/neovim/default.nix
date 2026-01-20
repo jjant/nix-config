@@ -22,7 +22,7 @@ in
   };
 
   programs = {
-    git.extraConfig.core.editor = "nvim";
+    git.settings.core.editor = "nvim";
 
     neovim = {
       enable = true;
@@ -53,7 +53,6 @@ in
             grammars.javascript
             grammars.typescript
           ]))
-          playground
           harpoon
           marks-nvim
           gitsigns-nvim

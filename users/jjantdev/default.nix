@@ -29,7 +29,6 @@
     rustup
     tokei
     nodejs_22
-    corepack
     cmake
     duckdb
     hyperfine
