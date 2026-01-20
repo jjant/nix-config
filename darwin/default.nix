@@ -126,7 +126,7 @@
         greedy = true;
       }
       {
-        name = "Docker";
+        name = "docker-desktop";
         greedy = true;
       }
       # Installs "SFMono Nerd Font" font
@@ -139,7 +139,7 @@
         greedy = true;
       }
       {
-        name = "wireshark";
+        name = "wireshark-app";
         greedy = true;
       }
     ];

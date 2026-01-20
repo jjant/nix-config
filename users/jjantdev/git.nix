@@ -14,15 +14,7 @@ in
     enable = true;
     lfs.enable = true;
 
-    # Github email
-    # TODO: Verify what the key in this map should be.
-    settings.userName = {
-      jjant = "Julian Antonielli";
-    };
-    # TODO: Verify the value of this option.
-    settings.userEmail = {
-      "jjant" = "julianantonielli@gmail.com";
-    };
+
 
     includes = [
       {
@@ -38,6 +30,11 @@ in
       push = {
         default = "current";
         autoSetupRemote = true;
+      };
+      user = {
+        name = "Julian Antonielli";
+        # Github email
+        email = "julianantonielli@gmail.com";
       };
       core.excludesFile = "${pkgs.writeTextFile {
         name = "globalGitExcludeFile";
