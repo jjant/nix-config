@@ -28,7 +28,7 @@
     tree
     rustup
     tokei
-    nodejs_22
+    nodejs_24
     cmake
     duckdb
     hyperfine
