@@ -33,6 +33,7 @@
     duckdb
     hyperfine
     postgresql_17
+    railway
 
     # Rust watcher/linter
     bacon
