@@ -32,6 +32,7 @@
     cmake
     duckdb
     hyperfine
+    postgresql_17
 
     # Rust watcher/linter
     bacon
