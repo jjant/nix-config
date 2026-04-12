@@ -34,6 +34,8 @@
     hyperfine
     postgresql_17
     railway
+    pnpm
+    tsx
 
     # Rust watcher/linter
     bacon
