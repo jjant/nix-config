@@ -30,9 +30,11 @@
   ];
   nix.settings.substituters = [
     "https://jjant-nix.cachix.org"
+    "https://nix-community.cachix.org"
   ];
   nix.settings.trusted-public-keys = [
     "jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4="
+    "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
   ];
 
   # Create /etc/zshrc that loads the nix-darwin environment.
