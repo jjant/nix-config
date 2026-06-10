@@ -85,7 +85,7 @@
         smt = "smithy-codegen-targets server";
         smc = "smithy-codegen-targets client";
 
-        mw = "mwinit -s";
+        mw = "mwinit -f";
       };
 
       functions = {
