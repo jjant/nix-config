@@ -1,4 +1,4 @@
-{ nix-darwin, lib, ... }:
+{ lib, ... }:
 let
   hosts =
     lib.mapAttrs (hostName: host: host // { name = hostName; }) {
@@ -14,15 +14,7 @@ let
         platform = "aarch64-linux";
       };
     };
-
-  buildDarwinHost = { host, configuration }: {
-    darwinConfigurations.${host.name} = nix-darwin.lib.darwinSystem {
-      # TODO: Fill in modules
-      modules = [ ];
-    };
-  };
 in
 {
   inherit hosts;
-
 }

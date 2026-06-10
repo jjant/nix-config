@@ -69,11 +69,9 @@
     inputs @ { self
     , nix-darwin
     , nixpkgs
-    , home-manager
     , ...
     }:
     let
-      hosts = import ./hosts;
       inherit (nixpkgs) lib;
 
       # Filters all inputs with name `vim-plugin:owner/repo`

@@ -7,90 +7,76 @@
     ./alacritty.nix
     ./bin
     ./neovim
-    # TODO:
-    # ./xdg.nix
-    # ./zsh.nix
   ];
 
-  home.sessionVariables = {
-    # TODO: Move somewhere more appropriate.
-    # TODO: How does Bernardo put this in a nicer path?
-    # https://github.com/lovesegfault/nix-config/blob/d5f1700b8463d4250e8fbe697c74faa50325d4f4/users/bemeurer/trusted/graphical.nix#L8
-    SSH_AUTH_SOCK = "$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
-  };
+  home = {
+    sessionVariables = {
+      SSH_AUTH_SOCK = "$HOME/Library/Group\ Containers/2BUA8C4S2C.com.1password/t/agent.sock";
+    };
 
-  home.packages = with pkgs; [
-    ripgrep
-    fd
-    jq
-    yq
-    tree
-    rustup
-    tokei
-    nodejs_24
-    cmake
-    duckdb
-    hyperfine
-    postgresql_17
-    railway
-    pnpm
-    tsx
+    packages = with pkgs; [
+      ripgrep
+      fd
+      jq
+      yq
+      tree
+      rustup
+      tokei
+      nodejs_24
+      cmake
+      duckdb
+      hyperfine
+      postgresql_17
+      railway
+      pnpm
+      tsx
 
-    # Rust watcher/linter
-    bacon
+      # Rust watcher/linter
+      bacon
 
-    # Pretty markdown in the terminal
-    glow
-    # Pretty logs
-    tailspin
-    # Data utilities
-    xan
+      # Pretty markdown in the terminal
+      glow
+      # Pretty logs
+      tailspin
+      # Data utilities
+      xan
 
-    awscli2
+      awscli2
 
-    shellcheck
+      shellcheck
 
-    # LSPs
-    # rnix-lsp
-    bash-language-server
-    typescript-language-server
-    taplo
+      # LSPs
+      bash-language-server
+      typescript-language-server
+      taplo
 
-    # Dot, etc.
-    graphviz
-  ];
+      # Dot, etc.
+      graphviz
+    ];
 
-  home.shellAliases = {
-    ls = "eza --binary --header --long --classify";
-    la = "ls --all";
-    lg = "la --grid";
+    shellAliases = {
+      ls = "eza --binary --header --long --classify";
+      la = "ls --all";
+      lg = "la --grid";
+    };
   };
 
   programs = {
-    bat.enable = true;
-    bat.config = {
-      theme = "Dracula";
+    bat = {
+      enable = true;
+      config.theme = "Dracula";
     };
     fzf.enable = true;
     eza.enable = true;
 
     atuin = {
       enable = true;
-      # TODO: https://github.com/atuinsh/atuin/issues/1724.
-      # settings = {
-      #   # So that atuin doesn't show the "Update available!" message.
-      #   show_help = false;
-      # };
-      flags = [
-        "--disable-up-arrow"
-      ];
+      flags = [ "--disable-up-arrow" ];
     };
 
     gh = {
       enable = true;
-      settings = {
-        git_protocol = "ssh";
-      };
+      settings.git_protocol = "ssh";
     };
   };
 }
