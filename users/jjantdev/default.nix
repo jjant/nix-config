@@ -22,7 +22,6 @@
   home.packages = with pkgs; [
     ripgrep
     fd
-    neofetch
     jq
     yq
     tree
