@@ -1,0 +1,14 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "nix": { "enabled": true },
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5am every day"],
+    "automerge": true,
+    "automergeType": "pr",
+    "automergeStrategy": "rebase",
+    "commitMessagePrefix": "chore(flake):",
+    "addLabels": ["dependencies", "automated"]
+  }
+}
