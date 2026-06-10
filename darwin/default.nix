@@ -28,6 +28,12 @@
     "root"
     "jjantdev"
   ];
+  nix.settings.substituters = [
+    "https://jjant-nix.cachix.org"
+  ];
+  nix.settings.trusted-public-keys = [
+    "jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4="
+  ];
 
   # Create /etc/zshrc that loads the nix-darwin environment.
   programs.zsh.enable = true; # default shell on catalina
