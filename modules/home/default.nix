@@ -1,12 +1,11 @@
 { pkgs, ... }: {
   imports = [
-    ./tmux
+    ./fish.nix
     ./git.nix
     ./starship.nix
-    ./fish.nix
-    ./alacritty.nix
-    ./bin
     ./neovim
+    ./tmux
+    ./bin
   ];
 
   xdg.enable = true;
