@@ -52,8 +52,8 @@
 
     # LSPs
     # rnix-lsp
-    nodePackages.bash-language-server
-    nodePackages_latest.typescript-language-server
+    bash-language-server
+    typescript-language-server
     taplo
 
     # Dot, etc.

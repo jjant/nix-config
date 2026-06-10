@@ -26,6 +26,8 @@ in
 
     neovim = {
       enable = true;
+      withRuby = false;
+      withPython3 = false;
       plugins = with pkgs.vimPlugins;
         [
           quick-scope
