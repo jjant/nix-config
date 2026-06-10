@@ -17,8 +17,21 @@ jobs:
       - run: nix run nixpkgs#statix -- check .
       - run: nix run nixpkgs#deadnix -- -f .
 
-  eval:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: mac-m1
+            cmd: nix eval .#darwinConfigurations.mac-m1.system
+          - name: al2-x86_64
+            cmd: nix build .#homeConfigurations.al2-x86_64.activationPackage
+          - name: al2023-x86_64
+            cmd: nix build .#homeConfigurations.al2023-x86_64.activationPackage
+          - name: al2-aarch64
+            cmd: nix eval .#homeConfigurations.al2-aarch64.activationPackage
+    name: build (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v6
       - uses: DeterminateSystems/nix-installer-action@v22
@@ -31,4 +44,4 @@ jobs:
           name: jjant-nix
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           extraPullNames: nix-community
-      - run: nix eval .#darwinConfigurations.mac-m1.system
+      - run: ${{ matrix.cmd }}

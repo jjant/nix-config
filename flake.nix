@@ -65,6 +65,12 @@
         inherit nix-darwin;
       });
 
+      homeConfigurations = {
+        al2-x86_64 = import ./hosts/al2-x86_64.nix commonArgs;
+        al2-aarch64 = import ./hosts/al2-aarch64.nix commonArgs;
+        al2023-x86_64 = import ./hosts/al2023-x86_64.nix commonArgs;
+      };
+
       darwinPackages = self.darwinConfigurations.mac-m1.pkgs;
     };
 }
