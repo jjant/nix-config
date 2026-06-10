@@ -2,6 +2,14 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
   "nix": { "enabled": true },
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "automerge": true,
+      "automergeType": "pr",
+      "automergeStrategy": "rebase"
+    }
+  ],
   "lockFileMaintenance": {
     "enabled": true,
     "schedule": ["before 5am every day"],
