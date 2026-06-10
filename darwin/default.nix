@@ -36,6 +36,12 @@
       "jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4="
       "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
     ];
+    max-jobs = "auto";
+    cores = 0;
+    always-allow-substitutes = true;
+    builders-use-substitutes = true;
+    connect-timeout = 5;
+    auto-optimise-store = false;
   };
 
   programs = {
