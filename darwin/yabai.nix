@@ -1,4 +1,4 @@
-{lib, ...}: {
+_: {
   # TODO: Not working well in Mac26.
   services.yabai.enable = false;
   services.yabai.enableScriptingAddition = false;

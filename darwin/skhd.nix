@@ -1,8 +1,4 @@
-{ pkgs
-, config
-, lib
-, ...
-}: {
+_: {
   services.skhd = {
     enable = true;
     skhdConfig = ''
