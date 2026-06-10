@@ -98,7 +98,7 @@
 
   homebrew = {
     enable = true;
-    brewPrefix = "/opt/homebrew/bin/";
+    prefix = "/opt/homebrew";
 
     taps = [
       # See: https://github.com/epk/SF-Mono-Nerd-Font
