@@ -105,11 +105,23 @@
       "epk/epk"
       "smithy-lang/tap"
       "eclipse-zenoh/homebrew-zenoh"
+      "goreleaser/tap"
     ];
 
     brews = [
+      "binutils"
+      "dpkg"
+      "ffmpeg"
+      "flyctl"
+      "fmt"
+      "goreleaser/tap/nfpm"
+      "patchelf"
+      "podman"
+      "poppler"
+      "rpm"
       "smithy-cli"
       "zenoh"
+      "zig"
     ];
 
     casks = [
@@ -148,6 +160,10 @@
       }
       {
         name = "wireshark-app";
+        greedy = true;
+      }
+      {
+        name = "postman";
         greedy = true;
       }
     ];
