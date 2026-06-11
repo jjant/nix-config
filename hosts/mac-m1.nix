@@ -8,6 +8,7 @@ nix-darwin.lib.darwinSystem {
   };
   modules = [
     { system.configurationRevision = self.rev or self.dirtyRev or null; }
+    { nix.registry.nixpkgs.flake = nixpkgs; nix.registry.p.flake = nixpkgs; }
     ../modules/darwin
     home-manager.darwinModules.home-manager
     {

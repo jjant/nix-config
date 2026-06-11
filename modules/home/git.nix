@@ -10,9 +10,18 @@ let
 
 in
 {
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+    options = { navigate = true; syntax-theme = "Dracula"; };
+  };
+
   programs.git = {
     enable = true;
     lfs.enable = true;
+    hooks.pre-commit = pkgs.writeShellScript "pre-commit-ripsecrets" ''
+      ${pkgs.ripsecrets}/bin/ripsecrets --strict-ignore
+    '';
 
 
 

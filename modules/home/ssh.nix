@@ -33,6 +33,9 @@ in
     ${hostBlocks}
     Host *
       IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+      ControlMaster auto
+      ControlPath ~/.ssh/ssh-%r@%h:%p
+      ControlPersist 30m
   '';
 
   # Ensure the WSSH-owned ~/.ssh/config pulls in the nix-managed hosts file.
