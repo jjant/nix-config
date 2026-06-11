@@ -19,16 +19,6 @@
       flake = false;
     };
 
-    "vim-plugin:VonHeikemen/lsp-zero.nvim" = {
-      url = "github:VonHeikemen/lsp-zero.nvim";
-      flake = false;
-    };
-
-    "vim-plugin:neovim/nvim-lspconfig" = {
-      url = "github:neovim/nvim-lspconfig";
-      flake = false;
-    };
-
     "vim-plugin:L3MON4D3/LuaSnip" = {
       url = "github:L3MON4D3/LuaSnip";
       flake = false;

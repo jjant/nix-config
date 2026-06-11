@@ -1,79 +1,63 @@
-local lsp = require('lsp-zero')
-local lspconfig = require('lspconfig')
-
-local barium_config = require('user.lsp.barium')
-require('lspconfig.configs').barium = barium_config
-lsp.configure('barium', { force_setup = true })
-
--- rust-analyzer excluded from this list because it's set up by rust-tools
-lspconfig.lua_ls.setup(lsp.nvim_lua_ls())
-lsp.setup_servers({ 'bashls', 'taplo', 'ts_ls', 'barium' })
-lsp.setup()
-
+-- Format on save
 local format_augroup = vim.api.nvim_create_augroup('LspFormat', { clear = true })
 
-local create_format_autocmd = function(client)
-  vim.api.nvim_clear_autocmds({ group = format_augroup })
-  vim.api.nvim_create_autocmd('BufWritePre', {
-    group = format_augroup,
-    callback = function()
-      vim.lsp.buf.format({ async = false })
-    end,
-    desc = 'Autoformat code (' .. client.name .. ')'
-  })
-end
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(args)
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    local bufnr = args.buf
+    local opts = { buffer = bufnr }
 
-local common_on_attach = function(client, bufnr)
-  local opts = { buffer = bufnr, remap = false }
+    vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help, opts)
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'gD', vim.lsp.buf.type_definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+    vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, opts)
+    vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
+    vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)
+    vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, opts)
 
-  vim.keymap.set('i', '<C-s>', vim.lsp.buf.signature_help, opts)
-
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
-  vim.keymap.set('n', 'gD', vim.lsp.buf.type_definition, opts)
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
-
-  vim.keymap.set('n', ']d', vim.diagnostic.goto_prev, opts)
-  vim.keymap.set('n', '[d', vim.diagnostic.goto_next, opts)
-
-  vim.keymap.set('n', '<Leader>rn', vim.lsp.buf.rename, opts)
-
-  vim.keymap.set('n', '<Leader>ca', vim.lsp.buf.code_action, opts)
-
-  create_format_autocmd(client)
-end
-
-lsp.on_attach(common_on_attach)
-
--- rust_tools.setup({
---   server = {
---     on_attach = function(client, bufnr)
---       rust_tools.inlay_hints.enable()
---
---       common_on_attach(client, bufnr)
---
---       local opts = { buffer = bufnr, remap = false }
---       local open_cargo_toml = rust_tools.open_cargo_toml.open_cargo_toml
---       vim.keymap.set('n', '<Leader>gc', open_cargo_toml, opts)
---     end
---   }
--- })
-
-local client = vim.lsp.start_client {
-  name = "skhd-lsp",
-  cmd = { "/Users/jjantdev/personal/skhd-lsp/target/debug/skhd-lsp" }
-}
-
-if not client then
-  vim.notify "Hey, you didn't do the client thing"
-  return
-end
-
-vim.filetype.add({ extension = { skhd = "skhd" } })
-
-vim.api.nvim_create_autocmd("FileType", {
-  pattern = "skhd",
-  callback = function()
-    vim.lsp.buf_attach_client(0, client)
-  end
+    if client and client:supports_method('textDocument/formatting') then
+      vim.api.nvim_clear_autocmds({ group = format_augroup, buffer = bufnr })
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        group = format_augroup,
+        buffer = bufnr,
+        callback = function() vim.lsp.buf.format({ async = false }) end,
+      })
+    end
+  end,
 })
 
+-- Server configs
+vim.lsp.config['lua_ls'] = {
+  cmd = { 'lua-language-server' },
+  filetypes = { 'lua' },
+  root_markers = { '.luarc.json', '.git' },
+  settings = { Lua = { diagnostics = { globals = { 'vim' } } } },
+}
+
+vim.lsp.config['bashls'] = {
+  cmd = { 'bash-language-server', 'start' },
+  filetypes = { 'sh', 'bash' },
+  root_markers = { '.git' },
+}
+
+vim.lsp.config['taplo'] = {
+  cmd = { 'taplo', 'lsp', 'stdio' },
+  filetypes = { 'toml' },
+  root_markers = { '.git' },
+}
+
+vim.lsp.config['ts_ls'] = {
+  cmd = { 'typescript-language-server', '--stdio' },
+  filetypes = { 'typescript', 'javascript', 'typescriptreact', 'javascriptreact' },
+  root_markers = { 'tsconfig.json', 'package.json', '.git' },
+}
+
+vim.filetype.add({ filename = { Config = 'brazil-config' } })
+vim.lsp.config['barium'] = {
+  cmd = { 'barium' },
+  filetypes = { 'brazil-config' },
+  root_markers = { '.git' },
+}
+
+vim.lsp.enable({ 'lua_ls', 'bashls', 'taplo', 'ts_ls', 'barium' })
