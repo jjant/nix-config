@@ -72,5 +72,42 @@
       };
 
       darwinPackages = self.darwinConfigurations.mac-m1.pkgs;
+
+      # nix run .#activate — auto-detects host type and applies config
+      apps = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ] (system:
+        let pkgs = import nixpkgs { inherit system; };
+        in {
+          activate = {
+            type = "app";
+            program = toString (pkgs.writeShellScript "activate" ''
+              set -e
+              if [ "$(uname)" = "Darwin" ]; then
+                if command -v darwin-rebuild &>/dev/null; then
+                  sudo darwin-rebuild switch --flake .#mac-m1 "$@"
+                else
+                  nix run nix-darwin -- switch --flake .#mac-m1 "$@"
+                fi
+              elif grep -q "2023" /etc/os-release 2>/dev/null; then
+                if command -v home-manager &>/dev/null; then
+                  home-manager switch --flake .#al2023-"$(uname -m)" "$@"
+                else
+                  nix run home-manager -- switch --flake .#al2023-"$(uname -m)" "$@"
+                fi
+              else
+                if command -v home-manager &>/dev/null; then
+                  home-manager switch --flake .#al2-"$(uname -m)" "$@"
+                else
+                  nix run home-manager -- switch --flake .#al2-"$(uname -m)" "$@"
+                fi
+              fi
+            '');
+          };
+          update = {
+            type = "app";
+            program = toString (pkgs.writeShellScript "update" ''
+              nix flake update
+            '');
+          };
+        });
     };
 }
