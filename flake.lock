@@ -63,8 +63,6 @@
         "nixpkgs": "nixpkgs",
         "vim-plugin:L3MON4D3/LuaSnip": "vim-plugin:L3MON4D3/LuaSnip",
         "vim-plugin:LunarVim/darkplus.nvim": "vim-plugin:LunarVim/darkplus.nvim",
-        "vim-plugin:VonHeikemen/lsp-zero.nvim": "vim-plugin:VonHeikemen/lsp-zero.nvim",
-        "vim-plugin:neovim/nvim-lspconfig": "vim-plugin:neovim/nvim-lspconfig",
         "vim-plugin:rafamadriz/friendly-snippets": "vim-plugin:rafamadriz/friendly-snippets"
       }
     },
@@ -97,38 +95,6 @@
       "original": {
         "owner": "LunarVim",
         "repo": "darkplus.nvim",
-        "type": "github"
-      }
-    },
-    "vim-plugin:VonHeikemen/lsp-zero.nvim": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1751989429,
-        "narHash": "sha256-CTLsXtY/89l1zV+Y09mhThx0PEEG5KhoOw1X4f4frtc=",
-        "owner": "VonHeikemen",
-        "repo": "lsp-zero.nvim",
-        "rev": "d388e2b71834c826e61a3eba48caec53d7602510",
-        "type": "github"
-      },
-      "original": {
-        "owner": "VonHeikemen",
-        "repo": "lsp-zero.nvim",
-        "type": "github"
-      }
-    },
-    "vim-plugin:neovim/nvim-lspconfig": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1780936741,
-        "narHash": "sha256-/oHPKM1LL9hZYwVbtoU8PKmdiDsK59v9oe3EMLaOxjw=",
-        "owner": "neovim",
-        "repo": "nvim-lspconfig",
-        "rev": "ed19590a3a9792901553c388d1aadafce012f80d",
-        "type": "github"
-      },
-      "original": {
-        "owner": "neovim",
-        "repo": "nvim-lspconfig",
         "type": "github"
       }
     },
