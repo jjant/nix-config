@@ -60,9 +60,6 @@
           # Amazon stuff
           fish_add_path --append "$HOME/.toolbox/bin"
 
-          # Personal scripts
-          fish_add_path --append "$HOME/.config/bin"
-
           # Rust binaries
           fish_add_path --append "$HOME/.cargo/bin"
           # Rodar

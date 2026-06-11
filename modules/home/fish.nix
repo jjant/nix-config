@@ -1,5 +1,4 @@
 { pkgs
-, config
 , ...
 }: {
   home.packages = [ pkgs.zoxide ];
@@ -9,7 +8,6 @@
       enable = true;
       loginShellInit = ''
         fish_add_path --append $HOME/.nix-profile/bin
-        fish_add_path --append ${config.xdg.configHome}/bin
         fish_add_path --append $HOME/.cargo/bin
 
         # Export as empty so that the nix-installed `rust-analyzer`
