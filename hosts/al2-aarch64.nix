@@ -13,6 +13,7 @@ home-manager.lib.homeManagerConfiguration {
         username = "jjantdev";
         homeDirectory = "/home/jjantdev";
         stateVersion = "23.11";
+        sessionVariables.STARSHIP_HOST_ALIAS = "al2-aarch64";
       };
     }
   ];
