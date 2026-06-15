@@ -32,6 +32,11 @@ in
     # Managed by nix-darwin (modules/home/ssh.nix). Do not edit by hand.
     ${hostBlocks}
     Host *
+      # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
+      # The client already prefers PQ KEX; this fires when the server lacks it
+      # (e.g. internal git/dev-desktop servers). Only mutes the PQ-KEX warning,
+      # not other weak-crypto warnings. Real fix is server-side.
+      WarnWeakCrypto no-pq-kex
       IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
       ControlMaster auto
       ControlPath ~/.ssh/ssh-%r@%h:%p
