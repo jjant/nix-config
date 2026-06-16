@@ -34,6 +34,24 @@
       # Rust watcher/linter
       bacon
 
+      # Rust dev tooling (migrated from `cargo install`)
+      cargo-audit
+      cargo-binstall
+      cargo-bloat
+      cargo-cache
+      cargo-deny
+      cargo-expand
+      cargo-fuzz
+      cargo-insta
+      cargo-llvm-cov
+      cargo-mutants
+      cargo-nextest
+      cargo-outdated
+      cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
+      cargo-zigbuild
+      inferno # flamegraph backend; rarely used standalone
+      wasm-pack
+
       # Pretty markdown in the terminal
       glow
       # Pretty logs
