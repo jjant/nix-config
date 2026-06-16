@@ -46,7 +46,6 @@
       cargo-nextest
       cargo-outdated
       cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
-      cargo-watch # deprecated upstream; `bacon` above replaces it
       cargo-zigbuild
       inferno # flamegraph backend; rarely used standalone
       sqlx-cli
