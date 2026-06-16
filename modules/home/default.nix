@@ -18,6 +18,7 @@
       jq
       yq
       tree
+      dust # intuitive `du`: disk usage per directory
       rustup
       tokei
       nodejs_24
@@ -28,6 +29,7 @@
       railway
       pnpm
       tsx
+      mprocs
 
       # Rust watcher/linter
       bacon
