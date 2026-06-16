@@ -48,7 +48,6 @@
       cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
       cargo-zigbuild
       inferno # flamegraph backend; rarely used standalone
-      sqlx-cli
       wasm-pack
 
       # Pretty markdown in the terminal
