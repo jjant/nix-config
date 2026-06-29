@@ -83,7 +83,8 @@
         smt = "smithy-codegen-targets server";
         smc = "smithy-codegen-targets client";
 
-        mw = "mwinit -f";
+        # Cloud desktops (Linux) need `-o` to write the cookie out; mac doesn't.
+        mw = if pkgs.stdenv.isDarwin then "mwinit -f" else "mwinit -f -o";
       };
 
       functions = {
