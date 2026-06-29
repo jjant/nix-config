@@ -31,6 +31,7 @@
       tokei
       nodejs_24
       uv
+      mosquitto
       cmake
       duckdb
       hyperfine
