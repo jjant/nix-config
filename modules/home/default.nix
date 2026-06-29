@@ -1,4 +1,4 @@
-{ pkgs, ... }: {
+{ pkgs, lib, ... }: {
   imports = [
     ./fish.nix
     ./git.nix
@@ -10,6 +10,14 @@
   ];
 
   xdg.enable = true;
+
+  # On the Linux cloud desktops, register docker-compose as a Docker CLI plugin
+  # so `docker compose` (subcommand) works, not just the standalone
+  # `docker-compose` binary.
+  xdg.configFile = lib.mkIf pkgs.stdenv.isLinux {
+    "docker/cli-plugins/docker-compose".source =
+      "${pkgs.docker-compose}/libexec/docker/cli-plugins/docker-compose";
+  };
 
   home = {
     packages = with pkgs; [
@@ -70,6 +78,11 @@
 
       # Dot, etc.
       graphviz
+    ]
+    # Docker tooling only on the Linux cloud desktops (mac uses Docker Desktop).
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      docker
+      docker-compose
     ];
 
     shellAliases = {
