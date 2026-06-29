@@ -30,6 +30,7 @@
       rustup
       tokei
       nodejs_24
+      uv
       cmake
       duckdb
       hyperfine
