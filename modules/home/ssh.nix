@@ -2,17 +2,21 @@
 let
   user = "jjantdev";
 
-  # `WarnWeakCrypto` only exists in OpenSSH 10+. The cloud desktops ship an
-  # older OpenSSH that rejects the option outright ("Bad configuration
-  # option: warnweakcrypto"), which aborts ssh and breaks git clones. Only
-  # emit it on macOS, where the newer client understands it.
-  warnWeakCryptoLine = lib.optionalString pkgs.stdenv.isDarwin ''
+  # Options that only make sense on macOS:
+  # - `WarnWeakCrypto` only exists in OpenSSH 10+. The cloud desktops ship an
+  #   older OpenSSH that rejects the option outright ("Bad configuration
+  #   option: warnweakcrypto"), which aborts ssh and breaks git clones.
+  # - `IdentityAgent` points at the 1Password mac agent socket
+  #   (~/Library/Group Containers/...), a path that only exists on macOS. On
+  #   the dev desks auth goes through the wssh ProxyCommand anyway.
+  darwinOnlyOptions = lib.optionalString pkgs.stdenv.isDarwin ''
 
       # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
       # The client already prefers PQ KEX; this fires when the server lacks it
       # (e.g. internal git/dev-desktop servers). Only mutes the PQ-KEX warning,
       # not other weak-crypto warnings. Real fix is server-side.
-      WarnWeakCrypto no-pq-kex'';
+      WarnWeakCrypto no-pq-kex
+      IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
 
   # Dev desktop aliases -> full internal hostnames.
   hosts = {
@@ -43,8 +47,7 @@ in
   home.file.".ssh/config.d/hosts".text = ''
     # Managed by nix-darwin (modules/home/ssh.nix). Do not edit by hand.
     ${hostBlocks}
-    Host *${warnWeakCryptoLine}
-      IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+    Host *${darwinOnlyOptions}
       ControlMaster auto
       ControlPath ~/.ssh/ssh-%r@%h:%p
       ControlPersist 30m
