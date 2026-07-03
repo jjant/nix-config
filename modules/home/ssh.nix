@@ -28,11 +28,18 @@ let
   # Each alias carries its own ProxyCommand: SSH matches `Host` against the
   # name typed on the command line, not the resolved HostName, so the WSSH
   # `Host dev-dsk-*.amazon.com` block never applies to these aliases.
+  #
+  # `ForwardAgent yes` forwards the local 1Password SSH agent to the dev desks
+  # so they can authenticate Git pushes to GitHub. The private key never leaves
+  # 1Password on the Mac; only signing requests travel back over the existing
+  # SSH connection. Scoped to these trusted hosts only (see `ForwardAgent no`
+  # on `Host *` below).
   hostBlock = alias: hostname: ''
     Host ${alias}
       HostName ${hostname}
       User ${user}
       ProxyCommand /usr/local/bin/wssh proxy %h
+      ForwardAgent yes
       ServerAliveInterval 15
       ServerAliveCountMax 44
   '';
@@ -48,6 +55,8 @@ in
     # Managed by nix-darwin (modules/home/ssh.nix). Do not edit by hand.
     ${hostBlocks}
     Host *${darwinOnlyOptions}
+      # Default-deny agent forwarding; only the dev-dsk aliases above opt in.
+      ForwardAgent no
       ControlMaster auto
       ControlPath ~/.ssh/ssh-%r@%h:%p
       ControlPersist 30m
