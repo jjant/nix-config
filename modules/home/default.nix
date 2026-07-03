@@ -83,10 +83,10 @@
       # Dot, etc.
       graphviz
 
-      # Standalone zenohd + remote-api plugin, for WebSocket access to a
-      # zenoh network. Not on nixpkgs; fetched from upstream's GitHub
-      # release binaries (see modules/packages/zenoh-bridge-remote-api.nix).
-      (pkgs.callPackage ../packages/zenoh-bridge-remote-api.nix { })
+      # Standalone zenohd + remote-api bridge, for WebSocket access to a
+      # zenoh network. Not on nixpkgs; built from source off the upstream
+      # release tag (see modules/packages/zenoh-bridge-remote-api/).
+      (pkgs.callPackage ../packages/zenoh-bridge-remote-api { })
     ]
     # Docker tooling only on the Linux cloud desktops (mac uses Docker Desktop).
     ++ lib.optionals pkgs.stdenv.isLinux [
