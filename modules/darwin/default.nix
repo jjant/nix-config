@@ -8,6 +8,11 @@
     ./yabai.nix
   ];
 
+  # Newer Nix installers create the `nixbld` group with GID 350 (macOS moved
+  # off the old 30000 default). Match the actual GID so nix-darwin doesn't
+  # abort activation over the mismatch.
+  ids.gids.nixbld = 350;
+
   environment = {
     systemPackages = [
       pkgs.vim
