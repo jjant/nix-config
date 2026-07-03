@@ -1,96 +1,29 @@
-{ pkgs, ... }: {
+{ pkgs, ... }:
+let
+  # Build a bin script from a sibling <name>.sh file, so scripts live as real,
+  # editor-friendly, shellcheck-able files instead of inline Nix strings.
+  #
+  # `subs` maps placeholders (e.g. "@fd@") to values (e.g. a pinned store path)
+  # that are substituted into the script text at build time. Pass { } for
+  # scripts that need no substitutions.
+  scriptFrom = name: subs:
+    pkgs.writeShellScriptBin name (
+      builtins.replaceStrings
+        (builtins.attrNames subs)
+        (builtins.attrValues subs)
+        (builtins.readFile (./. + "/${name}.sh"))
+    );
+in
+{
   home.packages = [
-    (pkgs.writeShellScriptBin "tmux-sessionizer" ''
-      directories=(
-        "$HOME"
-        "$HOME"/work
-        "$HOME"/personal
-        "$HOME"/.config
-        "$HOME"/workplace
-      )
-      selected=$(${pkgs.fd}/bin/fd -L --min-depth 1 --max-depth 1 --type d . "''${directories[@]}" | ${pkgs.fzf}/bin/fzf)
-
-      if [[ -z $selected ]]; then
-        exit 0
-      fi
-
-      session_name=$(basename "$selected" | tr ".: " "_")
-
-      if ! tmux has-session -t="$session_name" 2> /dev/null; then
-        tmux new-session -s "$session_name" -n "workspace" -c "$selected" -d
-
-        parent=$(realpath "$(dirname "$selected")")
-
-        if [[ $parent = "/Volumes/workplace" ]]; then
-          for dir in "$selected/src"/*; do
-             if [[ -d "$dir" ]]; then
-               tmux new-window -c "$dir" -n "$(basename "$dir")" -t "$session_name"
-             fi
-          done
-        fi
-      fi
-
-      if [[ -z "$TMUX" ]]; then
-        tmux attach -t "$session_name"
-      else
-        tmux switch-client -t "$session_name"
-      fi
-    '')
-
-    (pkgs.writeShellScriptBin "brazil-open-package" ''
-      if [ "$#" -eq 0 ]; then
-        packageName=$(brazil-context package name 2> /dev/null)
-        brazilContextSucceeded="$?"
-        if [ "$brazilContextSucceeded" -ne 0 ]; then
-          >&2 echo "Not in a brazil package."
-        fi
-      else
-        packageName="$1"
-      fi
-
-      if [ -n "$packageName" ]; then
-        open "https://code.amazon.com/packages/$packageName"
-      else
-        >&2 echo "Usage: brazil-open-package [BRAZIL_PKG_NAME]"
-        exit 1
-      fi
-    '')
-
-    (pkgs.writeShellScriptBin "dev-desk-tunnel" ''
-      if [ -z "$1" ]; then
-          echo "Missing port. Usage $0 HOST SOURCE_PORT [OUTPUT_PORT]"
-          exit 1
-      fi
-
-      USERNAME="jjantdev"
-      HOST=$1
-      SOURCE_PORT=$2
-      OUTPUT_PORT=''${3:-$SOURCE_PORT}
-
-      echo "Tunneling DevDesktop from $SOURCE_PORT to $OUTPUT_PORT"
-      ssh -T -L "$SOURCE_PORT":localhost:"$OUTPUT_PORT" "$USERNAME"@"$HOST"
-    '')
-
-    (pkgs.writeShellScriptBin "pnew" ''
-      set -o pipefail
-      set -e
-
-      if [[ $# -eq 0 ]]; then
-        echo "Project name required:"
-        echo "    $0 my_cool_project"
-        exit 1
-      fi
-
-      if [[ $# -ne 1 ]]; then
-        echo "Too many arguments, only 1 is supported"
-        exit $#
-      fi
-
-      project_name=$1
-      project_directory="$HOME/personal/$project_name"
-      mkdir -p "$project_directory"
-      git init --quiet "$project_directory"
-      echo "Project created at ~/personal/$project_name"
-    '')
+    # fd/fzf pinned to exact store paths; the rest (tmux, coreutils) come from
+    # the interactive environment, as before.
+    (scriptFrom "tmux-sessionizer" {
+      "@fd@" = "${pkgs.fd}/bin/fd";
+      "@fzf@" = "${pkgs.fzf}/bin/fzf";
+    })
+    (scriptFrom "brazil-open-package" { })
+    (scriptFrom "dev-desk-tunnel" { })
+    (scriptFrom "pnew" { })
   ];
 }
