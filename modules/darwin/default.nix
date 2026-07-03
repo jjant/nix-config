@@ -57,6 +57,13 @@
           fish_add_path --move --prepend --path ${lib.concatMapStringsSep " " dquote (makeBinPathList config.environment.profiles)}
           set fish_user_paths $fish_user_paths
 
+          # The Nix installer's default profile ships its own (frozen) nix and
+          # lands at the front of PATH, shadowing the newer nix that nix-darwin
+          # manages in /run/current-system/sw. Demote it so the managed nix wins.
+          # Home-manager profiles stay ahead of the system profile, so this does
+          # not shadow tools like nvim.
+          fish_add_path --move --append --path "/nix/var/nix/profiles/default/bin"
+
           # Amazon stuff
           fish_add_path --append "$HOME/.toolbox/bin"
 
