@@ -71,6 +71,14 @@
             type = "app";
             program = toString (pkgs.writeShellScript "activate" ''
               set -e
+
+              # Bootstrap: make flakes available to the *nested* `nix run` calls
+              # below (nix-darwin / home-manager) on a machine that has no
+              # persistent nix.conf yet. NIX_CONFIG is inherited by child nix
+              # processes; a `--extra-experimental-features` CLI flag is not.
+              # `extra-` so we don't clobber features enabled elsewhere.
+              export NIX_CONFIG="extra-experimental-features = nix-command flakes"
+
               if [ "$(uname)" = "Darwin" ]; then
                 if command -v darwin-rebuild &>/dev/null; then
                   sudo darwin-rebuild switch --flake .#mac-m1 "$@"
