@@ -84,6 +84,10 @@
     };
   };
 
+  # Never let the display sleep from inactivity. (It still turns off when the
+  # machine is locked manually.)
+  power.sleep.display = "never";
+
   security.pam.services.sudo_local.touchIdAuth = true;
 
   homebrew = {

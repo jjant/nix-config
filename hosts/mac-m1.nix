@@ -45,6 +45,16 @@ nix-darwin.lib.darwinSystem {
             ../modules/home
             ../modules/darwin/alacritty.nix
             ({ pkgs, ... }: { home.packages = [ pkgs.htop ]; })
+            ({ lib, ... }: {
+              # Disable the Spotlight (Cmd-Space) shortcut (symbolic hotkey 64)
+              # so it can be repurposed (e.g. by Raycast). `-dict-add` flips only
+              # hotkey 64 and leaves the other shortcuts intact. Runs as the
+              # user; takes effect on next login.
+              home.activation.disableSpotlightHotkey =
+                lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+                  $DRY_RUN_CMD /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "{ enabled = 0; }"
+                '';
+            })
           ];
         };
       };
