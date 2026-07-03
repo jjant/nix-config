@@ -60,6 +60,9 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    ```
 3. Change default shell: `chsh -s /run/current-system/sw/bin/fish`
 4. Disable SIP for Yabai: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
+5. Open **Raycast** once manually to finish its setup — the Homebrew cask only
+   downloads the app; it needs a first manual launch (grant permissions, etc.)
+   before it works.
 
 ### Cloud desktops (AL2 / AL2023)
 
