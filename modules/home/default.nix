@@ -97,6 +97,15 @@
   };
 
   programs = {
+    # Installs the `home-manager` CLI itself into the profile. Without this,
+    # only the generated activation package is built; the switcher command
+    # is never placed on PATH, so bare `home-manager <subcommand>` (e.g.
+    # `home-manager news`) fails until you fall back to
+    # `nix run home-manager -- <subcommand>`. Not needed on macOS: darwin
+    # config there goes through nix-darwin's home-manager module instead
+    # (see hosts/mac-m1.nix).
+    home-manager.enable = pkgs.stdenv.isLinux;
+
     bat = {
       enable = true;
       config.theme = "Dracula";
