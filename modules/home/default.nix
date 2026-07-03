@@ -100,7 +100,12 @@
       enable = true;
       config.theme = "Dracula";
     };
-    fzf.enable = true;
+    fzf = {
+      enable = true;
+      # Atuin owns Ctrl-R (bound in fish.nix); disable fzf's history widget
+      # so the two don't both bind Ctrl-R.
+      historyWidget.command = "";
+    };
     eza.enable = true;
 
     atuin = {

@@ -51,7 +51,10 @@ nix run .#update
    ```bash
    git clone https://github.com/jjant/nix-darwin.git ~/personal/nix-darwin
    cd ~/personal/nix-darwin
-   nix run .#activate
+   # The official installer doesn't enable flakes yet, so the very first run
+   # needs them passed to the outer `nix`; activate propagates them to the
+   # nested `nix run nix-darwin` call. Subsequent runs can use `nix run .#activate`.
+   nix --extra-experimental-features "nix-command flakes" run .#activate
    ```
 4. Change default shell: `chsh -s /run/current-system/sw/bin/fish`
 5. Disable SIP for Yabai: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
