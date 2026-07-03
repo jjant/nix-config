@@ -81,10 +81,16 @@
       # Dot, etc.
       graphviz
     ]
-    # Docker tooling only on the Linux cloud desktops (mac uses Docker Desktop).
+    # Packages only needed on the Linux cloud desktops.
     ++ lib.optionals pkgs.stdenv.isLinux [
+      # Docker tooling (mac uses Docker Desktop).
       docker
       docker-compose
+      # `cr` (CRUX CLI) is a Ruby program that needs a ruby interpreter on PATH
+      # (its launcher does `command -v ruby || exit`). macOS ships a system
+      # ruby; the cloud desktops don't, so provide one here. cr requires
+      # Ruby >= 2.0.0; this default is 3.x.
+      ruby
     ];
 
     shellAliases = {
