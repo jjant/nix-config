@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }: {
+{ pkgs, lib, config, ... }: {
   # Only manage zsh on the Linux cloud desktops.
   #
   # On macOS the login shell is already fish (via `chsh`) and `~/.zshrc` is
@@ -10,6 +10,11 @@
   # zsh as the login shell and hand *interactive* shells off to fish instead.
   programs.zsh = lib.mkIf pkgs.stdenv.isLinux {
     enable = true;
+    # Lock in the current "dotfiles live directly in $HOME" behavior. Without
+    # this, home-manager warns that the default will switch to an
+    # XDG-config-based location in a future release; we're not opting into
+    # that layout right now, just silencing the warning.
+    dotDir = config.home.homeDirectory;
     initContent = ''
       # Ensure Builder Toolbox is on PATH before we hand off to fish, so the
       # exec'd fish inherits it.
