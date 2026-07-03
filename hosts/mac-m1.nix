@@ -48,11 +48,17 @@ nix-darwin.lib.darwinSystem {
             ({ lib, ... }: {
               # Disable the Spotlight (Cmd-Space) shortcut (symbolic hotkey 64)
               # so it can be repurposed (e.g. by Raycast). `-dict-add` flips only
-              # hotkey 64 and leaves the other shortcuts intact. Runs as the
-              # user; takes effect on next login.
+              # hotkey 64 and leaves the other shortcuts intact. Runs as the user.
+              #
+              # `enabled` must be a real boolean: a bare `{ enabled = 0; }` is
+              # stored as the string "0", which macOS ignores (Spotlight stays
+              # on). Write the full XML entry (enabled=false + the standard
+              # Cmd-Space value) and reload settings so it applies without a
+              # re-login.
               home.activation.disableSpotlightHotkey =
                 lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-                  $DRY_RUN_CMD /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 "{ enabled = 0; }"
+                  $DRY_RUN_CMD /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 '<dict><key>enabled</key><false/><key>value</key><dict><key>type</key><string>standard</string><key>parameters</key><array><integer>32</integer><integer>49</integer><integer>1048576</integer></array></dict></dict>'
+                  $DRY_RUN_CMD /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u || true
                 '';
             })
           ];
