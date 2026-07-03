@@ -140,6 +140,7 @@
       { name = "graphiql"; greedy = true; }
       { name = "wireshark-app"; greedy = true; }
       { name = "postman"; greedy = true; }
+      { name = "steam"; greedy = true; }
     ];
   };
 }
