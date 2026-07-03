@@ -14,9 +14,9 @@
         exit 0
       fi
 
-      session_name=$(basename "$selected" | tr "." "_")
+      session_name=$(basename "$selected" | tr ".: " "_")
 
-      if ! tmux has-session -t "$session_name" 2> /dev/null; then
+      if ! tmux has-session -t="$session_name" 2> /dev/null; then
         tmux new-session -s "$session_name" -n "workspace" -c "$selected" -d
 
         parent=$(realpath "$(dirname "$selected")")
@@ -31,11 +31,10 @@
       fi
 
       if [[ -z "$TMUX" ]]; then
-        tmux start-server
-        tmux attach
+        tmux attach -t "$session_name"
+      else
+        tmux switch-client -t "$session_name"
       fi
-
-      tmux switch-client -t "$session_name"
     '')
 
     (pkgs.writeShellScriptBin "brazil-open-package" ''
