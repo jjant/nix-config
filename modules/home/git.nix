@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
 
   amazonGitConfigOverride = {
@@ -25,9 +25,17 @@ in
 
 
 
+    # Use the Amazon identity inside Brazil workspaces. The workspace root
+    # differs by platform: /Volumes/workplace on macOS, ~/workplace on the
+    # Linux cloud desktops.
     includes = [
       {
         condition = "gitdir:/Volumes/workplace/";
+        contents = amazonGitConfigOverride;
+      }
+    ] ++ lib.optionals pkgs.stdenv.isLinux [
+      {
+        condition = "gitdir:~/workplace/";
         contents = amazonGitConfigOverride;
       }
     ];
