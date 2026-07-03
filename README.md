@@ -45,9 +45,11 @@ nix run .#update
 
 ### macOS
 
-1. Install [Homebrew](https://brew.sh/)
-2. Install Nix: `curl -L https://nixos.org/nix/install | sh`
-3. Clone this repo and activate:
+Homebrew itself is installed and owned by nix-homebrew during activation
+(including trust for our non-official taps), so there's no manual Homebrew step.
+
+1. Install Nix: `curl -L https://nixos.org/nix/install | sh`
+2. Clone this repo and activate:
    ```bash
    git clone https://github.com/jjant/nix-darwin.git ~/personal/nix-darwin
    cd ~/personal/nix-darwin
@@ -56,8 +58,8 @@ nix run .#update
    # nested `nix run nix-darwin` call. Subsequent runs can use `nix run .#activate`.
    nix --extra-experimental-features "nix-command flakes" run .#activate
    ```
-4. Change default shell: `chsh -s /run/current-system/sw/bin/fish`
-5. Disable SIP for Yabai: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
+3. Change default shell: `chsh -s /run/current-system/sw/bin/fish`
+4. Disable SIP for Yabai: https://github.com/koekeishiya/yabai/wiki/Disabling-System-Integrity-Protection
 
 ### Cloud desktops (AL2 / AL2023)
 

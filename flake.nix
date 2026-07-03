@@ -14,6 +14,8 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+
     "vim-plugin:LunarVim/darkplus.nvim" = {
       url = "github:LunarVim/darkplus.nvim";
       flake = false;
@@ -33,6 +35,7 @@
   outputs =
     inputs @ { self
     , nix-darwin
+    , nix-homebrew
     , nixpkgs
     , home-manager
     , ...
@@ -52,7 +55,7 @@
     in
     {
       darwinConfigurations.mac-m1 = import ./hosts/mac-m1.nix (commonArgs // {
-        inherit nix-darwin;
+        inherit nix-darwin nix-homebrew;
       });
 
       homeConfigurations = {
