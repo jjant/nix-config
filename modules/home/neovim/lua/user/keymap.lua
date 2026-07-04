@@ -6,8 +6,8 @@ vim.keymap.set('v', '>', '>gv')
 vim.keymap.set('v', '<', '<gv')
 
 -- Delete without yanking
-vim.keymap.set('n', '<Leader>d', '\'_d')
-vim.keymap.set('v', '<Leader>d', '\'_d')
+vim.keymap.set('n', '<Leader>d', '"_d')
+vim.keymap.set('v', '<Leader>d', '"_d')
 
 vim.keymap.set('n', '<Leader><Leader>', '<C-^>')
 

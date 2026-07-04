@@ -109,7 +109,7 @@
     taps = [
       "epk/epk"
       "smithy-lang/tap"
-      "eclipse-zenoh/homebrew-zenoh"
+      "eclipse-zenoh/zenoh"
       "goreleaser/tap"
     ];
 
