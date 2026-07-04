@@ -1,15 +1,20 @@
 # Mac host (darwin + home-manager)
-{ self, nixpkgs, nix-darwin, nix-homebrew, home-manager, vimPlugins }:
+{ self, nixpkgs, nix-darwin, nix-homebrew, home-manager, vimPlugins, nix-vscode-extensions, mac-app-util }:
 nix-darwin.lib.darwinSystem {
   system = "aarch64-darwin";
   pkgs = import nixpkgs {
     system = "aarch64-darwin";
     config.allowUnfree = true;
+    # Adds pkgs.vscode-marketplace.* (consumed by ../modules/home/vscode.nix).
+    overlays = [ nix-vscode-extensions.overlays.default ];
   };
   modules = [
     { system.configurationRevision = self.rev or self.dirtyRev or null; }
     { nix.registry.nixpkgs.flake = nixpkgs; nix.registry.p.flake = nixpkgs; }
     ../modules/darwin
+    # Trampolines so nix-store GUI apps (VSCode, Alacritty, ...) are indexed by
+    # Spotlight and appear in the Dock.
+    mac-app-util.darwinModules.default
     nix-homebrew.darwinModules.nix-homebrew
     {
       # nix-homebrew installs and owns Homebrew itself; the nix-darwin
@@ -38,12 +43,14 @@ nix-darwin.lib.darwinSystem {
         extraSpecialArgs = { inherit vimPlugins; };
         useGlobalPkgs = true;
         useUserPackages = true;
+        sharedModules = [ mac-app-util.homeManagerModules.default ];
         users.jjantdev = {
           home.stateVersion = "23.11";
           home.homeDirectory = nixpkgs.lib.mkForce "/Users/jjantdev";
           imports = [
             ../modules/home
             ../modules/darwin/alacritty.nix
+            ../modules/home/vscode.nix
             ({ pkgs, ... }: { home.packages = [ pkgs.htop ]; })
             ({ lib, ... }: {
               # Disable the Spotlight (Cmd-Space) shortcut (symbolic hotkey 64)
