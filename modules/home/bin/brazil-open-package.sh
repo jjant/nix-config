@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if [ "$#" -eq 0 ]; then
-  packageName=$(brazil-context package name 2> /dev/null)
+  packageName=$(brazil-context package name 2>/dev/null)
   brazilContextSucceeded="$?"
   if [ "$brazilContextSucceeded" -ne 0 ]; then
     >&2 echo "Not in a brazil package."

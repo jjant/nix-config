@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 if [ -z "$1" ]; then
-    echo "Missing port. Usage $0 HOST SOURCE_PORT [OUTPUT_PORT]"
-    exit 1
+  echo "Missing port. Usage $0 HOST SOURCE_PORT [OUTPUT_PORT]"
+  exit 1
 fi
 
 USERNAME="jjantdev"
