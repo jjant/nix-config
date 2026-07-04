@@ -18,21 +18,21 @@ fi
 
 session_name=$(basename "$selected" | tr ".: " "_")
 
-if ! tmux has-session -t="$session_name" 2> /dev/null; then
+if ! tmux has-session -t="$session_name" 2>/dev/null; then
   tmux new-session -s "$session_name" -n "workspace" -c "$selected" -d
 
   parent=$(realpath "$(dirname "$selected")")
 
-  if [[ $parent = "/Volumes/workplace" ]]; then
+  if [[ $parent == "/Volumes/workplace" ]]; then
     for dir in "$selected/src"/*; do
-      if [[ -d "$dir" ]]; then
+      if [[ -d $dir ]]; then
         tmux new-window -c "$dir" -n "$(basename "$dir")" -t "$session_name"
       fi
     done
   fi
 fi
 
-if [[ -z "$TMUX" ]]; then
+if [[ -z $TMUX ]]; then
   tmux attach -t "$session_name"
 else
   tmux switch-client -t "$session_name"

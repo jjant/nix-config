@@ -35,6 +35,7 @@ let
         runHook preInstallCheck
         ${pkgs.stdenv.shellDryRun} "$out/bin/${name}"
         ${pkgs.shellcheck}/bin/shellcheck "$out/bin/${name}"
+        ${pkgs.shfmt}/bin/shfmt --diff -s -ln bash -i 2 -ci "$out/bin/${name}"
         runHook postInstallCheck
       '';
 
