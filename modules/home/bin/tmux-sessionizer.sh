@@ -51,6 +51,53 @@ is_brazil_workspace() {
   return 1
 }
 
+# Build the window layout for a directory: one window per child repo (or Brazil
+# src/ package) as appropriate. The session and its "workspace" window must
+# already exist.
+populate_windows() {
+  local session=$1 selected=$2 parent
+  parent=$(realpath "$(dirname "$selected")")
+  if is_brazil_workspace "$parent"; then
+    # Brazil workspace: one window per package under src/.
+    open_child_windows "$session" "$selected/src" all
+  elif [[ ! -e $selected/.git ]]; then
+    # A directory that isn't itself a git repo may be a container of repos
+    # (e.g. ~/personal/snowpark holding docs/, landing/, ...). Open one window
+    # per child repo, but only when there are few enough of them.
+    open_child_windows "$session" "$selected" git "$max_repo_windows"
+  fi
+}
+
+# Rebuild the current tmux session's windows to the layout tmux-sessionizer
+# originally created, discarding any windows opened or directories navigated to
+# since. Uses the @sessionizer_root option saved at creation time.
+#
+# This runs inside one of the session's own panes, so it must not destroy its
+# own window before finishing. It builds the fresh layout first, then removes
+# every previously-existing window (including this one) and renumbers in a
+# single batched tmux command: the tmux server runs the whole batch even though
+# killing our window terminates this script partway through it.
+reset_session() {
+  local session root wsid id
+  local old_ids=() args=()
+  session=$(tmux display-message -p '#S')
+  root=$(tmux show-options -t "$session" -qv @sessionizer_root)
+  if [[ -z $root ]]; then
+    tmux display-message "tmux-sessionizer: no saved root for this session — nothing to reset"
+    return
+  fi
+  # Windows to remove afterwards (captured before we add the fresh ones).
+  readarray -t old_ids < <(tmux list-windows -t "$session" -F '#{window_id}')
+  wsid=$(tmux new-window -P -F '#{window_id}' -t "$session" -n workspace -c "$root")
+  populate_windows "$session" "$root"
+  tmux select-window -t "$wsid"
+  for id in "${old_ids[@]}"; do
+    args+=(kill-window -t "$id" ";")
+  done
+  args+=(move-window -r -t "$session")
+  tmux "${args[@]}"
+}
+
 candidates=(
   "$HOME"
   "$HOME"/work
@@ -73,9 +120,24 @@ if [[ ${#directories[@]} -eq 0 ]]; then
   exit 1
 fi
 
-selected=$(fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}" | fzf)
+# "reset this session" is offered as the LAST entry (and only inside tmux, where
+# there is a current session to reset) so it is never the default selection —
+# you must deliberately move to it. It's coloured red to stand out; fzf --ansi
+# renders the colour and returns the entry's plain text, which we match below.
+reset_entry="↺  reset this session"
+selected=$(
+  {
+    fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}"
+    [[ -n $TMUX ]] && printf '\033[1;38;2;255;85;85m%s\033[0m\n' "$reset_entry"
+  } | fzf --ansi
+)
 
 if [[ -z $selected ]]; then
+  exit 0
+fi
+
+if [[ $selected == "$reset_entry" ]]; then
+  reset_session
   exit 0
 fi
 
@@ -83,18 +145,10 @@ session_name=$(basename "$selected" | tr ".: " "_")
 
 if ! tmux has-session -t="$session_name" 2>/dev/null; then
   tmux new-session -s "$session_name" -n "workspace" -c "$selected" -d
-
-  parent=$(realpath "$(dirname "$selected")")
-
-  if is_brazil_workspace "$parent"; then
-    # Brazil workspace: one window per package under src/.
-    open_child_windows "$session_name" "$selected/src" all
-  elif [[ ! -e $selected/.git ]]; then
-    # A directory that isn't itself a git repo may be a container of repos
-    # (e.g. ~/personal/snowpark holding docs/, landing/, ...). Open one window
-    # per child repo, but only when there are few enough of them.
-    open_child_windows "$session_name" "$selected" git "$max_repo_windows"
-  fi
+  # Remember the directory this session was built from so "reset this session"
+  # can rebuild the same layout later.
+  tmux set-option -t "$session_name" @sessionizer_root "$selected"
+  populate_windows "$session_name" "$selected"
 fi
 
 if [[ -z $TMUX ]]; then
