@@ -3,13 +3,28 @@
 # store paths at build time by resholve (see ../bin/default.nix), so this
 # stays a normal, editor-friendly shell script.
 
-directories=(
+candidates=(
   "$HOME"
   "$HOME"/work
   "$HOME"/personal
   "$HOME"/.config
   "$HOME"/workplace
 )
+
+# Only search directories that actually exist. Otherwise fd prints
+# "[fd error]: Search path '...' is not a directory" for each missing one
+# (and exits non-zero if they're all missing). Which of these exist varies
+# per host, e.g. ~/workplace only exists on the Amazon dev desktops.
+directories=()
+for dir in "${candidates[@]}"; do
+  [[ -d $dir ]] && directories+=("$dir")
+done
+
+if [[ ${#directories[@]} -eq 0 ]]; then
+  echo "tmux-sessionizer: none of the candidate directories exist" >&2
+  exit 1
+fi
+
 selected=$(fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}" | fzf)
 
 if [[ -z $selected ]]; then
