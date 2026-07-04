@@ -16,6 +16,16 @@
 
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
+    # Full VS Code marketplace (+ Open VSX) as a nixpkgs overlay:
+    # pkgs.vscode-marketplace.<publisher>.<name>.
+    nix-vscode-extensions = {
+      url = "github:nix-community/nix-vscode-extensions";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # Trampolines so nix-store GUI apps show up in Spotlight/Dock.
+    mac-app-util.url = "github:hraban/mac-app-util";
+
     "vim-plugin:LunarVim/darkplus.nvim" = {
       url = "github:LunarVim/darkplus.nvim";
       flake = false;
@@ -56,6 +66,7 @@
     {
       darwinConfigurations.mac-m1 = import ./hosts/mac-m1.nix (commonArgs // {
         inherit nix-darwin nix-homebrew;
+        inherit (inputs) nix-vscode-extensions mac-app-util;
       });
 
       homeConfigurations = {
