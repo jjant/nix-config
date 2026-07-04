@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# The fd and fzf invocations below are substituted with pinned Nix store
-# paths at build time (see ../bin/default.nix); the placeholders keep this a
-# real, editor-friendly shell script rather than an inline Nix string.
+# External commands (fd, fzf, tmux, coreutils) are resolved to absolute Nix
+# store paths at build time by resholve (see ../bin/default.nix), so this
+# stays a normal, editor-friendly shell script.
 
 directories=(
   "$HOME"
@@ -10,7 +10,7 @@ directories=(
   "$HOME"/.config
   "$HOME"/workplace
 )
-selected=$(@fd@ -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}" | @fzf@)
+selected=$(fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}" | fzf)
 
 if [[ -z $selected ]]; then
   exit 0
