@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-if [ -z "$1" ]; then
-  echo "Missing port. Usage $0 HOST SOURCE_PORT [OUTPUT_PORT]"
+if [ -z "$1" ] || [ -z "$2" ]; then
+  echo "Usage: $0 HOST SOURCE_PORT [OUTPUT_PORT]" >&2
   exit 1
 fi
 
