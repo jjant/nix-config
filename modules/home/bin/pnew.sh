@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+set -o pipefail
+set -e
+
+if [[ $# -eq 0 ]]; then
+  echo "Project name required:"
+  echo "    $0 my_cool_project"
+  exit 1
+fi
+
+if [[ $# -ne 1 ]]; then
+  echo "Too many arguments, only 1 is supported"
+  exit $#
+fi
+
+project_name=$1
+project_directory="$HOME/personal/$project_name"
+mkdir -p "$project_directory"
+git init --quiet "$project_directory"
+echo "Project created at ~/personal/$project_name"
