@@ -71,22 +71,31 @@ populate_windows() {
 # Rebuild the current tmux session's windows to the layout tmux-sessionizer
 # originally created, discarding any windows opened or directories navigated to
 # since. Uses the @sessionizer_root option saved at creation time.
+#
+# This runs inside one of the session's own panes, so it must not destroy its
+# own window before finishing. It builds the fresh layout first, then removes
+# every previously-existing window (including this one) and renumbers in a
+# single batched tmux command: the tmux server runs the whole batch even though
+# killing our window terminates this script partway through it.
 reset_session() {
-  local session root wsid
+  local session root wsid id
+  local old_ids=() args=()
   session=$(tmux display-message -p '#S')
   root=$(tmux show-options -t "$session" -qv @sessionizer_root)
   if [[ -z $root ]]; then
     tmux display-message "tmux-sessionizer: no saved root for this session — nothing to reset"
     return
   fi
-  # Open a fresh "workspace" window and drop every other window; renumber so
-  # workspace takes the base index, then rebuild the repo windows after it (new
-  # windows fill the lowest free index, so they land in order after workspace).
+  # Windows to remove afterwards (captured before we add the fresh ones).
+  readarray -t old_ids < <(tmux list-windows -t "$session" -F '#{window_id}')
   wsid=$(tmux new-window -P -F '#{window_id}' -t "$session" -n workspace -c "$root")
-  tmux kill-window -a -t "$wsid"
-  tmux move-window -r -t "$session"
   populate_windows "$session" "$root"
   tmux select-window -t "$wsid"
+  for id in "${old_ids[@]}"; do
+    args+=(kill-window -t "$id" ";")
+  done
+  args+=(move-window -r -t "$session")
+  tmux "${args[@]}"
 }
 
 candidates=(
@@ -111,31 +120,16 @@ if [[ ${#directories[@]} -eq 0 ]]; then
   exit 1
 fi
 
-# A Dracula-themed fzf UI (matches the tmux theme). --ansi lets the coloured
-# "reset" entry render; fzf returns that entry's plain text, so we can compare
-# it against $reset_entry below.
+# "reset this session" is offered as the LAST entry (and only inside tmux, where
+# there is a current session to reset) so it is never the default selection —
+# you must deliberately move to it. It's coloured red to stand out; fzf --ansi
+# renders the colour and returns the entry's plain text, which we match below.
 reset_entry="↺  reset this session"
-fzf_theme="fg:#f8f8f2,bg:#282a36,hl:#bd93f9,fg+:#f8f8f2,bg+:#44475a,hl+:#bd93f9,info:#ffb86c,prompt:#50fa7b,pointer:#ff79c6,marker:#ff79c6,spinner:#ffb86c,header:#6272a4,border:#6272a4,label:#f8f8f2"
-fzf_opts=(
-  --ansi
-  --layout=reverse
-  --border=rounded
-  --border-label=" tmux-sessionizer "
-  --info=inline
-  --prompt="❯ "
-  --pointer="❯"
-  --marker="❯"
-  --color="$fzf_theme"
-)
-
-# Offer "reset this session" at the top of the list, but only inside tmux where
-# there is a current session to reset. It's coloured red so it stands apart
-# from the directory entries.
 selected=$(
   {
-    [[ -n $TMUX ]] && printf '\033[1;38;2;255;85;85m%s\033[0m\n' "$reset_entry"
     fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}"
-  } | fzf "${fzf_opts[@]}"
+    [[ -n $TMUX ]] && printf '\033[1;38;2;255;85;85m%s\033[0m\n' "$reset_entry"
+  } | fzf --ansi
 )
 
 if [[ -z $selected ]]; then
