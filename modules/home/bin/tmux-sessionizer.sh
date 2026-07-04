@@ -38,6 +38,19 @@ open_child_windows() {
   done
 }
 
+# Brazil workspaces live under /Volumes/workplace on macOS (reached via the
+# ~/workplace symlink, which realpath resolves) and directly under ~/workplace
+# on the Linux cloud desktops. A selected workspace's realpath'd parent matches
+# one of these roots.
+is_brazil_workspace() {
+  local parent=$1 root
+  for root in "/Volumes/workplace" "$HOME/workplace"; do
+    [[ -d $root ]] || continue
+    [[ $parent == "$(realpath "$root")" ]] && return 0
+  done
+  return 1
+}
+
 candidates=(
   "$HOME"
   "$HOME"/work
@@ -73,7 +86,7 @@ if ! tmux has-session -t="$session_name" 2>/dev/null; then
 
   parent=$(realpath "$(dirname "$selected")")
 
-  if [[ $parent == "/Volumes/workplace" ]]; then
+  if is_brazil_workspace "$parent"; then
     # Brazil workspace: one window per package under src/.
     open_child_windows "$session_name" "$selected/src" all
   elif [[ ! -e $selected/.git ]]; then
