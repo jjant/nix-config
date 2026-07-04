@@ -3,6 +3,54 @@
 # store paths at build time by resholve (see ../bin/default.nix), so this
 # stays a normal, editor-friendly shell script.
 
+# When a selected directory isn't itself a git repo but contains child repos,
+# open one tmux window per repo — unless there are more than this many, in which
+# case just open a single "workspace" window so a directory full of repos
+# doesn't spawn a wall of windows.
+max_repo_windows=6
+
+# Open one tmux window per child repo of $scan_dir in $session. A child repo is
+# an immediate subdirectory; when $require_git is "git" only subdirectories that
+# are themselves git repos count, otherwise every subdirectory does (used for
+# Brazil `src/` packages). When $max > 0 and there are more repos than that,
+# open nothing (leaving just the single "workspace" window).
+open_child_windows() {
+  local session=$1 scan_dir=$2 require_git=$3 max=${4:-0}
+  local repos=() dir
+  for dir in "$scan_dir"/*; do
+    [[ -d $dir ]] || continue
+    if [[ $require_git == git && ! -e $dir/.git ]]; then
+      continue
+    fi
+    repos+=("$dir")
+  done
+
+  local count=${#repos[@]}
+  if ((count == 0)); then
+    return
+  fi
+  if ((max > 0)) && ((count > max)); then
+    return
+  fi
+
+  for dir in "${repos[@]}"; do
+    tmux new-window -c "$dir" -n "$(basename "$dir")" -t "$session"
+  done
+}
+
+# Brazil workspaces live under /Volumes/workplace on macOS (reached via the
+# ~/workplace symlink, which realpath resolves) and directly under ~/workplace
+# on the Linux cloud desktops. A selected workspace's realpath'd parent matches
+# one of these roots.
+is_brazil_workspace() {
+  local parent=$1 root
+  for root in "/Volumes/workplace" "$HOME/workplace"; do
+    [[ -d $root ]] || continue
+    [[ $parent == "$(realpath "$root")" ]] && return 0
+  done
+  return 1
+}
+
 candidates=(
   "$HOME"
   "$HOME"/work
@@ -38,12 +86,14 @@ if ! tmux has-session -t="$session_name" 2>/dev/null; then
 
   parent=$(realpath "$(dirname "$selected")")
 
-  if [[ $parent == "/Volumes/workplace" ]]; then
-    for dir in "$selected/src"/*; do
-      if [[ -d $dir ]]; then
-        tmux new-window -c "$dir" -n "$(basename "$dir")" -t "$session_name"
-      fi
-    done
+  if is_brazil_workspace "$parent"; then
+    # Brazil workspace: one window per package under src/.
+    open_child_windows "$session_name" "$selected/src" all
+  elif [[ ! -e $selected/.git ]]; then
+    # A directory that isn't itself a git repo may be a container of repos
+    # (e.g. ~/personal/snowpark holding docs/, landing/, ...). Open one window
+    # per child repo, but only when there are few enough of them.
+    open_child_windows "$session_name" "$selected" git "$max_repo_windows"
   fi
 fi
 
