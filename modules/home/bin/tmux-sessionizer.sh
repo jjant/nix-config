@@ -9,10 +9,12 @@
 # doesn't spawn a wall of windows.
 max_repo_windows=6
 
-# Open one tmux window per child repo of $scan_dir in $session. A child repo is
-# an immediate subdirectory; when $require_git is "git" only subdirectories that
-# are themselves git repos count, otherwise every subdirectory does (used for
-# Brazil `src/` packages). When $max > 0 and there are more repos than that,
+# Open one tmux window per child repo of $scan_dir in session $session (passed
+# as a session ID, not a name — a window may share the session's name, which
+# would make a name target resolve to that window). A child repo is an
+# immediate subdirectory; when $require_git is "git" only subdirectories that
+# are themselves git repos count, otherwise every subdirectory does (used for a
+# `src/` package layout). When $max > 0 and there are more repos than that,
 # open nothing (leaving just the single "workspace" window).
 open_child_windows() {
   local session=$1 scan_dir=$2 require_git=$3 max=${4:-0}
@@ -38,11 +40,12 @@ open_child_windows() {
   done
 }
 
-# Brazil workspaces live under /Volumes/workplace on macOS (reached via the
-# ~/workplace symlink, which realpath resolves) and directly under ~/workplace
-# on the Linux cloud desktops. A selected workspace's realpath'd parent matches
-# one of these roots.
-is_brazil_workspace() {
+# A "workspace" here is a directory holding packages under src/. On macOS these
+# live under /Volumes/workplace (reached via the ~/workplace symlink, which
+# realpath resolves); on the Linux cloud desktops they live directly under
+# ~/workplace. A selected workspace's realpath'd parent matches one of these
+# roots.
+is_workplace_root() {
   local parent=$1 root
   for root in "/Volumes/workplace" "$HOME/workplace"; do
     [[ -d $root ]] || continue
@@ -51,14 +54,14 @@ is_brazil_workspace() {
   return 1
 }
 
-# Build the window layout for a directory: one window per child repo (or Brazil
+# Build the window layout for a directory: one window per child repo (or per
 # src/ package) as appropriate. The session and its "workspace" window must
 # already exist.
 populate_windows() {
   local session=$1 selected=$2 parent
   parent=$(realpath "$(dirname "$selected")")
-  if is_brazil_workspace "$parent"; then
-    # Brazil workspace: one window per package under src/.
+  if is_workplace_root "$parent"; then
+    # Workspace layout: one window per package under src/.
     open_child_windows "$session" "$selected/src" all
   elif [[ ! -e $selected/.git ]]; then
     # A directory that isn't itself a git repo may be a container of repos
@@ -78,23 +81,27 @@ populate_windows() {
 # single batched tmux command: the tmux server runs the whole batch even though
 # killing our window terminates this script partway through it.
 reset_session() {
-  local session root wsid id
+  local session_id root wsid id
   local old_ids=() args=()
-  session=$(tmux display-message -p '#S')
-  root=$(tmux show-options -t "$session" -qv @sessionizer_root)
+  # Target the session by ID, never by name: a session can contain a window
+  # whose name equals the session name, in which case `-t <name>` resolves to
+  # that *window*, making `new-window` fail with "create window failed: index N
+  # in use".
+  session_id=$(tmux display-message -p '#{session_id}')
+  root=$(tmux show-options -t "$session_id" -qv @sessionizer_root)
   if [[ -z $root ]]; then
     tmux display-message "tmux-sessionizer: no saved root for this session — nothing to reset"
     return
   fi
   # Windows to remove afterwards (captured before we add the fresh ones).
-  readarray -t old_ids < <(tmux list-windows -t "$session" -F '#{window_id}')
-  wsid=$(tmux new-window -P -F '#{window_id}' -t "$session" -n workspace -c "$root")
-  populate_windows "$session" "$root"
+  readarray -t old_ids < <(tmux list-windows -t "$session_id" -F '#{window_id}')
+  wsid=$(tmux new-window -P -F '#{window_id}' -t "$session_id" -n workspace -c "$root")
+  populate_windows "$session_id" "$root"
   tmux select-window -t "$wsid"
   for id in "${old_ids[@]}"; do
     args+=(kill-window -t "$id" ";")
   done
-  args+=(move-window -r -t "$session")
+  args+=(move-window -r -t "$session_id")
   tmux "${args[@]}"
 }
 
@@ -109,7 +116,7 @@ candidates=(
 # Only search directories that actually exist. Otherwise fd prints
 # "[fd error]: Search path '...' is not a directory" for each missing one
 # (and exits non-zero if they're all missing). Which of these exist varies
-# per host, e.g. ~/workplace only exists on the Amazon dev desktops.
+# per host, e.g. ~/workplace only exists on the Linux cloud desktops.
 directories=()
 for dir in "${candidates[@]}"; do
   [[ -d $dir ]] && directories+=("$dir")
@@ -150,11 +157,14 @@ fi
 session_name=$(basename "$selected" | tr ".: " "_")
 
 if ! tmux has-session -t="$session_name" 2>/dev/null; then
-  tmux new-session -s "$session_name" -n "workspace" -c "$selected" -d
+  # Capture the new session's ID and target it by ID from here on: a window may
+  # share the session's name, and name-based `-t` would then resolve to that
+  # window instead of the session (see reset_session).
+  session_id=$(tmux new-session -s "$session_name" -n "workspace" -c "$selected" -d -P -F '#{session_id}')
   # Remember the directory this session was built from so "reset this session"
   # can rebuild the same layout later.
-  tmux set-option -t "$session_name" @sessionizer_root "$selected"
-  populate_windows "$session_name" "$selected"
+  tmux set-option -t "$session_id" @sessionizer_root "$selected"
+  populate_windows "$session_id" "$selected"
 fi
 
 if [[ -z $TMUX ]]; then
