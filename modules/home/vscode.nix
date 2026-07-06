@@ -25,9 +25,35 @@
         "workbench.colorTheme" = "Dracula Theme";
       };
 
+      # Marketplace extensions from the nix-vscode-extensions overlay.
       extensions = with pkgs.vscode-marketplace; [
+        # Theme
         dracula-theme.theme-dracula
+
+        # Nix (nix-ide supersedes bbenoist.nix + nixfmt-vscode)
         jnoortheen.nix-ide
+
+        # Rust
+        rust-lang.rust-analyzer
+        tamasfe.even-better-toml # TOML / Cargo.toml (taplo-backed)
+        serayuzgur.crates # Cargo.toml dependency version hints
+        mitsuhiko.insta # cargo-insta snapshot review
+
+        # Python (acs-gpio-client bindings)
+        ms-python.python
+        ms-python.vscode-pylance
+        ms-python.debugpy
+        ms-python.vscode-python-envs
+
+        # Project-specific
+        davidwang.ini-for-vscode # `ini` crate
+        mrmlnc.vscode-json5 # zenoh .json5 config
+        timonwong.shellcheck
+
+        # Quality-of-life / docs
+        aetonsi.disable-mru-tabs-behaviour
+        bierner.markdown-mermaid
+        yutengjing.vscode-archive
       ];
     };
   };
