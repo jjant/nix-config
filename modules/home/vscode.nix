@@ -26,9 +26,6 @@
       };
 
       # Marketplace extensions from the nix-vscode-extensions overlay.
-      # NOTE: the Amazon Brazil extension (marklel.vscode-brazil) is not on the
-      # public marketplace, so it isn't available here -- install it via the
-      # internal VS Code marketplace / Viceroy on work machines.
       extensions = with pkgs.vscode-marketplace; [
         # Theme
         dracula-theme.theme-dracula
@@ -40,7 +37,6 @@
         rust-lang.rust-analyzer
         tamasfe.even-better-toml # TOML / Cargo.toml (taplo-backed)
         serayuzgur.crates # Cargo.toml dependency version hints
-        dustypomerleau.rust-syntax
         mitsuhiko.insta # cargo-insta snapshot review
 
         # Python (acs-gpio-client bindings)
@@ -51,8 +47,6 @@
 
         # Project-specific
         davidwang.ini-for-vscode # `ini` crate
-        geequlim.godot-tools # godot-tracing
-        pollywoggames.pico8-ls # pico8-carts
         mrmlnc.vscode-json5 # zenoh .json5 config
         timonwong.shellcheck
 
