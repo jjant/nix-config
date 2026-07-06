@@ -12,6 +12,7 @@
     "fish/completions/brazil.fish".source = ./fish/completions/brazil.fish;
     "fish/completions/toolbox.fish".source = ./fish/completions/toolbox.fish;
     "fish/completions/ada.fish".source = ./fish/completions/ada.fish;
+    "fish/completions/art.fish".source = ./fish/completions/art.fish;
   };
 
   programs = {
