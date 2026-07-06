@@ -9,6 +9,12 @@
   xdg.configFile."fish/completions/brazil.fish".source =
     ./fish/completions/brazil.fish;
 
+  # Toolbox CLI tab-completion. Toolbox (cobra) emits its own fish completion
+  # via `toolbox completion fish`; the wrapper sources it lazily and is a no-op
+  # when toolbox isn't installed. fish autoloads it on first `toolbox <TAB>`.
+  xdg.configFile."fish/completions/toolbox.fish".source =
+    ./fish/completions/toolbox.fish;
+
   programs = {
     fish = {
       enable = true;
