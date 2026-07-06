@@ -137,7 +137,13 @@ if [[ -z $selected ]]; then
 fi
 
 if [[ $selected == "$reset_entry" ]]; then
-  reset_session
+  # Reset rebuilds the session (drops stray windows and resets directories), so
+  # confirm first. fzf highlights the first line by default, so Enter or Escape
+  # cancels — you have to pick "reset" deliberately.
+  confirm=$(printf 'cancel\nreset this session\n' | fzf --prompt='reset this session? ')
+  if [[ $confirm == "reset this session" ]]; then
+    reset_session
+  fi
   exit 0
 fi
 
