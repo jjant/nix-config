@@ -32,6 +32,7 @@
       tokei
       nodejs_24
       ruby
+      jdk25 # Java: latest LTS (Azul Zulu build from nixpkgs)
       uv
       mosquitto
       cmake
