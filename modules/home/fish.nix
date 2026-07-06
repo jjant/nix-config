@@ -3,17 +3,16 @@
 }: {
   home.packages = [ pkgs.zoxide ];
 
-  # Brazil CLI tab-completion. Delegates to the `brazil-cmd-complete` helper
-  # that Brazil's own bash/zsh completions use; fish autoloads this the first
-  # time you complete `brazil`.
-  xdg.configFile."fish/completions/brazil.fish".source =
-    ./fish/completions/brazil.fish;
-
-  # Toolbox CLI tab-completion. Toolbox (cobra) emits its own fish completion
-  # via `toolbox completion fish`; the wrapper sources it lazily and is a no-op
-  # when toolbox isn't installed. fish autoloads it on first `toolbox <TAB>`.
-  xdg.configFile."fish/completions/toolbox.fish".source =
-    ./fish/completions/toolbox.fish;
+  # Fish completions for a few CLIs, installed into fish's autoload dir; each is
+  # a no-op when its command isn't installed. brazil wraps the
+  # `brazil-cmd-complete` helper (it ships bash/zsh completions only); toolbox
+  # and ada emit their own fish completion via `<cmd> completion fish`, which
+  # the wrappers source lazily on first `<cmd> <TAB>`.
+  xdg.configFile = {
+    "fish/completions/brazil.fish".source = ./fish/completions/brazil.fish;
+    "fish/completions/toolbox.fish".source = ./fish/completions/toolbox.fish;
+    "fish/completions/ada.fish".source = ./fish/completions/ada.fish;
+  };
 
   programs = {
     fish = {
