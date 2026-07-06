@@ -13,6 +13,17 @@
   # abort activation over the mismatch.
   ids.gids.nixbld = 350;
 
+  # Work around a nix-darwin<->nixpkgs skew: nix-darwin's HTML manual build
+  # calls `nixos-render-docs manual html --toc-depth`, a flag newer nixpkgs
+  # removed, so `darwin-manual-html` fails to build (and CI can't catch it — the
+  # mac config is only `nix eval`d on the Linux runners). It reaches the system
+  # closure two ways, so we cut both until upstream nix-darwin catches up:
+  #   1. our own system's docs, and
+  #   2. darwin-uninstaller, which embeds a nested darwin-system with default docs.
+  # Man pages (documentation.man.enable) are unaffected.
+  documentation.doc.enable = false;
+  system.tools.darwin-uninstaller.enable = false;
+
   environment = {
     systemPackages = [
       pkgs.vim
