@@ -3,6 +3,12 @@
 }: {
   home.packages = [ pkgs.zoxide ];
 
+  # Brazil CLI tab-completion. Delegates to the `brazil-cmd-complete` helper
+  # that Brazil's own bash/zsh completions use; fish autoloads this the first
+  # time you complete `brazil`.
+  xdg.configFile."fish/completions/brazil.fish".source =
+    ./fish/completions/brazil.fish;
+
   programs = {
     fish = {
       enable = true;
