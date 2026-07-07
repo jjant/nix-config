@@ -29,14 +29,19 @@
       JAVA_HOME = pkgs.jdk25.home;
     };
 
-    # Stable, hash-free JAVA_HOME paths, one per JDK major version. Tools that
-    # persist an absolute JDK path in their own config can point at a fixed
-    # ~/.jdks/<major> location instead of a /nix/store path whose hash changes
-    # on every upgrade. home-manager repoints the symlink target on each
-    # rebuild; the ~/.jdks/<major> path itself stays constant.
-    #
-    # macOS only — the Linux hosts don't need these.
-    file = lib.mkIf pkgs.stdenv.isDarwin {
+    file = {
+      # ~/.hushlogin: sshd honors it on the Linux cloud desktops (suppresses the
+      # Amazon Linux MOTD banner + the "Last login" line shown over SSH), and
+      # /usr/bin/login honors it on macOS (silences Terminal's
+      # "Last login: … on ttysNNN"). Editing /etc/motd wouldn't stick — the
+      # dev-desktop tooling regenerates it.
+      ".hushlogin".text = "";
+
+      # Stable, hash-free JAVA_HOME paths, one per JDK major version. Tools that
+      # persist an absolute JDK path in their own config can point at a fixed
+      # ~/.jdks/<major> location instead of a /nix/store path whose hash changes
+      # on every upgrade. home-manager repoints the symlink target on each
+      # rebuild; the ~/.jdks/<major> path itself stays constant.
       ".jdks/8".source = pkgs.jdk8.home;
       ".jdks/11".source = pkgs.jdk11.home;
       ".jdks/17".source = pkgs.jdk17.home;
