@@ -21,6 +21,29 @@
   };
 
   home = {
+    # Point JAVA_HOME at the jdk25 package. `.home` is correct on both
+    # platforms: on macOS (Zulu) it's the store root; on Linux (OpenJDK)
+    # it resolves to `$out/lib/openjdk`. Nix injects the (hashed) store
+    # path and refreshes it on every rebuild, so it's never hardcoded.
+    sessionVariables = {
+      JAVA_HOME = pkgs.jdk25.home;
+    };
+
+    # Stable, hash-free JAVA_HOME paths, one per JDK major version. Tools that
+    # persist an absolute JDK path in their own config can point at a fixed
+    # ~/.jdks/<major> location instead of a /nix/store path whose hash changes
+    # on every upgrade. home-manager repoints the symlink target on each
+    # rebuild; the ~/.jdks/<major> path itself stays constant.
+    #
+    # macOS only — the Linux hosts don't need these.
+    file = lib.mkIf pkgs.stdenv.isDarwin {
+      ".jdks/8".source = pkgs.jdk8.home;
+      ".jdks/11".source = pkgs.jdk11.home;
+      ".jdks/17".source = pkgs.jdk17.home;
+      ".jdks/21".source = pkgs.jdk21.home;
+      ".jdks/25".source = pkgs.jdk25.home;
+    };
+
     packages = with pkgs; [
       ripgrep
       fd
