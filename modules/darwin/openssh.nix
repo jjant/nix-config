@@ -26,6 +26,6 @@
   # via the forwarded 1Password agent. Fill in from `ssh-add -L` on the Mac.
   # Until a key is added here, no SSH login succeeds (fail-closed).
   users.users.jjantdev.openssh.authorizedKeys.keys = [
-    # "ssh-ed25519 AAAA...= jjant@1password"   # <-- replace before activating
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHwNd/RtI0W1muIkgF/84DZLPKNUH/e+jnnEwnGrewAL amzn-mbp-14-m1"
   ];
 }
