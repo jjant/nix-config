@@ -84,9 +84,14 @@ in
   ++ lib.optionals pkgs.stdenv.isLinux [
     (writeShellApp {
       name = "open";
-      inputs = with pkgs; [ coreutils ];
-      # System ssh/scp: carry the user's ~/.ssh config + forwarded agent.
-      fake.external = [ "ssh" "scp" ];
+      inputs = with pkgs; [ coreutils gnutar gzip pv ];
+      # System ssh carries the user's ~/.ssh config + forwarded agent.
+      fake.external = [ "ssh" ];
+      # tar/pv can exec in general, but this script never uses them that way.
+      execer = [
+        "cannot:${pkgs.gnutar}/bin/tar"
+        "cannot:${pkgs.pv}/bin/pv"
+      ];
     })
   ];
 }
