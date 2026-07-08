@@ -11,7 +11,7 @@
 # Hardened to loopback only: the reverse tunnel's final hop is the Mac
 # connecting to its own 127.0.0.1:22, so sshd never needs to be reachable from
 # the network. Key-only auth, no passwords.
-{ ... }:
+_:
 {
   services.openssh.enable = true;
 
