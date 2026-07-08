@@ -39,7 +39,11 @@ let
       HostName ${hostname}
       User ${user}
       ProxyCommand /usr/local/bin/wssh proxy %h
-      ForwardAgent yes
+      ForwardAgent yes${lib.optionalString pkgs.stdenv.isDarwin ''
+
+      # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
+      # Linux `open` wrapper hand files back to the Mac's native `open`.
+      RemoteForward 2022 localhost:22''}
       ServerAliveInterval 15
       ServerAliveCountMax 44
   '';

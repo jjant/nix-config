@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   # Wrap a sibling <name>.sh file as a resholve'd package: resholve parses the
   # script, rewrites every declared external command to its absolute Nix store
@@ -78,6 +78,15 @@ in
       name = "pnew";
       inputs = with pkgs; [ git coreutils ];
       execer = [ "cannot:${pkgs.git}/bin/git" ];
+    })
+  ]
+  # Linux-only: on macOS this would shadow the real `open`.
+  ++ lib.optionals pkgs.stdenv.isLinux [
+    (writeShellApp {
+      name = "open";
+      inputs = with pkgs; [ coreutils ];
+      # System ssh/scp: carry the user's ~/.ssh config + forwarded agent.
+      fake.external = [ "ssh" "scp" ];
     })
   ];
 }
