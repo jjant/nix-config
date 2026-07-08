@@ -43,12 +43,12 @@ for arg in "$@"; do
   dest="/tmp/open-$(date +%s)-$$"
   bytes="$(du -sb "$src" | cut -f1)"
 
-  printf '-> copying %s (%s) to the Mac...\n' "$base" "$(numfmt --to=iec "$bytes")" >&2
+  printf '%s\n' "-> copying $base ($(numfmt --to=iec "$bytes")) to the Mac..." >&2
 
-  # Uncompressed tar -> pv (progress against the real size) -> gzip -> extract
-  # and open on the Mac, all over one SSH connection.
+  # Uncompressed tar -> pv (live throughput readout) -> gzip -> extract and
+  # open on the Mac, all over one SSH connection.
   tar cf - -C "$parent" -- "$base" |
-    pv -s "$bytes" |
+    pv -btr |
     gzip |
     ssh "${ssh_opts[@]}" "$mac" "mkdir -p '$dest' && tar xzf - -C '$dest' && open '$dest/$base'"
 done
