@@ -6,6 +6,7 @@
   imports = [
     ./skhd.nix
     ./yabai.nix
+    ./openssh.nix
   ];
 
   # Newer Nix installers create the `nixbld` group with GID 350 (macOS moved
