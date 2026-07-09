@@ -126,14 +126,23 @@
             cd $repoRoot
           '';
         };
-        # TODO: Clean up directories if something fails.
         brazil-workspace-from-package = {
           description = "Create a workspace with a single package.";
           body = ''
-            set package $argv[1]
+            set -l package $argv[1]
 
             if test -z "$package"
               echo "Package name required"
+              return 1
+            end
+
+            set -l original_dir $PWD
+            set -l workspace_dir "$HOME/workplace/$package"
+
+            # Refuse to touch a pre-existing directory, so the cleanup below can
+            # never delete something we didn't create.
+            if test -e "$workspace_dir"
+              echo "Workspace directory already exists: $workspace_dir"
               return 1
             end
 
@@ -142,8 +151,19 @@
             and cd $package
             and brazil ws use -p $package
             and cd src/$package
-          '';
+            set -l result $status
 
+            # If any step failed, go back to where we started and remove the
+            # partially-created workspace so nothing is left behind.
+            if test $result -ne 0
+              echo "Failed to set up workspace for '$package'; restoring previous state"
+              cd "$original_dir"
+              if test -e "$workspace_dir"
+                rm -rf "$workspace_dir"
+              end
+              return $result
+            end
+          '';
         };
         brazil-try-again = {
           description = "Amend the commit and run a dry run";
