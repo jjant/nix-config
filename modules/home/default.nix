@@ -90,6 +90,7 @@
       cargo-outdated
       cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
       cargo-zigbuild
+      grcov
       inferno # flamegraph backend; rarely used standalone
       wasm-pack
 
