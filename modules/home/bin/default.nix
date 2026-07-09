@@ -84,7 +84,7 @@ in
   ++ lib.optionals pkgs.stdenv.isLinux [
     (writeShellApp {
       name = "open";
-      inputs = with pkgs; [ coreutils gnutar gzip pv ];
+      inputs = with pkgs; [ coreutils gnutar zstd pv ];
       # System ssh carries the user's ~/.ssh config + forwarded agent.
       fake.external = [ "ssh" ];
       # tar/pv can exec in general, but this script never uses them that way.
