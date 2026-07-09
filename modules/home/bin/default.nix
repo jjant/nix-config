@@ -79,5 +79,14 @@ in
       inputs = with pkgs; [ git coreutils ];
       execer = [ "cannot:${pkgs.git}/bin/git" ];
     })
+
+    (writeShellApp {
+      name = "cr-open";
+      inputs = with pkgs; [ git coreutils ];
+      execer = [ "cannot:${pkgs.git}/bin/git" ];
+      # macOS `open` (and the Cloud Desktop shim of the same name) isn't a Nix
+      # package; leave it as a runtime PATH lookup.
+      fake.external = [ "open" ];
+    })
   ];
 }
