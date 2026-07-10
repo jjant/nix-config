@@ -104,6 +104,11 @@
       universalaccess.mouseDriverCursorSize = 1.75;
       trackpad.TrackpadRightClick = true;
       finder.QuitMenuItem = true;
+      controlcenter = {
+        BatteryShowPercentage = true;
+        Bluetooth = true;
+        Sound = true;
+      };
     };
   };
 
