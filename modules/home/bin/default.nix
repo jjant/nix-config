@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 let
   # Wrap a sibling <name>.sh file as a resholve'd package: resholve parses the
   # script, rewrites every declared external command to its absolute Nix store
@@ -103,6 +103,20 @@ in
       # macOS `open` (and the Cloud Desktop shim of the same name) isn't a Nix
       # package; leave it as a runtime PATH lookup.
       fake.external = [ "open" ];
+    })
+  ]
+  # Linux-only: on macOS this would shadow the real `open`.
+  ++ lib.optionals pkgs.stdenv.isLinux [
+    (writeShellApp {
+      name = "open";
+      inputs = with pkgs; [ coreutils gnutar zstd pv ];
+      # System ssh carries the user's ~/.ssh config + forwarded agent.
+      fake.external = [ "ssh" ];
+      # tar/pv can exec in general, but this script never uses them that way.
+      execer = [
+        "cannot:${pkgs.gnutar}/bin/tar"
+        "cannot:${pkgs.pv}/bin/pv"
+      ];
     })
   ];
 }
