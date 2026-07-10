@@ -127,20 +127,6 @@
             cd $repoRoot
           '';
         };
-        brazil-workspace-from-package = {
-          description = "Create a workspace with a single package, then open a tmux session for it.";
-          # The heavy lifting lives in the `brazil-workspace-from-package`
-          # command (modules/home/bin) so it is runnable from any shell; this
-          # wrapper opens a tmux-sessionizer session for the package source it
-          # prints on success.
-          body = ''
-            set -l dir (command brazil-workspace-from-package $argv)
-            if test -z "$dir"
-              return 1
-            end
-            tmux-sessionizer $dir
-          '';
-        };
         brazil-try-again = {
           description = "Amend the commit and run a dry run";
           body = ''
