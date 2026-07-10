@@ -128,16 +128,17 @@
           '';
         };
         brazil-workspace-from-package = {
-          description = "Create a workspace with a single package, then cd into it.";
+          description = "Create a workspace with a single package, then open a tmux session for it.";
           # The heavy lifting lives in the `brazil-workspace-from-package`
           # command (modules/home/bin) so it is runnable from any shell; this
-          # wrapper just cd's into the package source it prints on success.
+          # wrapper opens a tmux-sessionizer session for the package source it
+          # prints on success.
           body = ''
             set -l dir (command brazil-workspace-from-package $argv)
             if test -z "$dir"
               return 1
             end
-            cd $dir
+            tmux-sessionizer $dir
           '';
         };
         brazil-try-again = {
