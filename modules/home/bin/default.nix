@@ -68,6 +68,13 @@ in
     })
 
     (writeShellApp {
+      name = "brazil-workspace-from-package";
+      inputs = with pkgs; [ coreutils ];
+      # `brazil` is the Amazon toolbox CLI, not a Nix package.
+      fake.external = [ "brazil" ];
+    })
+
+    (writeShellApp {
       name = "dev-desk-tunnel";
       inputs = with pkgs; [ coreutils ];
       # Use the system ssh (carries the user's ~/.ssh config, agent, wssh proxy).

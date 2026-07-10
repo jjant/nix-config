@@ -128,42 +128,16 @@
           '';
         };
         brazil-workspace-from-package = {
-          description = "Create a workspace with a single package.";
+          description = "Create a workspace with a single package, then cd into it.";
+          # The heavy lifting lives in the `brazil-workspace-from-package`
+          # command (modules/home/bin) so it is runnable from any shell; this
+          # wrapper just cd's into the package source it prints on success.
           body = ''
-            set -l package $argv[1]
-
-            if test -z "$package"
-              echo "Package name required"
+            set -l dir (command brazil-workspace-from-package $argv)
+            if test -z "$dir"
               return 1
             end
-
-            set -l original_dir $PWD
-            set -l workspace_dir "$HOME/workplace/$package"
-
-            # Refuse to touch a pre-existing directory, so the cleanup below can
-            # never delete something we didn't create.
-            if test -e "$workspace_dir"
-              echo "Workspace directory already exists: $workspace_dir"
-              return 1
-            end
-
-            cd "$HOME/workplace"
-            and brazil ws create --name $package
-            and cd $package
-            and brazil ws use -p $package
-            and cd src/$package
-            set -l result $status
-
-            # If any step failed, go back to where we started and remove the
-            # partially-created workspace so nothing is left behind.
-            if test $result -ne 0
-              echo "Failed to set up workspace for '$package'; restoring previous state"
-              cd "$original_dir"
-              if test -e "$workspace_dir"
-                rm -rf "$workspace_dir"
-              end
-              return $result
-            end
+            cd $dir
           '';
         };
         brazil-try-again = {
