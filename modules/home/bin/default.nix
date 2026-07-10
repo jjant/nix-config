@@ -70,8 +70,9 @@ in
     (writeShellApp {
       name = "brazil-workspace-from-package";
       inputs = with pkgs; [ coreutils ];
-      # `brazil` is the Amazon toolbox CLI, not a Nix package.
-      fake.external = [ "brazil" ];
+      # `brazil` (Amazon toolbox) and `tmux-sessionizer` (installed alongside
+      # this) are runtime PATH lookups, not Nix packages resholve resolves.
+      fake.external = [ "brazil" "tmux-sessionizer" ];
     })
 
     (writeShellApp {

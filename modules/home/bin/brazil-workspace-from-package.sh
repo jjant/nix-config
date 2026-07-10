@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 # brazil-workspace-from-package — create a fresh Brazil workspace containing a
-# single package under ~/workplace and print that package's source directory.
-#
-# Runnable from any shell and any directory (all paths are absolute). The
-# matching fish function (modules/home/fish.nix) additionally cd's into the
-# printed path; from other shells use: cd "$(brazil-workspace-from-package X)".
+# single package under ~/workplace and open a tmux session for it (via
+# tmux-sessionizer). Runnable from any shell; ~/workplace must already exist.
 
 set -euo pipefail
 
@@ -29,17 +26,15 @@ if [ -e "$workspace_dir" ]; then
   exit 1
 fi
 
-# Create the workspace and step into the package source. Brazil's own output is
-# sent to stderr so stdout carries only the final path (for the fish wrapper /
-# command substitution). On any failure, remove the partial workspace.
+# Create the workspace, then open a tmux session for the package source. Brazil
+# output goes to stderr. On any failure, remove the partial workspace.
 if {
   cd "$HOME/workplace" &&
     brazil ws create --name "$package" &&
     cd "$package" &&
-    brazil ws use -p "$package" &&
-    cd "src/$package"
+    brazil ws use -p "$package"
 } >&2; then
-  pwd
+  tmux-sessionizer "$workspace_dir/src/$package"
 else
   echo "Failed to set up workspace for '$package'; cleaning up" >&2
   rm -rf "$workspace_dir"
