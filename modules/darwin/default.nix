@@ -104,6 +104,16 @@
       universalaccess.mouseDriverCursorSize = 1.75;
       trackpad.TrackpadRightClick = true;
       finder.QuitMenuItem = true;
+      NSGlobalDomain = {
+        # Repeat keys when held (e.g. j/k in Vim-style editors) instead of the
+        # accent-character popup. Takes effect per app on its next launch.
+        ApplePressAndHoldEnabled = false;
+        # Always show filename extensions. This is the global (-g) toggle that
+        # the Finder "Show all filename extensions" checkbox actually sets, so
+        # the com.apple.finder variant (finder.AppleShowAllExtensions) is
+        # redundant and we set only this one.
+        AppleShowAllExtensions = true;
+      };
       controlcenter = {
         BatteryShowPercentage = true;
         Bluetooth = true;
