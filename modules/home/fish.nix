@@ -86,6 +86,7 @@
         bbb = "brazil-build build";
         bop = "brazil-open-package";
         bwd = "brazil workspace dryrun";
+        cro = "cr-open";
 
         edabb = "eda build brazil-build build";
         tx = "toolbox";
