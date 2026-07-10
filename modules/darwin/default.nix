@@ -104,6 +104,14 @@
           fish_add_path --append "$HOME/.cargo/bin"
           # Rodar
           fish_add_path --append "$HOME/.rodar/bin"
+
+          # Point ssh-agent (ssh-add, and crucially `ForwardAgent`) at the
+          # 1Password agent. IdentityAgent (modules/home/ssh.nix) only covers
+          # ssh's own auth; agent *forwarding* to the dev desks follows
+          # $SSH_AUTH_SOCK, which macOS otherwise points at its empty built-in
+          # launchd agent — so git pushes and the `open` reverse tunnel would
+          # forward an agent with no keys.
+          set -gx SSH_AUTH_SOCK "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
         '';
     };
   };
