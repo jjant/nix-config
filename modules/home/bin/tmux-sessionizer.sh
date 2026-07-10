@@ -105,53 +105,64 @@ reset_session() {
   tmux "${args[@]}"
 }
 
-candidates=(
-  "$HOME"
-  "$HOME"/work
-  "$HOME"/personal
-  "$HOME"/.config
-  "$HOME"/workplace
-)
-
-# Only search directories that actually exist. Otherwise fd prints
-# "[fd error]: Search path '...' is not a directory" for each missing one
-# (and exits non-zero if they're all missing). Which of these exist varies
-# per host, e.g. ~/workplace only exists on the Linux cloud desktops.
-directories=()
-for dir in "${candidates[@]}"; do
-  [[ -d $dir ]] && directories+=("$dir")
-done
-
-if [[ ${#directories[@]} -eq 0 ]]; then
-  echo "tmux-sessionizer: none of the candidate directories exist" >&2
-  exit 1
-fi
-
-# "reset this session" is offered as the LAST entry (and only inside tmux, where
-# there is a current session to reset) so it is never the default selection —
-# you must deliberately move to it. It's coloured red to stand out; fzf --ansi
-# renders the colour and returns the entry's plain text, which we match below.
-reset_entry="↺  reset this session"
-selected=$(
-  {
-    fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}"
-    [[ -n $TMUX ]] && printf '\033[1;38;2;255;85;85m%s\033[0m\n' "$reset_entry"
-  } | fzf --ansi
-)
-
-if [[ -z $selected ]]; then
-  exit 0
-fi
-
-if [[ $selected == "$reset_entry" ]]; then
-  # Reset rebuilds the session (drops stray windows and resets directories), so
-  # confirm first. fzf highlights the first line by default, so Enter or Escape
-  # cancels — you have to pick "reset" deliberately.
-  confirm=$(printf 'cancel\nreset this session\n' | fzf --prompt='reset this session? ')
-  if [[ $confirm == "reset this session" ]]; then
-    reset_session
+# An explicit directory argument sessionizes that directory directly and skips
+# the interactive picker (used by the brazil-workspace-from-package wrapper).
+if (($# >= 1)); then
+  selected=$1
+  if [[ ! -d $selected ]]; then
+    echo "tmux-sessionizer: not a directory: $selected" >&2
+    exit 1
   fi
-  exit 0
+else
+  candidates=(
+    "$HOME"
+    "$HOME"/work
+    "$HOME"/personal
+    "$HOME"/.config
+    "$HOME"/workplace
+  )
+
+  # Only search directories that actually exist. Otherwise fd prints
+  # "[fd error]: Search path '...' is not a directory" for each missing one
+  # (and exits non-zero if they're all missing). Which of these exist varies
+  # per host, e.g. ~/workplace only exists on the Linux cloud desktops.
+  directories=()
+  for dir in "${candidates[@]}"; do
+    [[ -d $dir ]] && directories+=("$dir")
+  done
+
+  if [[ ${#directories[@]} -eq 0 ]]; then
+    echo "tmux-sessionizer: none of the candidate directories exist" >&2
+    exit 1
+  fi
+
+  # "reset this session" is offered as the LAST entry (and only inside tmux,
+  # where there is a current session to reset) so it is never the default
+  # selection — you must deliberately move to it. It's coloured red to stand
+  # out; fzf --ansi renders the colour and returns the entry's plain text,
+  # which we match below.
+  reset_entry="↺  reset this session"
+  selected=$(
+    {
+      fd -L --min-depth 1 --max-depth 1 --type d . "${directories[@]}"
+      [[ -n $TMUX ]] && printf '\033[1;38;2;255;85;85m%s\033[0m\n' "$reset_entry"
+    } | fzf --ansi
+  )
+
+  if [[ -z $selected ]]; then
+    exit 0
+  fi
+
+  if [[ $selected == "$reset_entry" ]]; then
+    # Reset rebuilds the session (drops stray windows and resets directories),
+    # so confirm first. fzf highlights the first line by default, so Enter or
+    # Escape cancels — you have to pick "reset" deliberately.
+    confirm=$(printf 'cancel\nreset this session\n' | fzf --prompt='reset this session? ')
+    if [[ $confirm == "reset this session" ]]; then
+      reset_session
+    fi
+    exit 0
+  fi
 fi
 
 session_name=$(basename "$selected" | tr ".: " "_")

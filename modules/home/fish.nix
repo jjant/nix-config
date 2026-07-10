@@ -86,6 +86,7 @@
         bbb = "brazil-build build";
         bop = "brazil-open-package";
         bwd = "brazil workspace dryrun";
+        cro = "cr-open";
 
         edabb = "eda build brazil-build build";
         tx = "toolbox";
@@ -125,25 +126,6 @@
             end
             cd $repoRoot
           '';
-        };
-        # TODO: Clean up directories if something fails.
-        brazil-workspace-from-package = {
-          description = "Create a workspace with a single package.";
-          body = ''
-            set package $argv[1]
-
-            if test -z "$package"
-              echo "Package name required"
-              return 1
-            end
-
-            cd "$HOME/workplace"
-            and brazil ws create --name $package
-            and cd $package
-            and brazil ws use -p $package
-            and cd src/$package
-          '';
-
         };
         brazil-try-again = {
           description = "Amend the commit and run a dry run";

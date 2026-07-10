@@ -39,26 +39,42 @@
     ];
   };
 
-  nix.settings = {
-    experimental-features = "nix-command flakes";
-    trusted-users = [
-      "root"
-      "jjantdev"
-    ];
-    substituters = [
-      "https://jjant-nix.cachix.org"
-      "https://nix-community.cachix.org"
-    ];
-    trusted-public-keys = [
-      "jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4="
-      "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
-    ];
-    max-jobs = "auto";
-    cores = 0;
-    always-allow-substitutes = true;
-    builders-use-substitutes = true;
-    connect-timeout = 5;
-    auto-optimise-store = false;
+  nix = {
+    settings = {
+      experimental-features = "nix-command flakes";
+      trusted-users = [
+        "root"
+        "jjantdev"
+      ];
+      substituters = [
+        "https://jjant-nix.cachix.org"
+        "https://nix-community.cachix.org"
+      ];
+      trusted-public-keys = [
+        "jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4="
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+      ];
+      max-jobs = "auto";
+      cores = 0;
+      always-allow-substitutes = true;
+      builders-use-substitutes = true;
+      connect-timeout = 5;
+      auto-optimise-store = false;
+    };
+
+    # Automatic store maintenance via launchd jobs:
+    #  - gc: prune profile generations older than 30 days, then collect dead
+    #    store paths — daily at 03:15.
+    #  - optimise: deduplicate identical store files into hardlinks — weekly
+    #    (Sun 04:15 by default); the scheduled counterpart to
+    #    auto-optimise-store (kept off so builds aren't slowed inline).
+    gc = {
+      automatic = true;
+      interval = [{ Hour = 3; Minute = 15; }];
+      options = "--delete-older-than 30d";
+    };
+
+    optimise.automatic = true;
   };
 
   programs = {
@@ -105,6 +121,21 @@
       universalaccess.mouseDriverCursorSize = 1.75;
       trackpad.TrackpadRightClick = true;
       finder.QuitMenuItem = true;
+      NSGlobalDomain = {
+        # Repeat keys when held (e.g. j/k in Vim-style editors) instead of the
+        # accent-character popup. Takes effect per app on its next launch.
+        ApplePressAndHoldEnabled = false;
+        # Always show filename extensions. This is the global (-g) toggle that
+        # the Finder "Show all filename extensions" checkbox actually sets, so
+        # the com.apple.finder variant (finder.AppleShowAllExtensions) is
+        # redundant and we set only this one.
+        AppleShowAllExtensions = true;
+      };
+      controlcenter = {
+        BatteryShowPercentage = true;
+        Bluetooth = true;
+        Sound = true;
+      };
     };
   };
 
