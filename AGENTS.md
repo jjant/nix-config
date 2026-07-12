@@ -41,6 +41,9 @@ it feeds every configuration.
   (`feat`, `fix`, `refactor`, `chore`, …) to match existing history.
 - Never force-push or amend a commit that's already been pushed. Fix forward
   with a new commit; let GitHub squash on merge if you want a single commit.
+- After creating a PR, open it in the browser so the reviewer can look it over
+  and merge it on GitHub: run `open <pr-url>` on the URL `gh pr create` prints
+  (Linux desktops: `xdg-open`), or pass `-o` / `--web` to `gh pr create`.
 
 ## After a PR merges — clean up
 
