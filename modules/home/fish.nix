@@ -1,4 +1,5 @@
 { pkgs
+, lib
 , ...
 }: {
   home.packages = [ pkgs.zoxide ];
@@ -53,6 +54,18 @@
         bind \cf tmux-sessionizer
 
         abbr --add gcm --set-cursor="%" "git commit -m \"%\""
+      '' + lib.optionalString pkgs.stdenv.isLinux ''
+
+        # On the cloud desktop, drop straight into tmux on interactive SSH
+        # logins: attach to the most-recently-used session, or launch
+        # tmux-sessionizer (the fzf project picker) when no session exists yet.
+        # Cancelling the picker (Esc) drops you in a plain shell. Guarded so it
+        # never fires inside an existing tmux (avoids nesting), and only on
+        # interactive SSH shells -- so local consoles, scp/rsync, and
+        # `ssh host cmd` are left as a plain shell.
+        if status is-interactive; and set -q SSH_TTY; and not set -q TMUX
+            tmux attach 2>/dev/null; or tmux-sessionizer
+        end
       '';
 
       shellAbbrs = {
