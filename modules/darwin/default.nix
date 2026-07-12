@@ -145,11 +145,21 @@
         Sound = true;
       };
     };
-  };
 
-  # Never let the display sleep from inactivity. (It still turns off when the
-  # machine is locked manually.)
-  power.sleep.display = "never";
+    # Never let the display sleep or dim from inactivity, so the screen only
+    # turns off when I lock the Mac myself.
+    #
+    # nix-darwin has no native pmset option: `power.sleep.display` only shells
+    # out to `systemsetup -setDisplaySleep`, which on Apple Silicon writes just
+    # the AC profile (leaving the battery profile to sleep the display after a
+    # couple of minutes) and can't disable battery dimming at all. So instead of
+    # that half-working native option, extend nix-darwin's own `power` activation
+    # script with the two pmset calls that actually stick across both profiles.
+    activationScripts.power.text = lib.mkAfter ''
+      pmset -a displaysleep 0   # never sleep the display, on battery or AC
+      pmset -b lessbright 0     # don't dim the display on battery
+    '';
+  };
 
   security.pam.services.sudo_local.touchIdAuth = true;
 
