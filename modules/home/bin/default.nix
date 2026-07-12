@@ -105,8 +105,10 @@ in
       fake.external = [ "open" ];
     })
   ]
-  # Linux-only: on macOS this would shadow the real `open`.
+  # Linux-only packages, built into the cloud desktop closures but not macOS.
   ++ lib.optionals pkgs.stdenv.isLinux [
+    # On macOS `open` would shadow the real one; on the cloud desktop it hands
+    # files/URLs to the Mac over a reverse SSH tunnel.
     (writeShellApp {
       name = "open";
       inputs = with pkgs; [ coreutils gnutar zstd pv ];
@@ -116,6 +118,21 @@ in
       execer = [
         "cannot:${pkgs.gnutar}/bin/tar"
         "cannot:${pkgs.pv}/bin/pv"
+      ];
+    })
+
+    # Invoked only from fish's interactive-SSH-login guard, which is itself
+    # Linux-only, so there's no reason to build it on macOS.
+    (writeShellApp {
+      name = "tmux-attach-or-sessionize";
+      # tmux-sessionizer resolves to its store path (a real dependency); tmux
+      # is the only other external command.
+      inputs = [ pkgs.tmux tmux-sessionizer ];
+      # Both can exec in general (tmux run, sessionizer runs tmux/fd/fzf), but
+      # this script invokes them as plain commands, execing neither.
+      execer = [
+        "cannot:${pkgs.tmux}/bin/tmux"
+        "cannot:${tmux-sessionizer}/bin/tmux-sessionizer"
       ];
     })
   ];
