@@ -153,6 +153,13 @@
       flags = [ "--disable-up-arrow" ];
     };
 
+    # Owns `j` (was hand-rolled `zoxide init fish --cmd j` in fish.nix); the
+    # module generates the init with zoxide pinned to its store path.
+    zoxide = {
+      enable = true;
+      options = [ "--cmd" "j" ];
+    };
+
     gh = {
       enable = true;
       settings.git_protocol = "ssh";
