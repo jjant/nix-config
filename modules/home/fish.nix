@@ -37,8 +37,6 @@ in
         # Disable fish greeting
         set -g fish_greeting
 
-        # TODO: Should I use `function fish_user_key_bindings` for these bindings?
-
         # Ctrl-s: move cursor to edit command
         bind \cs beginning-of-line forward-bigword
 
