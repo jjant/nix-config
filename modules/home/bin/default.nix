@@ -1,7 +1,7 @@
 { pkgs, lib, ... }:
 let
   # Shared with fish.nix, which interpolates tmux-sessionizer's store path.
-  scripts = import ./packages.nix { inherit pkgs lib; };
+  scripts = import ./packages.nix { inherit pkgs; };
 in
 {
   home.packages =

@@ -6,7 +6,7 @@
 # from more than one place with the *same* derivations: `default.nix` installs
 # them into `home.packages`, and `fish.nix` interpolates `tmux-sessionizer`'s
 # store path into its keybinding + SSH-login snippet.
-{ pkgs, lib }:
+{ pkgs }:
 let
   # Wrap a sibling <name>.sh file as a resholve'd package. Extra args (inputs,
   # fake, execer, keep, ...) are passed straight through to resholve's
@@ -65,8 +65,7 @@ let
   };
 
   # Our reverse-tunnel `open` (installed on Linux only — see default.nix). Bound
-  # in the `let` so cr-open and brazil-open-package can pin their `open` calls
-  # to it on Linux.
+  # in the `let` so scripts that call `open` can pin it to this store path.
   open = writeShellApp {
     name = "open";
     inputs = with pkgs; [ coreutils gnutar zstd pv ];
@@ -79,23 +78,29 @@ let
     ];
   };
 
-  # `open` differs by platform: on Linux it's the package above, so pin it to
-  # its store path; on macOS it's the system binary, so leave it a PATH lookup.
-  openInputs = lib.optional pkgs.stdenv.isLinux open;
-  openExecer = lib.optional pkgs.stdenv.isLinux "cannot:${open}/bin/open";
-  openFake = lib.optional pkgs.stdenv.isDarwin "open";
+  # Fold platform-appropriate `open` handling into a script's resholve args:
+  # on Linux `open` is our package above, so pin it (input + execer); on macOS
+  # `open` is the system binary, so leave it a PATH lookup (fake). Call sites
+  # just wrap their args with this instead of threading it through by hand.
+  withOpen = args:
+    if pkgs.stdenv.isLinux then
+      args // {
+        inputs = (args.inputs or [ ]) ++ [ open ];
+        execer = (args.execer or [ ]) ++ [ "cannot:${open}/bin/open" ];
+      }
+    else
+      args // { fake.external = (args.fake.external or [ ]) ++ [ "open" ]; };
 in
 {
   inherit tmux-sessionizer open;
 
-  brazil-open-package = writeShellApp {
+  brazil-open-package = writeShellApp (withOpen {
     name = "brazil-open-package";
-    inputs = [ pkgs.coreutils ] ++ openInputs;
-    # `brazil-context` is the Amazon toolbox (not a Nix package). `open` is the
-    # system binary on macOS (faked) but our own package on Linux (pinned).
-    fake.external = [ "brazil-context" ] ++ openFake;
-    execer = openExecer;
-  };
+    inputs = [ pkgs.coreutils ];
+    # brazil-context is the Amazon toolbox (not a Nix package); withOpen adds
+    # the platform-appropriate `open` handling.
+    fake.external = [ "brazil-context" ];
+  });
 
   brazil-workspace-from-package = writeShellApp {
     name = "brazil-workspace-from-package";
@@ -121,12 +126,10 @@ in
     execer = [ "cannot:${pkgs.git}/bin/git" ];
   };
 
-  cr-open = writeShellApp {
+  cr-open = writeShellApp (withOpen {
     name = "cr-open";
-    inputs = with pkgs; [ git coreutils ] ++ openInputs;
-    execer = [ "cannot:${pkgs.git}/bin/git" ] ++ openExecer;
-    # `open` is the system binary on macOS (faked) but our own package on Linux
-    # (pinned via openInputs).
-    fake.external = openFake;
-  };
+    inputs = with pkgs; [ git coreutils ];
+    execer = [ "cannot:${pkgs.git}/bin/git" ];
+    # withOpen adds the platform-appropriate `open` handling.
+  });
 }
