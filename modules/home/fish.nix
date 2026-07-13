@@ -2,8 +2,6 @@
 , lib
 , ...
 }: {
-  home.packages = [ pkgs.zoxide ];
-
   # Fish completions for a few CLIs, installed into fish's autoload dir; each is
   # a no-op when its command isn't installed. brazil wraps the
   # `brazil-cmd-complete` helper (it ships bash/zsh completions only); toolbox
@@ -38,19 +36,8 @@
         # Ctrl-s: move cursor to edit command
         bind \cs beginning-of-line forward-bigword
 
-        # Disable default keybindings.
-        # See: https://github.com/ellie/atuin/blob/main/docs/key-binding.md#fish
-        # This could be simplified after https://github.com/ellie/atuin/issues/660
-        # is resolved
-        set -gx ATUIN_NOBIND "true"
-        atuin init fish | source
-
-        zoxide init fish --cmd j | source
-
-        # bind to ctrl-r in normal and insert mode, add any other bindings you want here too
-        bind \cr _atuin_search
-        bind -M insert \cr _atuin_search
-
+        # Ctrl-r (atuin) and `j` (zoxide) are wired up by their home-manager
+        # modules in default.nix, which pin their store paths for us.
         bind \cf tmux-sessionizer
 
         abbr --add gcm --set-cursor="%" "git commit -m \"%\""
