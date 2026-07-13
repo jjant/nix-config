@@ -6,7 +6,7 @@
 # from more than one place with the *same* derivations: `default.nix` installs
 # them into `home.packages`, and `fish.nix` interpolates `tmux-sessionizer`'s
 # store path into its keybinding + SSH-login snippet.
-{ pkgs }:
+{ pkgs, lib }:
 let
   # Wrap a sibling <name>.sh file as a resholve'd package. Extra args (inputs,
   # fake, execer, keep, ...) are passed straight through to resholve's
@@ -63,16 +63,38 @@ let
       "cannot:${pkgs.tmux}/bin/tmux"
     ];
   };
+
+  # Our reverse-tunnel `open` (installed on Linux only — see default.nix). Bound
+  # in the `let` so cr-open and brazil-open-package can pin their `open` calls
+  # to it on Linux.
+  open = writeShellApp {
+    name = "open";
+    inputs = with pkgs; [ coreutils gnutar zstd pv ];
+    # System ssh carries the user's ~/.ssh config + forwarded agent.
+    fake.external = [ "ssh" ];
+    # tar/pv can exec in general, but this script never uses them that way.
+    execer = [
+      "cannot:${pkgs.gnutar}/bin/tar"
+      "cannot:${pkgs.pv}/bin/pv"
+    ];
+  };
+
+  # `open` differs by platform: on Linux it's the package above, so pin it to
+  # its store path; on macOS it's the system binary, so leave it a PATH lookup.
+  openInputs = lib.optional pkgs.stdenv.isLinux open;
+  openExecer = lib.optional pkgs.stdenv.isLinux "cannot:${open}/bin/open";
+  openFake = lib.optional pkgs.stdenv.isDarwin "open";
 in
 {
-  inherit tmux-sessionizer;
+  inherit tmux-sessionizer open;
 
   brazil-open-package = writeShellApp {
     name = "brazil-open-package";
-    inputs = with pkgs; [ coreutils ];
-    # macOS `open` and the Amazon toolbox `brazil-context` aren't Nix
-    # packages; leave them as runtime PATH lookups.
-    fake.external = [ "open" "brazil-context" ];
+    inputs = [ pkgs.coreutils ] ++ openInputs;
+    # `brazil-context` is the Amazon toolbox (not a Nix package). `open` is the
+    # system binary on macOS (faked) but our own package on Linux (pinned).
+    fake.external = [ "brazil-context" ] ++ openFake;
+    execer = openExecer;
   };
 
   brazil-workspace-from-package = writeShellApp {
@@ -101,24 +123,10 @@ in
 
   cr-open = writeShellApp {
     name = "cr-open";
-    inputs = with pkgs; [ git coreutils ];
-    execer = [ "cannot:${pkgs.git}/bin/git" ];
-    # macOS `open` (and the Cloud Desktop shim of the same name) isn't a Nix
-    # package; leave it as a runtime PATH lookup.
-    fake.external = [ "open" ];
-  };
-
-  # Linux-only in practice (the consumer gates its install): on macOS this
-  # would shadow the real `open`.
-  open = writeShellApp {
-    name = "open";
-    inputs = with pkgs; [ coreutils gnutar zstd pv ];
-    # System ssh carries the user's ~/.ssh config + forwarded agent.
-    fake.external = [ "ssh" ];
-    # tar/pv can exec in general, but this script never uses them that way.
-    execer = [
-      "cannot:${pkgs.gnutar}/bin/tar"
-      "cannot:${pkgs.pv}/bin/pv"
-    ];
+    inputs = with pkgs; [ git coreutils ] ++ openInputs;
+    execer = [ "cannot:${pkgs.git}/bin/git" ] ++ openExecer;
+    # `open` is the system binary on macOS (faked) but our own package on Linux
+    # (pinned via openInputs).
+    fake.external = openFake;
   };
 }

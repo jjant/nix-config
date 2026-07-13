@@ -5,7 +5,7 @@
 let
   # Shared with bin/default.nix so tmux-sessionizer's exact store path can be
   # interpolated into the keybinding + SSH-login snippet below.
-  binScripts = import ./bin/packages.nix { inherit pkgs; };
+  binScripts = import ./bin/packages.nix { inherit pkgs lib; };
 in
 {
   # Fish completions for a few CLIs, installed into fish's autoload dir; each is
