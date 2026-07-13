@@ -1,9 +1,13 @@
 { pkgs
 , lib
 , ...
-}: {
-  home.packages = [ pkgs.zoxide ];
-
+}:
+let
+  # Shared with bin/default.nix so tmux-sessionizer's exact store path can be
+  # interpolated into the keybinding + SSH-login snippet below.
+  binScripts = import ./bin/packages.nix { inherit pkgs; };
+in
+{
   # Fish completions for a few CLIs, installed into fish's autoload dir; each is
   # a no-op when its command isn't installed. brazil wraps the
   # `brazil-cmd-complete` helper (it ships bash/zsh completions only); toolbox
@@ -38,20 +42,10 @@
         # Ctrl-s: move cursor to edit command
         bind \cs beginning-of-line forward-bigword
 
-        # Disable default keybindings.
-        # See: https://github.com/ellie/atuin/blob/main/docs/key-binding.md#fish
-        # This could be simplified after https://github.com/ellie/atuin/issues/660
-        # is resolved
-        set -gx ATUIN_NOBIND "true"
-        atuin init fish | source
-
-        zoxide init fish --cmd j | source
-
-        # bind to ctrl-r in normal and insert mode, add any other bindings you want here too
-        bind \cr _atuin_search
-        bind -M insert \cr _atuin_search
-
-        bind \cf tmux-sessionizer
+        # Ctrl-f: fuzzy project picker, pinned to its exact store path.
+        # (Ctrl-r/atuin and `j`/zoxide are set up by their home-manager modules
+        # in default.nix, which pin their own store paths.)
+        bind \cf ${binScripts.tmux-sessionizer}/bin/tmux-sessionizer
 
         abbr --add gcm --set-cursor="%" "git commit -m \"%\""
       '' + lib.optionalString pkgs.stdenv.isLinux ''
@@ -64,7 +58,7 @@
         # interactive SSH shells -- so local consoles, scp/rsync, and
         # `ssh host cmd` are left as a plain shell.
         if status is-interactive; and set -q SSH_TTY; and not set -q TMUX
-            tmux attach 2>/dev/null; or tmux-sessionizer
+            ${lib.getExe pkgs.tmux} attach 2>/dev/null; or ${binScripts.tmux-sessionizer}/bin/tmux-sessionizer
         end
       '';
 
