@@ -50,6 +50,22 @@ in
         abbr --add gcm --set-cursor="%" "git commit -m \"%\""
       '' + lib.optionalString pkgs.stdenv.isLinux ''
 
+        # Keep SSH agent forwarding working across reconnects and tmux panes.
+        # A forwarded agent socket ($SSH_AUTH_SOCK) is torn down when its SSH
+        # session ends, so reconnected sessions and pre-existing tmux panes end
+        # up pointing at a dead socket (git pushes and the `open` wrapper then
+        # fail with "Permission denied (publickey)"). Funnel every shell through
+        # one stable symlink and repoint it at this session's live socket:
+        # tmux's update-environment hands each new pane the current
+        # SSH_AUTH_SOCK, so the newest shell keeps the symlink live and every
+        # shell that uses it -- older panes included -- follows along.
+        set -l stable_ssh_sock "$HOME/.ssh/ssh-auth-sock"
+        if set -q SSH_AUTH_SOCK; and test "$SSH_AUTH_SOCK" != "$stable_ssh_sock"
+            rm -f "$stable_ssh_sock"
+            ln -sf "$SSH_AUTH_SOCK" "$stable_ssh_sock"
+            set -gx SSH_AUTH_SOCK "$stable_ssh_sock"
+        end
+
         # On the cloud desktop, drop straight into tmux on interactive SSH
         # logins: attach to the most-recently-used session, or launch
         # tmux-sessionizer (the fzf project picker) when no session exists yet.
