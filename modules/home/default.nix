@@ -88,6 +88,7 @@
       cargo-mutants
       cargo-nextest
       cargo-outdated
+      cargo-rdme
       cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
       cargo-zigbuild
       grcov
