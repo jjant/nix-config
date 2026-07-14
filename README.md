@@ -79,11 +79,16 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    NIX_FIRST_BUILD_UID="$(awk -F' ' '$1 == "SYS_UID_MIN" { print $2 }' /etc/login.defs)" \
    sh <(curl -L https://nixos.org/nix/install) --daemon
    ```
-2. Enable flakes:
+2. Trust yourself with the Nix daemon, so the jjant-nix cache (filled by CI)
+   is honored for you (skip on single-user installs — no daemon, user config
+   is always honored):
    ```bash
-   mkdir -p ~/.config/nix && echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
+   echo "trusted-users = $USER" | sudo tee -a /etc/nix/nix.conf
+   sudo systemctl restart nix-daemon
    ```
-3. Activate:
+3. Activate — flake flags are only needed for this first run (afterwards
+   home-manager owns `~/.config/nix/nix.conf`, which enables them). Answer `y`
+   to the substituter prompts to pull from the cache:
    ```bash
-   nix run github:jjant/nix-darwin#activate
+   nix --extra-experimental-features "nix-command flakes" run github:jjant/nix-darwin#activate
    ```

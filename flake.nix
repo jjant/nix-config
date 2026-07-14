@@ -1,6 +1,18 @@
 {
   description = "jjant's nix config";
 
+  # Lets `nix run github:jjant/nix-darwin#activate` on a fresh machine pull
+  # from the CI-filled cache. Only honored for trusted users (see README
+  # first-time setup); untrusted users get a warning and build locally.
+  # On configured machines the same settings live in nix.conf (system-wide
+  # via modules/darwin on the mac, per-user via modules/home on Linux).
+  nixConfig = {
+    extra-substituters = [ "https://jjant-nix.cachix.org" ];
+    extra-trusted-public-keys = [
+      "jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4="
+    ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
