@@ -41,6 +41,13 @@ Auto-detects Darwin vs AL2 vs AL2023 and applies the right config. Works for bot
 nix run .#update
 ```
 
+## Development
+
+```bash
+nix fmt            # format all Nix files (nixfmt, RFC 166 style)
+nix flake check    # lint + build every host buildable on this platform
+```
+
 ## First-time setup
 
 ### macOS

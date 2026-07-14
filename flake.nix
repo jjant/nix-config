@@ -57,6 +57,9 @@
     let
       inherit (nixpkgs) lib;
 
+      # Platforms this flake's hosts run on.
+      systems = [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ];
+
       vimPlugins =
         lib.mapAttrs'
           (name: value: {
@@ -101,8 +104,27 @@
 
       darwinPackages = self.darwinConfigurations.mac-m1.pkgs;
 
+      # `nix flake check` builds every host that can build on the current
+      # platform (same attrs CI builds), so it works as a single local gate.
+      checks = {
+        x86_64-linux = {
+          al2-x86_64 = self.homeConfigurations.al2-x86_64.activationPackage;
+          al2023-x86_64 = self.homeConfigurations.al2023-x86_64.activationPackage;
+        };
+        aarch64-linux = {
+          al2-aarch64 = self.homeConfigurations.al2-aarch64.activationPackage;
+        };
+        aarch64-darwin = {
+          mac-m1 = self.darwinConfigurations.mac-m1.system;
+        };
+      };
+
+      # `nix fmt` — official Nix formatting (RFC 166) via the treefmt wrapper,
+      # which handles tree-walking (plain nixfmt deprecated directory args).
+      formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
+
       # nix run .#activate — auto-detects host type and applies config
-      apps = lib.genAttrs [ "aarch64-darwin" "x86_64-linux" "aarch64-linux" ] (system:
+      apps = lib.genAttrs systems (system:
         let pkgs = import nixpkgs { inherit system; };
         in {
           activate = {
