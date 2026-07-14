@@ -14,6 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - uses: DeterminateSystems/nix-installer-action@v22
+      - run: nix fmt -- --ci # fail on unformatted files
       - run: nix run nixpkgs#statix -- check .
       - run: nix run nixpkgs#deadnix -- -f .
 
