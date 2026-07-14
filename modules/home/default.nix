@@ -120,7 +120,9 @@
     ];
 
     shellAliases = {
-      ls = "eza --binary --header --long --classify";
+      # eza >= 0.23 made --classify take an optional [WHEN]; the bare flag now
+      # eats the next arg (e.g. `ls ..` -> "invalid value '..'"), so pin it.
+      ls = "eza --binary --header --long --classify=always";
       la = "ls --all";
       lg = "la --grid";
     };
