@@ -13,7 +13,10 @@ in
   programs.delta = {
     enable = true;
     enableGitIntegration = true;
-    options = { navigate = true; syntax-theme = "Dracula"; };
+    options = {
+      navigate = true;
+      syntax-theme = "Dracula";
+    };
   };
 
   programs.git = {
@@ -23,8 +26,6 @@ in
       ${pkgs.ripsecrets}/bin/ripsecrets --strict-ignore
     '';
 
-
-
     # Use the Amazon identity inside Brazil workspaces. The workspace root
     # differs by platform: /Volumes/workplace on macOS, ~/workplace on the
     # Linux cloud desktops.
@@ -33,7 +34,8 @@ in
         condition = "gitdir:/Volumes/workplace/";
         contents = amazonGitConfigOverride;
       }
-    ] ++ lib.optionals pkgs.stdenv.isLinux [
+    ]
+    ++ lib.optionals pkgs.stdenv.isLinux [
       {
         condition = "gitdir:~/workplace/";
         contents = amazonGitConfigOverride;

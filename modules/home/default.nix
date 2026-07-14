@@ -49,76 +49,78 @@
       ".jdks/25".source = pkgs.jdk25.home;
     };
 
-    packages = with pkgs; [
-      ripgrep
-      fd
-      jq
-      yq
-      tree
-      dust # intuitive `du`: disk usage per directory
-      rustup
-      tokei
-      nodejs_24
-      ruby
-      jdk25 # Java: latest LTS (Azul Zulu build from nixpkgs)
-      uv
-      mosquitto
-      cmake
-      duckdb
-      hyperfine
-      postgresql_17
-      railway
-      pnpm
-      tsx
-      mprocs
+    packages =
+      with pkgs;
+      [
+        ripgrep
+        fd
+        jq
+        yq
+        tree
+        dust # intuitive `du`: disk usage per directory
+        rustup
+        tokei
+        nodejs_24
+        ruby
+        jdk25 # Java: latest LTS (Azul Zulu build from nixpkgs)
+        uv
+        mosquitto
+        cmake
+        duckdb
+        hyperfine
+        postgresql_17
+        railway
+        pnpm
+        tsx
+        mprocs
 
-      # Rust watcher/linter
-      bacon
+        # Rust watcher/linter
+        bacon
 
-      # Rust dev tooling (migrated from `cargo install`)
-      cargo-audit
-      cargo-binstall
-      cargo-bloat
-      cargo-cache
-      cargo-deny
-      cargo-expand
-      cargo-fuzz
-      cargo-insta
-      cargo-llvm-cov
-      cargo-mutants
-      cargo-nextest
-      cargo-outdated
-      cargo-rdme
-      cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
-      cargo-zigbuild
-      grcov
-      inferno # flamegraph backend; rarely used standalone
-      wasm-pack
+        # Rust dev tooling (migrated from `cargo install`)
+        cargo-audit
+        cargo-binstall
+        cargo-bloat
+        cargo-cache
+        cargo-deny
+        cargo-expand
+        cargo-fuzz
+        cargo-insta
+        cargo-llvm-cov
+        cargo-mutants
+        cargo-nextest
+        cargo-outdated
+        cargo-rdme
+        cargo-tarpaulin # redundant with cargo-llvm-cov; candidate to drop
+        cargo-zigbuild
+        grcov
+        inferno # flamegraph backend; rarely used standalone
+        wasm-pack
 
-      # Pretty markdown in the terminal
-      glow
-      # Pretty logs
-      tailspin
-      # Data utilities
-      xan
+        # Pretty markdown in the terminal
+        glow
+        # Pretty logs
+        tailspin
+        # Data utilities
+        xan
 
-      awscli2
+        awscli2
 
-      shellcheck
+        shellcheck
 
-      # LSPs
-      bash-language-server
-      typescript-language-server
-      taplo
+        # LSPs
+        bash-language-server
+        typescript-language-server
+        taplo
 
-      # Dot, etc.
-      graphviz
-    ]
-    # Docker tooling only on the Linux cloud desktops (mac uses Docker Desktop).
-    ++ lib.optionals pkgs.stdenv.isLinux [
-      docker
-      docker-compose
-    ];
+        # Dot, etc.
+        graphviz
+      ]
+      # Docker tooling only on the Linux cloud desktops (mac uses Docker Desktop).
+      ++ lib.optionals pkgs.stdenv.isLinux [
+        docker
+        docker-compose
+      ];
 
     shellAliases = {
       ls = "eza --binary --header --long --classify=auto";
@@ -158,7 +160,10 @@
     # module generates the init with zoxide pinned to its store path.
     zoxide = {
       enable = true;
-      options = [ "--cmd" "j" ];
+      options = [
+        "--cmd"
+        "j"
+      ];
     };
 
     gh = {

@@ -12,9 +12,16 @@ let
   # fake, execer, keep, ...) are passed straight through to resholve's
   # "solution".
   writeShellApp =
-    { name, src ? (./. + "/${name}.sh"), ... }@args:
+    {
+      name,
+      src ? (./. + "/${name}.sh"),
+      ...
+    }@args:
     let
-      extraSolution = builtins.removeAttrs args [ "name" "src" ];
+      extraSolution = builtins.removeAttrs args [
+        "name"
+        "src"
+      ];
     in
     pkgs.resholve.mkDerivation {
       pname = name;
@@ -45,7 +52,8 @@ let
       solutions.default = {
         interpreter = "${pkgs.bash}/bin/bash";
         scripts = [ "bin/${name}" ];
-      } // extraSolution;
+      }
+      // extraSolution;
     };
 
   # Bound in the `let` (not just an attr) because siblings reference it:
@@ -54,7 +62,12 @@ let
   # to the exact same derivation rather than a bare PATH lookup.
   tmux-sessionizer = writeShellApp {
     name = "tmux-sessionizer";
-    inputs = with pkgs; [ fd fzf tmux coreutils ];
+    inputs = with pkgs; [
+      fd
+      fzf
+      tmux
+      coreutils
+    ];
     # These can exec arguments in general (fd -x, fzf --bind, tmux run), but
     # this script never uses them that way, so assert they don't here.
     execer = [
@@ -68,7 +81,12 @@ let
   # in the `let` so scripts that call `open` can pin it to this store path.
   open = writeShellApp {
     name = "open";
-    inputs = with pkgs; [ coreutils gnutar zstd pv ];
+    inputs = with pkgs; [
+      coreutils
+      gnutar
+      zstd
+      pv
+    ];
     # System ssh carries the user's ~/.ssh config + forwarded agent.
     fake.external = [ "ssh" ];
     # tar/pv can exec in general, but this script never uses them that way.
@@ -82,9 +100,11 @@ let
   # on Linux `open` is our package above, so pin it (input + execer); on macOS
   # `open` is the system binary, so leave it a PATH lookup (fake). Call sites
   # just wrap their args with this instead of threading it through by hand.
-  withOpen = args:
+  withOpen =
+    args:
     if pkgs.stdenv.isLinux then
-      args // {
+      args
+      // {
         inputs = (args.inputs or [ ]) ++ [ open ];
         execer = (args.execer or [ ]) ++ [ "cannot:${open}/bin/open" ];
       }
@@ -106,7 +126,10 @@ in
     name = "brazil-workspace-from-package";
     # tmux-sessionizer is resolved to its store path (a real dependency), so
     # only `brazil` (the Amazon toolbox) stays a runtime PATH lookup.
-    inputs = [ pkgs.coreutils tmux-sessionizer ];
+    inputs = [
+      pkgs.coreutils
+      tmux-sessionizer
+    ];
     fake.external = [ "brazil" ];
     # tmux-sessionizer can exec (it runs tmux/fd/fzf internally), but we only
     # hand it a directory, so assert this invocation does not exec its arg.
@@ -122,13 +145,19 @@ in
 
   pnew = writeShellApp {
     name = "pnew";
-    inputs = with pkgs; [ git coreutils ];
+    inputs = with pkgs; [
+      git
+      coreutils
+    ];
     execer = [ "cannot:${pkgs.git}/bin/git" ];
   };
 
   cr-open = writeShellApp (withOpen {
     name = "cr-open";
-    inputs = with pkgs; [ git coreutils ];
+    inputs = with pkgs; [
+      git
+      coreutils
+    ];
     execer = [ "cannot:${pkgs.git}/bin/git" ];
     # withOpen adds the platform-appropriate `open` handling.
   });

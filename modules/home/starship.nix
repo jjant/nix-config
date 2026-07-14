@@ -4,7 +4,9 @@ _: {
     enableFishIntegration = true;
     settings = {
       add_newline = false;
-      line_break = { disabled = true; };
+      line_break = {
+        disabled = true;
+      };
       aws.disabled = true;
       hostname.disabled = true;
       username.disabled = true;

@@ -1,8 +1,10 @@
-{ pkgs
-, config
-, lib
-, ...
-}: {
+{
+  pkgs,
+  config,
+  lib,
+  ...
+}:
+{
   imports = [
     ./skhd.nix
     ./yabai.nix
@@ -70,7 +72,12 @@
     #    auto-optimise-store (kept off so builds aren't slowed inline).
     gc = {
       automatic = true;
-      interval = [{ Hour = 3; Minute = 15; }];
+      interval = [
+        {
+          Hour = 3;
+          Minute = 15;
+        }
+      ];
       options = "--delete-older-than 30d";
     };
 
@@ -87,7 +94,9 @@
           makeBinPathList = map (path: path + "/bin");
         in
         ''
-          fish_add_path --move --prepend --path ${lib.concatMapStringsSep " " dquote (makeBinPathList config.environment.profiles)}
+          fish_add_path --move --prepend --path ${
+            lib.concatMapStringsSep " " dquote (makeBinPathList config.environment.profiles)
+          }
           set fish_user_paths $fish_user_paths
 
           # The Nix installer's default profile ships its own (frozen) nix and
@@ -191,17 +200,50 @@
     ];
 
     casks = [
-      { name = "lunar"; greedy = true; }
-      { name = "raycast"; greedy = true; }
-      { name = "1password"; greedy = true; }
-      { name = "1password-cli"; greedy = true; }
-      { name = "signal"; greedy = true; }
-      { name = "docker-desktop"; greedy = true; }
-      { name = "font-sf-mono-nerd-font"; greedy = true; }
-      { name = "graphiql"; greedy = true; }
-      { name = "wireshark-app"; greedy = true; }
-      { name = "postman"; greedy = true; }
-      { name = "steam"; greedy = true; }
+      {
+        name = "lunar";
+        greedy = true;
+      }
+      {
+        name = "raycast";
+        greedy = true;
+      }
+      {
+        name = "1password";
+        greedy = true;
+      }
+      {
+        name = "1password-cli";
+        greedy = true;
+      }
+      {
+        name = "signal";
+        greedy = true;
+      }
+      {
+        name = "docker-desktop";
+        greedy = true;
+      }
+      {
+        name = "font-sf-mono-nerd-font";
+        greedy = true;
+      }
+      {
+        name = "graphiql";
+        greedy = true;
+      }
+      {
+        name = "wireshark-app";
+        greedy = true;
+      }
+      {
+        name = "postman";
+        greedy = true;
+      }
+      {
+        name = "steam";
+        greedy = true;
+      }
     ];
   };
 }

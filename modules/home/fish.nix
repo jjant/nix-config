@@ -1,6 +1,7 @@
-{ pkgs
-, lib
-, ...
+{
+  pkgs,
+  lib,
+  ...
 }:
 let
   # Shared with bin/default.nix so tmux-sessionizer's exact store path can be
@@ -46,7 +47,8 @@ in
         bind \cf ${binScripts.tmux-sessionizer}/bin/tmux-sessionizer
 
         abbr --add gcm --set-cursor="%" "git commit -m \"%\""
-      '' + lib.optionalString pkgs.stdenv.isLinux ''
+      ''
+      + lib.optionalString pkgs.stdenv.isLinux ''
 
         # Keep SSH agent forwarding working across reconnects and tmux panes.
         # A forwarded agent socket ($SSH_AUTH_SOCK) is torn down when its SSH
@@ -151,12 +153,12 @@ in
         brazil-try-again = {
           description = "Amend the commit and run a dry run";
           body = ''
-          if brazil-context workspace root > /dev/null 2>&1
-            git add . && git commit --amend --no-edit && brazil workspace dryrun 2>&1 | tee /tmp/out && open -u (grep -Eo 'https?://[^ ]+' /tmp/out | tail -n1)
-          else
-            echo "Directory isn't within a workspace"
-            return 1
-          end
+            if brazil-context workspace root > /dev/null 2>&1
+              git add . && git commit --amend --no-edit && brazil workspace dryrun 2>&1 | tee /tmp/out && open -u (grep -Eo 'https?://[^ ]+' /tmp/out | tail -n1)
+            else
+              echo "Directory isn't within a workspace"
+              return 1
+            end
           '';
         };
         go-to-smithy-rs-latest-tmp = {
