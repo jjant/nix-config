@@ -121,7 +121,7 @@
     ];
 
     shellAliases = {
-      ls = "eza --binary --header --long --classify";
+      ls = "eza --binary --header --long --classify=auto";
       la = "ls --all";
       lg = "la --grid";
     };
