@@ -18,19 +18,27 @@ jobs:
       - run: nix run nixpkgs#deadnix -- -f .
 
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
+        # Every host is *built* (not just eval'd) on a runner of its native
+        # platform, so the resulting closures get pushed to cachix and
+        # `nix run .#activate` on the real machines is a cache pull instead
+        # of a local build.
         include:
           - name: mac-m1
-            cmd: nix eval .#darwinConfigurations.mac-m1.system
+            os: macos-15 # aarch64-darwin
+            cmd: nix build .#darwinConfigurations.mac-m1.system
           - name: al2-x86_64
+            os: ubuntu-latest
             cmd: nix build .#homeConfigurations.al2-x86_64.activationPackage
           - name: al2023-x86_64
+            os: ubuntu-latest
             cmd: nix build .#homeConfigurations.al2023-x86_64.activationPackage
           - name: al2-aarch64
-            cmd: nix eval .#homeConfigurations.al2-aarch64.activationPackage
+            os: ubuntu-24.04-arm # aarch64-linux
+            cmd: nix build .#homeConfigurations.al2-aarch64.activationPackage
     name: build (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v7

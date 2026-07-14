@@ -23,14 +23,16 @@ across several assignments (e.g. `system.foo = ...;` next to a separate
 ### 2. Build the host config(s) you touched
 
 Use the exact command CI uses for each host (from the build matrix in
-`ci.yml`):
+`ci.yml`). CI runs each on a native-platform runner; locally you can only
+*build* hosts matching your platform — for the others, `nix eval` the same
+attribute to at least catch evaluation errors:
 
 | Host           | Command                                                        |
 | -------------- | -------------------------------------------------------------- |
-| mac-m1 (Darwin)| `nix eval .#darwinConfigurations.mac-m1.system`                |
+| mac-m1 (Darwin)| `nix build .#darwinConfigurations.mac-m1.system`               |
 | al2-x86_64     | `nix build .#homeConfigurations.al2-x86_64.activationPackage`  |
 | al2023-x86_64  | `nix build .#homeConfigurations.al2023-x86_64.activationPackage` |
-| al2-aarch64    | `nix eval .#homeConfigurations.al2-aarch64.activationPackage`   |
+| al2-aarch64    | `nix build .#homeConfigurations.al2-aarch64.activationPackage`   |
 
 If you changed a shared module under `modules/home/`, evaluate **all** hosts —
 it feeds every configuration.
