@@ -13,17 +13,17 @@ Nix configurations for all my hosts.
 
 ```
 .
-├── flake.nix
-├── hosts/              # Per-host entry points
-│   ├── mac-m1.nix
-│   ├── al2-x86_64.nix
-│   ├── al2-aarch64.nix
-│   └── al2023-x86_64.nix
+├── flake.nix           # Inputs, Linux hosts (mkHome), apps
+├── hosts/
+│   └── mac-m1.nix      # Darwin host entry point
 └── modules/
     ├── home/           # Shared home-manager modules (all hosts)
     │   ├── fish.nix, git.nix, neovim/, tmux/, starship.nix, bin/
     └── darwin/         # macOS-only (system defaults, homebrew, skhd, yabai)
 ```
+
+The Linux cloud desktops are generated in `flake.nix` by a small `mkHome`
+helper — they only differ in platform and prompt tag.
 
 ## Usage
 

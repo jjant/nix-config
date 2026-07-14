@@ -61,18 +61,38 @@
           })
           (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) inputs);
 
-      commonArgs = { inherit self nixpkgs home-manager vimPlugins; };
+      # A Linux cloud desktop. The hosts only differ in platform and prompt
+      # tag; everything else lives in ../modules/home.
+      mkHome = alias: system:
+        home-manager.lib.homeManagerConfiguration {
+          pkgs = import nixpkgs {
+            inherit system;
+            config.allowUnfree = true;
+          };
+          extraSpecialArgs = { inherit vimPlugins; };
+          modules = [
+            ./modules/home
+            {
+              home = {
+                username = "jjantdev";
+                homeDirectory = "/home/jjantdev";
+                stateVersion = "23.11";
+                sessionVariables.STARSHIP_HOST_ALIAS = alias;
+              };
+            }
+          ];
+        };
     in
     {
-      darwinConfigurations.mac-m1 = import ./hosts/mac-m1.nix (commonArgs // {
-        inherit nix-darwin nix-homebrew;
+      darwinConfigurations.mac-m1 = import ./hosts/mac-m1.nix {
+        inherit self nixpkgs home-manager vimPlugins nix-darwin nix-homebrew;
         inherit (inputs) nix-vscode-extensions mac-app-util;
-      });
+      };
 
-      homeConfigurations = {
-        al2-x86_64 = import ./hosts/al2-x86_64.nix commonArgs;
-        al2-aarch64 = import ./hosts/al2-aarch64.nix commonArgs;
-        al2023-x86_64 = import ./hosts/al2023-x86_64.nix commonArgs;
+      homeConfigurations = lib.mapAttrs mkHome {
+        al2-x86_64 = "x86_64-linux";
+        al2-aarch64 = "aarch64-linux";
+        al2023-x86_64 = "x86_64-linux";
       };
 
       darwinPackages = self.darwinConfigurations.mac-m1.pkgs;
