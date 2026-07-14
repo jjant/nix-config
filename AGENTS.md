@@ -9,12 +9,16 @@ CI (`.github/workflows/ci.yml`) gates every push and PR with a **lint** job and
 a per-host **build** matrix. Run the same checks locally *before* pushing so you
 never raise a PR with a red check.
 
-### 1. Lint — always run both, both must exit 0
+### 1. Format & lint — all must exit 0
 
 ```bash
+nix fmt                             # nixfmt (RFC 166) via treefmt — formats in place
 nix run nixpkgs#statix -- check .   # anti-patterns (e.g. repeated attrset keys)
 nix run nixpkgs#deadnix -- -f .     # dead / unused Nix code
 ```
+
+CI runs `nix fmt -- --ci` and fails on unformatted files, so always commit
+the formatter's changes.
 
 Note: `statix` flags **repeated top-level keys**. Don't split one attribute
 across several assignments (e.g. `system.foo = ...;` next to a separate
@@ -22,17 +26,24 @@ across several assignments (e.g. `system.foo = ...;` next to a separate
 
 ### 2. Build the host config(s) you touched
 
-Use the exact command CI uses for each host (from the build matrix in
-`ci.yml`). CI runs each on a native-platform runner; locally you can only
-*build* hosts matching your platform — for the others, `nix eval` the same
-attribute to at least catch evaluation errors:
+```bash
+nix flake check    # builds every host buildable on this platform (same attrs CI builds)
+```
 
-| Host           | Command                                                        |
-| -------------- | -------------------------------------------------------------- |
-| mac-m1 (Darwin)| `nix build .#darwinConfigurations.mac-m1.system`               |
-| al2-x86_64     | `nix build .#homeConfigurations.al2-x86_64.activationPackage`  |
-| al2023-x86_64  | `nix build .#homeConfigurations.al2023-x86_64.activationPackage` |
-| al2-aarch64    | `nix build .#homeConfigurations.al2-aarch64.activationPackage`   |
+CI builds each host on a native-platform runner (see the matrix in `ci.yml`);
+locally, `nix flake check` covers the hosts matching your platform. For the
+other platforms' hosts, `nix eval` the attribute's `.drvPath` to at least
+catch evaluation errors:
+
+| Host           | Attribute                                              |
+| -------------- | ------------------------------------------------------ |
+| mac-m1 (Darwin)| `.#darwinConfigurations.mac-m1.system`                 |
+| al2-x86_64     | `.#homeConfigurations.al2-x86_64.activationPackage`    |
+| al2023-x86_64  | `.#homeConfigurations.al2023-x86_64.activationPackage` |
+| al2-aarch64    | `.#homeConfigurations.al2-aarch64.activationPackage`   |
+
+(e.g. `nix eval --raw .#darwinConfigurations.mac-m1.system.drvPath` works
+from Linux.)
 
 If you changed a shared module under `modules/home/`, evaluate **all** hosts —
 it feeds every configuration.
