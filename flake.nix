@@ -14,6 +14,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # NB: no `follows` — nix-homebrew declares no nixpkgs input.
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
     # Full VS Code marketplace (+ Open VSX) as a nixpkgs overlay:
@@ -24,7 +25,10 @@
     };
 
     # Trampolines so nix-store GUI apps show up in Spotlight/Dock.
-    mac-app-util.url = "github:hraban/mac-app-util";
+    mac-app-util = {
+      url = "github:hraban/mac-app-util";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     "vim-plugin:LunarVim/darkplus.nvim" = {
       url = "github:LunarVim/darkplus.nvim";
