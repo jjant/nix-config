@@ -11,12 +11,12 @@ let
   #   the dev desks auth goes through the wssh ProxyCommand anyway.
   darwinOnlyOptions = lib.optionalString pkgs.stdenv.isDarwin ''
 
-      # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
-      # The client already prefers PQ KEX; this fires when the server lacks it
-      # (e.g. internal git/dev-desktop servers). Only mutes the PQ-KEX warning,
-      # not other weak-crypto warnings. Real fix is server-side.
-      WarnWeakCrypto no-pq-kex
-      IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
+    # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
+    # The client already prefers PQ KEX; this fires when the server lacks it
+    # (e.g. internal git/dev-desktop servers). Only mutes the PQ-KEX warning,
+    # not other weak-crypto warnings. Real fix is server-side.
+    WarnWeakCrypto no-pq-kex
+    IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
 
   # Dev desktop aliases -> full internal hostnames.
   hosts = {
@@ -41,9 +41,9 @@ let
       ProxyCommand /usr/local/bin/wssh proxy %h
       ForwardAgent yes${lib.optionalString pkgs.stdenv.isDarwin ''
 
-      # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
-      # Linux `open` wrapper hand files back to the Mac's native `open`.
-      RemoteForward 2022 localhost:22''}
+        # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
+        # Linux `open` wrapper hand files back to the Mac's native `open`.
+        RemoteForward 2022 localhost:22''}
       ServerAliveInterval 15
       ServerAliveCountMax 44
   '';

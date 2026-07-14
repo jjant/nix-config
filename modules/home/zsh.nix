@@ -1,4 +1,10 @@
-{ pkgs, lib, config, ... }: {
+{
+  pkgs,
+  lib,
+  config,
+  ...
+}:
+{
   # Only manage zsh on the Linux cloud desktops.
   #
   # On macOS the login shell is already fish (via `chsh`) and `~/.zshrc` is

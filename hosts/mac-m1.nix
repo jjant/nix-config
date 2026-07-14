@@ -1,5 +1,14 @@
 # Mac host (darwin + home-manager)
-{ self, nixpkgs, nix-darwin, nix-homebrew, home-manager, vimPlugins, nix-vscode-extensions, mac-app-util }:
+{
+  self,
+  nixpkgs,
+  nix-darwin,
+  nix-homebrew,
+  home-manager,
+  vimPlugins,
+  nix-vscode-extensions,
+  mac-app-util,
+}:
 nix-darwin.lib.darwinSystem {
   system = "aarch64-darwin";
   pkgs = import nixpkgs {
@@ -10,7 +19,10 @@ nix-darwin.lib.darwinSystem {
   };
   modules = [
     { system.configurationRevision = self.rev or self.dirtyRev or null; }
-    { nix.registry.nixpkgs.flake = nixpkgs; nix.registry.p.flake = nixpkgs; }
+    {
+      nix.registry.nixpkgs.flake = nixpkgs;
+      nix.registry.p.flake = nixpkgs;
+    }
     ../modules/darwin
     # Trampolines so nix-store GUI apps (VSCode, Alacritty, ...) are indexed by
     # Spotlight and appear in the Dock.
@@ -62,11 +74,10 @@ nix-darwin.lib.darwinSystem {
               # on). Write the full XML entry (enabled=false + the standard
               # Cmd-Space value) and reload settings so it applies without a
               # re-login.
-              home.activation.disableSpotlightHotkey =
-                lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-                  $DRY_RUN_CMD /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 '<dict><key>enabled</key><false/><key>value</key><dict><key>type</key><string>standard</string><key>parameters</key><array><integer>32</integer><integer>49</integer><integer>1048576</integer></array></dict></dict>'
-                  $DRY_RUN_CMD /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u || true
-                '';
+              home.activation.disableSpotlightHotkey = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+                $DRY_RUN_CMD /usr/bin/defaults write com.apple.symbolichotkeys AppleSymbolicHotKeys -dict-add 64 '<dict><key>enabled</key><false/><key>value</key><dict><key>type</key><string>standard</string><key>parameters</key><array><integer>32</integer><integer>49</integer><integer>1048576</integer></array></dict></dict>'
+                $DRY_RUN_CMD /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u || true
+              '';
             })
           ];
         };

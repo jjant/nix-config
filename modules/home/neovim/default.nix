@@ -1,12 +1,17 @@
-{ lib, pkgs, vimPlugins, ... }:
+{
+  lib,
+  pkgs,
+  vimPlugins,
+  ...
+}:
 let
-  extraVimPlugins = lib.mapAttrsToList
-    (name: value:
-      pkgs.vimUtils.buildVimPlugin {
-        inherit name;
-        src = value;
-      })
-    vimPlugins;
+  extraVimPlugins = lib.mapAttrsToList (
+    name: value:
+    pkgs.vimUtils.buildVimPlugin {
+      inherit name;
+      src = value;
+    }
+  ) vimPlugins;
 in
 {
   home = {
@@ -28,7 +33,8 @@ in
       enable = true;
       withRuby = false;
       withPython3 = false;
-      plugins = with pkgs.vimPlugins;
+      plugins =
+        with pkgs.vimPlugins;
         [
           quick-scope
           lualine-nvim
@@ -60,7 +66,8 @@ in
           gitsigns-nvim
           comment-nvim
           rustaceanvim
-        ] ++ extraVimPlugins;
+        ]
+        ++ extraVimPlugins;
     };
   };
 
