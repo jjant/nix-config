@@ -114,6 +114,16 @@ in
 {
   inherit tmux-sessionizer open;
 
+  # Compatibility shim: tools and agents on the dev desks reach for
+  # `xdg-open`, which doesn't exist on these headless hosts; route them to
+  # `open` above (Linux-only install — see default.nix).
+  xdg-open = writeShellApp {
+    name = "xdg-open";
+    inputs = [ open ];
+    # `open` doesn't exec its arguments — same assertion withOpen makes.
+    execer = [ "cannot:${open}/bin/open" ];
+  };
+
   brazil-open-package = writeShellApp (withOpen {
     name = "brazil-open-package";
     inputs = [ pkgs.coreutils ];

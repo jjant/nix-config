@@ -13,6 +13,10 @@ in
       pnew
       cr-open
     ])
-    # Linux-only: on macOS `open` would shadow the real one.
-    ++ lib.optionals pkgs.stdenv.isLinux [ scripts.open ];
+    # Linux-only: on macOS `open` would shadow the real one, and xdg-open's
+    # callers don't exist there.
+    ++ lib.optionals pkgs.stdenv.isLinux [
+      scripts.open
+      scripts.xdg-open
+    ];
 }
