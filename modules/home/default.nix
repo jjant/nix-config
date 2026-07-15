@@ -18,6 +18,16 @@
   xdg.configFile = lib.mkIf pkgs.stdenv.isLinux {
     "docker/cli-plugins/docker-compose".source =
       "${pkgs.docker-compose}/libexec/docker/cli-plugins/docker-compose";
+
+    # Nix client config (macOS gets all of this system-wide via nix-darwin's
+    # nix.settings in modules/darwin instead). The substituter/key are only
+    # honored because /etc/nix/nix.conf marks us a trusted user — a one-time
+    # step in the README's first-time setup.
+    "nix/nix.conf".text = ''
+      experimental-features = nix-command flakes
+      extra-substituters = https://jjant-nix.cachix.org
+      extra-trusted-public-keys = jjant-nix.cachix.org-1:g3Dup2VOxdS2kNwIxoQ7JVl0W/mhrTHv7jvFHOYAFd4=
+    '';
   };
 
   home = {
