@@ -171,7 +171,10 @@
       config = ''
         #command
         s    noaction
-        \es  toggle-option -log-file
+        # Same action as the stock `s` binding (`toggle-option o`). The long
+        # spelling (`toggle-option -log-file`) would leave less's option
+        # prompt waiting for an extra Enter before asking for the file name.
+        \es  toggle-option o
       '';
     };
 
