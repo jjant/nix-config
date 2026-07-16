@@ -161,6 +161,23 @@
     };
     eza.enable = true;
 
+    # Delta (and man, etc.) page through less, where bare `s` prompts to save
+    # the piped input to a file ("log file:") — too easy to hit accidentally.
+    # Disable it and keep the feature on a deliberate ESC-s instead. Enabling
+    # the module also installs a modern less: macOS ships 581, which predates
+    # support for reading this lesskey source file (added in less 590).
+    less = {
+      enable = true;
+      config = ''
+        #command
+        s    noaction
+        # Same action as the stock `s` binding (`toggle-option o`). The long
+        # spelling (`toggle-option -log-file`) would leave less's option
+        # prompt waiting for an extra Enter before asking for the file name.
+        \es  toggle-option o
+      '';
+    };
+
     atuin = {
       enable = true;
       flags = [ "--disable-up-arrow" ];
