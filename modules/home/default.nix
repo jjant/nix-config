@@ -68,6 +68,7 @@
         yq
         tree
         dust # intuitive `du`: disk usage per directory
+        btop # resource monitor: prettier, more interactive `top`
         rustup
         tokei
         nodejs_24
