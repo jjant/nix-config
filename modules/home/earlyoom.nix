@@ -44,9 +44,13 @@
       #   and retries (kill.c) — without this flag it can fixate on a
       #   root-owned hog (falcon-sensor is routinely the single largest
       #   process on the CDs) and never kill anything.
+      # -r 3600: memory report once an hour instead of the default every
+      #   second (~86k journal lines/day). Kills are always logged
+      #   regardless of the report interval.
       ExecStart = ''
         ${pkgs.earlyoom}/bin/earlyoom \
           -m 4,2 \
+          -r 3600 \
           --ignore-root-user \
           --avoid '^(tmux.*|sshd|fish|nvim|systemd.*)$' \
           --prefer '^(kiro-cli.*|bun|node)$'
