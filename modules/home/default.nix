@@ -8,6 +8,7 @@
     ./neovim
     ./tmux
     ./bin
+    ./earlyoom.nix
   ];
 
   xdg.enable = true;
