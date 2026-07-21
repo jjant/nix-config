@@ -30,6 +30,14 @@
           "al2-aarch64" = "linux";
           "al2023-x86_64" = "linux";
         };
+        # Never prompt for Workspace Trust. Folders opened from the cloud
+        # desks over Remote-SSH (the `code` flow above) would otherwise ask
+        # on every new folder, and VS Code can't scope this per remote:
+        # security.workspace.trust.enabled is application-scoped (ignored in
+        # remote/workspace settings) and the trusted-folder list lives in
+        # VS Code's internal state DB, not settings.json. Everything opened
+        # on this Mac is our own code, so trust it all.
+        "security.workspace.trust.enabled" = false;
         "workbench.colorTheme" = "Dracula Theme";
       };
 
