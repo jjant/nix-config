@@ -22,6 +22,14 @@
         "editor.fontFamily" = "'SFMono Nerd Font', Menlo, monospace";
         "editor.fontSize" = 14;
         "files.trimTrailingWhitespace" = true;
+        # Skip Remote-SSH's "what OS is this host?" prompt for the dev-desk
+        # aliases (modules/home/ssh.nix) that the desks' `code` command
+        # (modules/home/bin/code.sh) attaches back to.
+        "remote.SSH.remotePlatform" = {
+          "al2-x86_64" = "linux";
+          "al2-aarch64" = "linux";
+          "al2023-x86_64" = "linux";
+        };
         "workbench.colorTheme" = "Dracula Theme";
       };
 
@@ -32,6 +40,11 @@
 
         # Nix (nix-ide supersedes bbenoist.nix + nixfmt-vscode)
         jnoortheen.nix-ide
+
+        # Remote-SSH: edit on the cloud desks from this Mac. Also what the
+        # desks' `code` command drives (modules/home/bin/code.sh -> the
+        # mac-open-recv `code` mode -> vscode-remote:// URIs).
+        ms-vscode-remote.remote-ssh
 
         # Rust
         rust-lang.rust-analyzer

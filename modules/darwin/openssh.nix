@@ -1,7 +1,9 @@
 # Apple's built-in OpenSSH server (macOS "Remote Login"), enabled declaratively
 # so a Cloud Desktop can reach this Mac back over the reverse tunnel
 # (modules/home/ssh.nix: `RemoteForward 2022 localhost:22`) and invoke the Mac's
-# native `open` (modules/home/bin/open.sh) via a locked-down forced command.
+# native `open` (modules/home/bin/open.sh) or open VS Code attached back to the
+# desk over Remote-SSH (modules/home/bin/code.sh), via a locked-down forced
+# command.
 #
 # Policy: enabling Remote Login on a managed Mac is officially sanctioned by IT
 # ("Enable secure shell (SSH) in macOS",
@@ -26,9 +28,16 @@ let
   # rewrites. writeShellApplication pins a modern bash and runs shellcheck.
   macOpenRecv = pkgs.writeShellApplication {
     name = "mac-open-recv";
-    # macOS's libarchive has no built-in zstd, so ship a pinned zstd for the
-    # receiver to decompress the transfer stream (see mac-open-recv.sh).
-    runtimeInputs = [ pkgs.zstd ];
+    # Pinned tools for the receiver's PATH (sshd's bare forced-command
+    # environment has no user profile):
+    #  - zstd: decompress the `file` transfer stream — macOS's libarchive has
+    #    no built-in zstd (see mac-open-recv.sh).
+    #  - vscode: the `code` CLI for the Remote-SSH flow; same pkgs.vscode the
+    #    user profile installs (modules/home/vscode.nix via useGlobalPkgs).
+    runtimeInputs = [
+      pkgs.zstd
+      pkgs.vscode
+    ];
     text = builtins.readFile ./mac-open-recv.sh;
   };
 in

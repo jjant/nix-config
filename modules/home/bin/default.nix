@@ -13,11 +13,12 @@ in
       pnew
       cr-open
     ])
-    # Linux-only: on macOS `open` would shadow the real one, and xdg-open's
-    # callers don't exist there.
+    # Linux-only: on macOS `open` would shadow the real one, `code` must stay
+    # VS Code's own CLI, and xdg-open's callers don't exist there.
     ++ lib.optionals pkgs.stdenv.isLinux [
       scripts.open
       scripts.xdg-open
+      scripts.code
     ];
 
   # For URL-opening flows that honor $BROWSER instead of (or before)
