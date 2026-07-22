@@ -6,6 +6,9 @@ let
       name = "jjantdev";
       email = "jjantdev@amazon.co.uk";
     };
+    # Amazon's convention. Clones from GitFarm get HEAD from the remote
+    # anyway; this covers repos created with `git init` inside a workspace.
+    init.defaultBranch = "mainline";
   };
 
 in
