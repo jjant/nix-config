@@ -44,7 +44,7 @@ in
 
     settings = {
       color.ui = true;
-      init.defaultBranch = "master";
+      init.defaultBranch = "main";
       pull.rebase = false;
       push = {
         default = "current";
