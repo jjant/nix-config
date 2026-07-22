@@ -117,6 +117,10 @@
         xan
 
         awscli2
+        # `aws ssm start-session` (Session Manager) is a separate plugin, not
+        # bundled with awscli2. Installing it via Nix replaces the manual
+        # curl + `sudo installer` steps in AWS's macOS/Linux install docs.
+        ssm-session-manager-plugin
 
         shellcheck
 
