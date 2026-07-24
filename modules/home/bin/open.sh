@@ -18,12 +18,12 @@
 #            a client-side transfer progress bar so a large copy never looks
 #            stuck.
 #   - share: the same stream as `file`, but the Mac zips directories, uploads
-#            the artifact to Amazon Drive with its own Midway session, and
-#            echoes the share link. The upload happens on the Mac because
-#            Drive lets laptops in on the Midway cookie alone, while
-#            corp-network hosts like this one are routed to a Kerberos-only
-#            IdP. Progress goes to stderr; the link is the only stdout, so
-#            `open -s x` composes with pipes.
+#            the artifact to Amazon Drive with its own Midway session, echoes
+#            the share link back, and pops the link's page in its browser.
+#            The upload happens on the Mac because Drive lets laptops in on
+#            the Midway cookie alone, while corp-network hosts like this one
+#            are routed to a Kerberos-only IdP. Progress goes to stderr; the
+#            link is the only stdout, so `open -s x` composes with pipes.
 # The mode token is untrusted but inert: the forced command only matches it
 # against its fixed vocabulary, never executes it. No path or URL ever rides in
 # the command string, so there is no remote-shell quoting/injection surface.

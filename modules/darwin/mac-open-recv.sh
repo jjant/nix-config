@@ -10,7 +10,8 @@
 #   - share: a zstd-compressed tar on stdin; extracted, zipped if it's a
 #            directory, uploaded to a fixed Amazon Drive folder with this
 #            user's Midway session, and the recipient link echoed on stdout
-#            (which rides the ssh channel back to the dev desk).
+#            (riding the ssh channel back to the dev desk) and opened in the
+#            Mac's browser for instant verification.
 #   - code:  kind + host + path, one per line; VS Code here attaches back to
 #            that host over Remote-SSH and opens the path (nothing is copied).
 #
@@ -27,9 +28,10 @@
 # same leash: every payload field is checked against a closed grammar and the
 # vscode-remote:// URI is assembled here, never accepted pre-built — but
 # attaching Remote-SSH to a payload-named host still means trusting that host.
-# `share` is the tamest mode: nothing is launched — the payload is re-packed
-# and uploaded to a Drive folder fixed in this script (the client cannot pick
-# the destination, a path, or a URL), and its only output is the link.
+# `share` never launches the payload: it is re-packed and uploaded to a Drive
+# folder fixed in this script (the client cannot pick the destination, a path,
+# or a URL); the only thing it opens is the https:// share link it built
+# itself, and its only output is that link.
 #
 # Runs under the writeShellApplication-pinned bash and as the login user (so
 # `open` and `code` reach the desktop session, and `share` finds this user's
@@ -102,10 +104,11 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     ;;
   share)
     # Share the payload via Amazon Drive instead of opening it. Same transport
-    # as `file` (zstd tar on stdin, extraction dir chosen by us), but nothing
-    # is ever launched: the payload is re-packed if needed and uploaded to the
-    # fixed folder below with the login user's Midway session; the only stdout
-    # is the recipient link, riding the ssh channel back to the dev desk.
+    # as `file` (zstd tar on stdin, extraction dir chosen by us), but the
+    # payload is never launched: it is re-packed if needed and uploaded to the
+    # fixed folder below with the login user's Midway session. The only stdout
+    # is the recipient link, riding the ssh channel back to the dev desk; the
+    # same link is popped in the browser here at the end.
     # Upload protocol (session priming, CSRF, batch_create → S3 → complete):
     # https://w.amazon.com/bin/view/IHMPublic/Auth/llm-wiki/Drive-Corp-Programmatic-Access/
     #
@@ -231,10 +234,18 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
       exit 1
     fi
 
-    # The mode's only stdout: the recipient link (direct download). data_path
-    # is server-provided and name is sanitized above — both embed in a URL
-    # as-is.
-    printf '%s/view/%s/%s?download=true\n' "$drive_base" "$data_path" "$name"
+    # The recipient link: the /documents/ viewer page for the file in the
+    # team folder (shape confirmed against the Drive UI). Built entirely from
+    # values fixed or sanitized here: base + folder name + safe filename.
+    share_url="$drive_base/documents/${drive_folder#folders/}/$name"
+
+    # The mode's only stdout: the link, echoed back down the ssh channel.
+    printf '%s\n' "$share_url"
+
+    # Also pop the page in the Mac's browser so the share is immediately
+    # verifiable (and copyable) at this end. https-only by construction — the
+    # payload itself is never opened. Non-fatal: the share already succeeded.
+    /usr/bin/open -- "$share_url" || true
     ;;
   code)
     # VS Code Remote-SSH launcher. Three payload lines — kind, host, path —
