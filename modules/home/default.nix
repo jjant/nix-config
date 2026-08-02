@@ -202,6 +202,13 @@
     gh = {
       enable = true;
       settings.git_protocol = "ssh";
+
+      # GitHub's official stacked-PRs extension (`gh stack`), pinned via
+      # nixpkgs instead of a mutable `gh extension install`. Home-manager
+      # symlinks ~/.local/share/gh/extensions to the store, so a previous
+      # manual install must be removed before activating:
+      #   gh extension remove stack && rmdir ~/.local/share/gh/extensions
+      extensions = [ pkgs.gh-stack ];
     };
   };
 }
