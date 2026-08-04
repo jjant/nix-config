@@ -1,7 +1,7 @@
 {
   description = "jjant's nix config";
 
-  # Lets `nix run github:jjant/nix-darwin#activate` on a fresh machine pull
+  # Lets `nix run github:jjant/nix-config#activate` on a fresh machine pull
   # from the CI-filled cache. Only honored for trusted users (see README
   # first-time setup); untrusted users get a warning and build locally.
   # On configured machines the same settings live in nix.conf (system-wide

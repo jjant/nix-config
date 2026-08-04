@@ -58,8 +58,8 @@ Homebrew itself is installed and owned by nix-homebrew during activation
 1. Install Nix: `curl -L https://nixos.org/nix/install | sh`
 2. Clone this repo and activate:
    ```bash
-   git clone https://github.com/jjant/nix-darwin.git ~/personal/nix-darwin
-   cd ~/personal/nix-darwin
+   git clone https://github.com/jjant/nix-config.git ~/personal/nix-config
+   cd ~/personal/nix-config
    # The official installer doesn't enable flakes yet, so the very first run
    # needs them passed to the outer `nix`; activate propagates them to the
    # nested `nix run nix-darwin` call. Subsequent runs can use `nix run .#activate`.
@@ -90,5 +90,5 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    home-manager owns `~/.config/nix/nix.conf`, which enables them). Answer `y`
    to the substituter prompts to pull from the cache:
    ```bash
-   nix --extra-experimental-features "nix-command flakes" run github:jjant/nix-darwin#activate
+   nix --extra-experimental-features "nix-command flakes" run github:jjant/nix-config#activate
    ```
