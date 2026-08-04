@@ -170,7 +170,15 @@
     '';
   };
 
-  security.pam.services.sudo_local.touchIdAuth = true;
+  security.pam.services.sudo_local = {
+    touchIdAuth = true;
+    # pam_tid.so only authenticates a process attached to the user's GUI
+    # bootstrap session, so inside tmux/screen Touch ID silently fails and sudo
+    # falls back to typing the password. pam_reattach re-attaches first, which
+    # makes Touch ID work for every sudo in a tmux pane (e.g. `nix run
+    # .#activate`, which shells out to `sudo darwin-rebuild switch`).
+    reattach = true;
+  };
 
   homebrew = {
     enable = true;
