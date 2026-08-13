@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # open — on a Linux dev desk, hand a file, directory, or URL to the Mac's
-# native `open`; with -s, share instead of open: the Mac uploads the payload
-# to the team's Amazon Drive folder and prints back a recipient link.
+# native `open`, printing where a copied file/dir landed on the Mac; with -s,
+# share instead of open: the Mac uploads the payload to the team's Amazon Drive
+# folder and prints back a recipient link.
 #
 # Transport: the Mac's ssh config (modules/home/ssh.nix) sets
 #   RemoteForward 2022 localhost:22
@@ -14,9 +15,11 @@
 #   - url:   the URL text on stdin; the Mac opens it (web URLs only).
 #   - file:  a zstd-compressed tar of the file/dir on stdin (single connection,
 #            few round-trips -- far faster than per-file scp for trees). The
-#            Mac decompresses, extracts to a temp dir, and opens it. `pv` draws
-#            a client-side transfer progress bar so a large copy never looks
-#            stuck.
+#            Mac decompresses, extracts to a temp dir, opens it, and echoes the
+#            Mac-side path of the copy back -- the only stdout of the mode, so
+#            `open x` composes with pipes and the path is there to paste into
+#            something else on the Mac. `pv` draws a client-side transfer
+#            progress bar so a large copy never looks stuck.
 #   - share: the same stream as `file`, but the Mac zips directories, uploads
 #            the artifact to Amazon Drive with its own Midway session, echoes
 #            the share link back, and pops the link's page in its browser.
