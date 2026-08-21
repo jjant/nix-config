@@ -6,7 +6,9 @@
 # (modules/home/bin/open.sh and code.sh) send a fixed mode token as the ssh
 # command and the payload on stdin:
 #   - url:   a URL on stdin; opened on the Mac (web schemes only).
-#   - file:  a zstd-compressed tar on stdin; extracted to a temp dir and opened.
+#   - file:  a zstd-compressed tar on stdin; extracted to a temp dir, opened,
+#            and the Mac-side path of the copy echoed on stdout (riding the ssh
+#            channel back to the dev desk).
 #   - share: a zstd-compressed tar on stdin; extracted, zipped if it's a
 #            directory, uploaded to a fixed Amazon Drive folder with this
 #            user's Midway session, and the recipient link echoed on stdout
@@ -97,10 +99,19 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     first="$(/usr/bin/find "$dest" -mindepth 1 -maxdepth 1 -print -quit)"
     count="$(/usr/bin/find "$dest" -mindepth 1 -maxdepth 1 | /usr/bin/wc -l | /usr/bin/tr -d '[:space:]')"
     if [ "$count" = "1" ] && [ -n "$first" ]; then
-      exec /usr/bin/open -- "$first"
+      target="$first"
     else
-      exec /usr/bin/open -- "$dest"
+      target="$dest"
     fi
+
+    # Echo where the payload landed, riding the ssh channel back to the dev
+    # desk: the copy lives under a temp dir only this side knows, and the path
+    # is what you need to hand the file to something else on the Mac (a
+    # Mac-side command, an app's open dialog, ...). It is the mode's only
+    # stdout, so `open x` composes with pipes the way `open -s x` does.
+    printf '%s\n' "$target"
+
+    exec /usr/bin/open -- "$target"
     ;;
   share)
     # Share the payload via Amazon Drive instead of opening it. Same transport
