@@ -36,7 +36,7 @@ in
         contents = amazonGitConfigOverride;
       }
     ]
-    ++ lib.optionals pkgs.stdenv.isLinux [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       {
         condition = "gitdir:~/workplace/";
         contents = amazonGitConfigOverride;

@@ -14,7 +14,7 @@
   # On the cloud desktops we're not allowed to `chsh`, and making a non-POSIX
   # shell the login shell would break scp/rsync/non-interactive ssh. So we keep
   # zsh as the login shell and hand *interactive* shells off to fish instead.
-  programs.zsh = lib.mkIf pkgs.stdenv.isLinux {
+  programs.zsh = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     enable = true;
     # Lock in the current "dotfiles live directly in $HOME" behavior. Without
     # this, home-manager warns that the default will switch to an

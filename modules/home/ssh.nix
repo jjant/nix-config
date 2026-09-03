@@ -9,7 +9,7 @@ let
   # - `IdentityAgent` points at the 1Password mac agent socket
   #   (~/Library/Group Containers/...), a path that only exists on macOS. On
   #   the dev desks auth goes through the wssh ProxyCommand anyway.
-  darwinOnlyOptions = lib.optionalString pkgs.stdenv.isDarwin ''
+  darwinOnlyOptions = lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
 
     # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
     # The client already prefers PQ KEX; this fires when the server lacks it
@@ -39,7 +39,7 @@ let
       HostName ${hostname}
       User ${user}
       ProxyCommand /usr/local/bin/wssh proxy %h
-      ForwardAgent yes${lib.optionalString pkgs.stdenv.isDarwin ''
+      ForwardAgent yes${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
 
         # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
         # Linux `open` wrapper hand files back to the Mac's native `open`.

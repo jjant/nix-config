@@ -48,7 +48,7 @@ in
 
         abbr --add gcm --set-cursor="%" "git commit -m \"%\""
       ''
-      + lib.optionalString pkgs.stdenv.isLinux ''
+      + lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
 
         # Keep SSH agent forwarding working across reconnects and tmux panes.
         # A forwarded agent socket ($SSH_AUTH_SOCK) is torn down when its SSH
@@ -120,7 +120,7 @@ in
         smc = "smithy-codegen-targets client";
 
         # Cloud desktops (Linux) need `-o` to write the cookie out; mac doesn't.
-        mw = if pkgs.stdenv.isDarwin then "mwinit -f" else "mwinit -f -o";
+        mw = if pkgs.stdenv.hostPlatform.isDarwin then "mwinit -f" else "mwinit -f -o";
       };
 
       functions = {
