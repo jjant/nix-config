@@ -19,7 +19,7 @@
   # up while we're logged in running agents. `loginctl enable-linger` would
   # extend it to boot time, but needs root, so it's deliberately not
   # assumed here.
-  systemd.user.services.earlyoom = lib.mkIf pkgs.stdenv.isLinux {
+  systemd.user.services.earlyoom = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     Unit = {
       Description = "Early OOM Daemon (user, unprivileged)";
       # Docs recommend not restarting too aggressively: if earlyoom itself

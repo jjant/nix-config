@@ -16,7 +16,7 @@
   # On the Linux cloud desktops, register docker-compose as a Docker CLI plugin
   # so `docker compose` (subcommand) works, not just the standalone
   # `docker-compose` binary.
-  xdg.configFile = lib.mkIf pkgs.stdenv.isLinux {
+  xdg.configFile = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     "docker/cli-plugins/docker-compose".source =
       "${pkgs.docker-compose}/libexec/docker/cli-plugins/docker-compose";
 
@@ -133,7 +133,7 @@
         graphviz
       ]
       # Docker tooling only on the Linux cloud desktops (mac uses Docker Desktop).
-      ++ lib.optionals pkgs.stdenv.isLinux [
+      ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
         docker
         docker-compose
       ];
@@ -153,7 +153,7 @@
     # `nix run home-manager -- <subcommand>`. Not needed on macOS: darwin
     # config there goes through nix-darwin's home-manager module instead
     # (see hosts/mac-m1.nix).
-    home-manager.enable = pkgs.stdenv.isLinux;
+    home-manager.enable = pkgs.stdenv.hostPlatform.isLinux;
 
     bat = {
       enable = true;

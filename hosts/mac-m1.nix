@@ -9,15 +9,21 @@
   nix-vscode-extensions,
   mac-app-util,
 }:
-nix-darwin.lib.darwinSystem {
+let
   system = "aarch64-darwin";
+in
+nix-darwin.lib.darwinSystem {
   pkgs = import nixpkgs {
-    system = "aarch64-darwin";
+    inherit system;
     config.allowUnfree = true;
     # Adds pkgs.vscode-marketplace.* (consumed by ../modules/home/vscode.nix).
     overlays = [ nix-vscode-extensions.overlays.default ];
   };
   modules = [
+    # The modern spelling. Passing `system` to `darwinSystem` instead routes
+    # through a backwards-compat shim that sets the legacy `nixpkgs.system`
+    # option, which upstream says "will be deprecated in the future".
+    { nixpkgs.hostPlatform = system; }
     { system.configurationRevision = self.rev or self.dirtyRev or null; }
     {
       nix.registry.nixpkgs.flake = nixpkgs;

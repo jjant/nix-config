@@ -102,7 +102,7 @@ let
   # just wrap their args with this instead of threading it through by hand.
   withOpen =
     args:
-    if pkgs.stdenv.isLinux then
+    if pkgs.stdenv.hostPlatform.isLinux then
       args
       // {
         inputs = (args.inputs or [ ]) ++ [ open ];

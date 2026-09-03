@@ -15,7 +15,7 @@ in
     ])
     # Linux-only: on macOS `open` would shadow the real one, `code` must stay
     # VS Code's own CLI, and xdg-open's callers don't exist there.
-    ++ lib.optionals pkgs.stdenv.isLinux [
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       scripts.open
       scripts.xdg-open
       scripts.code
@@ -26,7 +26,7 @@ in
   # login and friends), which only tries xdg-open when DISPLAY or
   # WAYLAND_DISPLAY is set — on these headless hosts BROWSER is its only
   # hook. Store-pinned so it works even where PATH lacks the profile bin.
-  home.sessionVariables = lib.mkIf pkgs.stdenv.isLinux {
+  home.sessionVariables = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     BROWSER = "${scripts.open}/bin/open";
   };
 }

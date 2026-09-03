@@ -22,7 +22,7 @@ in
     extraConfig =
       builtins.readFile ./tmux.conf
       + (
-        if pkgs.stdenv.isDarwin then
+        if pkgs.stdenv.hostPlatform.isDarwin then
           ''
 
             # copy-mode `y`: copy to the macOS system clipboard.

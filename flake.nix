@@ -21,8 +21,10 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # `master` pairs with nixpkgs-unstable; nix-darwin asserts the two match.
+    # (The repo moved from LnL7/nix-darwin to the nix-darwin org.)
     nix-darwin = {
-      url = "github:LnL7/nix-darwin";
+      url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
