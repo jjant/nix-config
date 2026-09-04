@@ -4,11 +4,36 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 concurrency:
   group: ci-${{ github.head_ref || github.ref_name }}
   cancel-in-progress: true
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      flake_lock: ${{ steps.lockfile.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v7
+        if: github.event_name == 'pull_request'
+        with:
+          fetch-depth: 0
+      - name: Check for flake.lock changes
+        if: github.event_name == 'pull_request'
+        id: lockfile
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          if git diff --quiet "$BASE_SHA" "$HEAD_SHA" -- flake.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +44,7 @@ jobs:
       - run: nix run nixpkgs#deadnix -- -f .
 
   build:
+    needs: changes
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -30,16 +56,16 @@ jobs:
         include:
           - name: mac-m1
             os: macos-15 # aarch64-darwin
-            cmd: nix build .#darwinConfigurations.mac-m1.system
+            attr: darwinConfigurations.mac-m1.system
           - name: al2-x86_64
             os: ubuntu-latest
-            cmd: nix build .#homeConfigurations.al2-x86_64.activationPackage
+            attr: homeConfigurations.al2-x86_64.activationPackage
           - name: al2023-x86_64
             os: ubuntu-latest
-            cmd: nix build .#homeConfigurations.al2023-x86_64.activationPackage
+            attr: homeConfigurations.al2023-x86_64.activationPackage
           - name: al2-aarch64
             os: ubuntu-24.04-arm # aarch64-linux
-            cmd: nix build .#homeConfigurations.al2-aarch64.activationPackage
+            attr: homeConfigurations.al2-aarch64.activationPackage
     name: build (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v7
@@ -53,4 +79,102 @@ jobs:
           name: jjant-nix
           authToken: ${{ secrets.CACHIX_AUTH_TOKEN }}
           extraPullNames: nix-community
-      - run: ${{ matrix.cmd }}
+      - name: Build current closure
+        id: current
+        run: |
+          closure="$(nix build --no-link --print-out-paths ".#${{ matrix.attr }}")"
+          if [[ -z "$closure" || "$closure" == *$'\n'* ]]; then
+            echo "Expected exactly one closure output, got:" >&2
+            printf '%s\n' "$closure" >&2
+            exit 1
+          fi
+          echo "path=$closure" >> "$GITHUB_OUTPUT"
+      - name: Check out base revision
+        if: needs.changes.outputs.flake_lock == 'true'
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          path: closure-diff-base
+      - name: Compare closures
+        if: needs.changes.outputs.flake_lock == 'true'
+        env:
+          CURRENT_CLOSURE: ${{ steps.current.outputs.path }}
+        run: |
+          base_closure="$(
+            nix build \
+              --no-link \
+              --print-out-paths \
+              "./closure-diff-base#${{ matrix.attr }}"
+          )"
+          if [[ -z "$base_closure" || "$base_closure" == *$'\n'* ]]; then
+            echo "Expected exactly one base closure output, got:" >&2
+            printf '%s\n' "$base_closure" >&2
+            exit 1
+          fi
+
+          mkdir -p closure-diff
+          nix store diff-closures \
+            "$base_closure" \
+            "$CURRENT_CLOSURE" |
+            sed -E $'s/\x1B\\[[0-9;]*[mK]//g' \
+            > "closure-diff/${{ matrix.name }}.txt"
+      - name: Upload closure diff
+        if: needs.changes.outputs.flake_lock == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: closure-diff-${{ matrix.name }}
+          path: closure-diff/${{ matrix.name }}.txt
+          if-no-files-found: error
+          retention-days: 7
+
+  closure-diff-comment:
+    name: publish closure diff
+    if: >-
+      github.event_name == 'pull_request' &&
+      needs.changes.outputs.flake_lock == 'true'
+    needs: [changes, build]
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      issues: write
+    steps:
+      - uses: actions/checkout@v7
+      - name: Download closure diffs
+        uses: actions/download-artifact@v8
+        with:
+          pattern: closure-diff-*
+          path: closure-diffs
+          merge-multiple: true
+      - name: Render closure diff
+        run: |
+          .github/scripts/render-closure-diff.sh \
+            closure-diffs \
+            closure-diff-comment.md
+          cat closure-diff-comment.md >> "$GITHUB_STEP_SUMMARY"
+      - name: Update pull request comment
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        env:
+          COMMENT_FILE: closure-diff-comment.md
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          marker='<!-- flake-closure-diff -->'
+          comment_id="$(
+            gh api --paginate \
+              "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" |
+              jq --arg marker "$marker" -sr \
+                '[.[][] | select(.body | startswith($marker))][0].id // empty'
+          )"
+
+          if [[ -n "$comment_id" ]]; then
+            gh api --method PATCH \
+              "repos/$GITHUB_REPOSITORY/issues/comments/$comment_id" \
+              -F "body=@$COMMENT_FILE" \
+              >/dev/null
+          else
+            gh api --method POST \
+              "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/comments" \
+              -F "body=@$COMMENT_FILE" \
+              >/dev/null
+          fi
