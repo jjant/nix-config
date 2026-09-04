@@ -53,7 +53,7 @@ render_comment() {
       entry_count="$(awk 'NF { count++ } END { print count + 0 }' "$diff_file")"
 
       echo
-      echo '<details>'
+      echo '<details open>'
       if (( entry_count == 0 )); then
         echo "<summary>$host_summary — no package-level changes</summary>"
         echo
