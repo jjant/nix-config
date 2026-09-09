@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: DeterminateSystems/nix-installer-action@v23
       - run: nix fmt -- --ci # fail on unformatted files
       - run: nix run nixpkgs#statix -- check .
       - run: nix run nixpkgs#deadnix -- -f .
@@ -69,7 +69,7 @@ jobs:
     name: build (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v22
+      - uses: DeterminateSystems/nix-installer-action@v23
         with:
           extra-conf: |
             accept-flake-config = true
