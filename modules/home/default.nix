@@ -82,7 +82,6 @@
         hyperfine
         postgresql_17
         railway
-        pnpm
         tsx
         mprocs
 
@@ -166,6 +165,10 @@
       historyWidget.command = "";
     };
     eza.enable = true;
+
+    # In addition to installing pnpm, the module declares PNPM_HOME and puts
+    # its global executable directory on PATH.
+    pnpm.enable = true;
 
     # Delta (and man, etc.) page through less, where bare `s` prompts to save
     # the piped input to a file ("log file:") — too easy to hit accidentally.
