@@ -31,8 +31,8 @@ let
     name = "mac-open-recv";
     # Pinned tools for the receiver's PATH (sshd's bare forced-command
     # environment has no user profile):
-    #  - zstd: decompress the `file`/`share` transfer stream — macOS's
-    #    libarchive has no built-in zstd (see mac-open-recv.sh).
+    #  - zstd: decompress the `file`/`directory`/`share` transfer stream —
+    #    macOS's libarchive has no built-in zstd (see mac-open-recv.sh).
     #  - jq: build/parse the Drive upload API's JSON in the `share` flow;
     #    macOS ships no jq.
     #  - vscode: the `code` CLI for the Remote-SSH flow; same pkgs.vscode the

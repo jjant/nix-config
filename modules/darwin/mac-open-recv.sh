@@ -5,17 +5,19 @@
 # the ONLY thing that key can run — never an arbitrary shell. The clients
 # (modules/home/bin/open.sh and code.sh) send a fixed mode token as the ssh
 # command and the payload on stdin:
-#   - url:   a URL on stdin; opened on the Mac (web schemes only).
-#   - file:  a zstd-compressed tar on stdin; extracted to a temp dir, opened,
-#            and the Mac-side path of the copy echoed on stdout (riding the ssh
-#            channel back to the dev desk).
-#   - share: a zstd-compressed tar on stdin; extracted, zipped if it's a
-#            directory, uploaded to a fixed Amazon Drive folder with this
-#            user's Midway session, and the recipient link echoed on stdout
-#            (riding the ssh channel back to the dev desk) and opened in the
-#            Mac's browser for instant verification.
-#   - code:  kind + host + path, one per line; VS Code here attaches back to
-#            that host over Remote-SSH and opens the path (nothing is copied).
+#   - url:       a URL on stdin; opened on the Mac (web schemes only).
+#   - file:      a zstd-compressed tar on stdin; extracted to a temp dir,
+#                opened, and the Mac-side path of the copy echoed on stdout.
+#   - directory: a NUL-terminated entrypoint basename followed by a
+#                zstd-compressed tar containing its whole parent directory.
+#                Everything is extracted, but only the entrypoint is opened.
+#                This backs `open -d FILE` for HTML files with sibling assets.
+#   - share:     a zstd-compressed tar on stdin; extracted, zipped if it's a
+#                directory, uploaded to a fixed Amazon Drive folder with this
+#                user's Midway session, and the recipient link echoed on
+#                stdout and opened in the Mac's browser for verification.
+#   - code:      kind + host + path, one per line; VS Code here attaches back
+#                to that host over Remote-SSH and opens the path (no copy).
 #
 # $SSH_ORIGINAL_COMMAND is client-controlled and therefore untrusted: it is only
 # ever matched against the fixed vocabulary below, never executed. Client input
@@ -111,6 +113,39 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     # stdout, so `open x` composes with pipes the way `open -s x` does.
     printf '%s\n' "$target"
 
+    exec /usr/bin/open -- "$target"
+    ;;
+  directory)
+    # `open -d FILE` sends FILE's basename as a NUL-terminated header, then a
+    # tar of the containing directory's contents. A basename cannot contain
+    # '/', so this also prevents traversal and keeps the target directly under
+    # the fresh extraction directory. Reject a symlink target rather than let
+    # `/usr/bin/open` follow it outside the extracted payload.
+    if ! IFS= read -r -d '' entrypoint; then
+      printf 'mac-open-recv: missing -d entrypoint\n' >&2
+      exit 1
+    fi
+    case "$entrypoint" in
+      "" | "." | ".." | */*)
+        printf 'mac-open-recv: invalid -d entrypoint\n' >&2
+        exit 1
+        ;;
+    esac
+
+    dest="$(/usr/bin/mktemp -d "${TMPDIR:-/tmp}/mac-open.XXXXXX")"
+    zstd -d | /usr/bin/tar -xf - -C "$dest"
+
+    /usr/bin/xattr -w -r com.apple.quarantine \
+      "0081;$(printf '%x' "$(/bin/date +%s)");mac-open;$(/usr/bin/uuidgen)" \
+      "$dest" 2>/dev/null || true
+
+    target="$dest/$entrypoint"
+    if [ ! -f "$target" ] || [ -L "$target" ]; then
+      printf 'mac-open-recv: -d entrypoint is not a regular file\n' >&2
+      exit 1
+    fi
+
+    printf '%s\n' "$target"
     exec /usr/bin/open -- "$target"
     ;;
   share)
