@@ -19,7 +19,7 @@
 #
 # Protocol: this client sends only a fixed mode token as the ssh command --
 # `url`, `file`, `directory`, or `share` -- and the payload on stdin:
-#   - url:       the URL text on stdin; the Mac opens it (web URLs only).
+#   - url:       the URL text on stdin; both sides accept web URLs only.
 #   - file:      a zstd-compressed tar of the file/dir on stdin (single
 #                connection, few round-trips -- far faster than per-file scp
 #                for trees). The Mac decompresses, extracts to a temp dir,
@@ -129,7 +129,9 @@ if [ "$#" -eq 0 ]; then
 fi
 
 for arg in "$@"; do
-  # Not a local path -> treat as a URL and let the Mac resolve it.
+  # Only explicit web URLs go over the tunnel. Reject typos, bare domains, and
+  # unsupported schemes here so they fail immediately instead of waiting for
+  # the Mac-side receiver to make the same decision.
   if [ ! -e "$arg" ]; then
     if [ "$with_directory" -eq 1 ]; then
       echo "open: -d requires a local file; not found: $arg" >&2
@@ -139,8 +141,16 @@ for arg in "$@"; do
       echo "open: -s shares local files/dirs; not found: $arg" >&2
       exit 1
     fi
-    printf '%s' "$arg" | ssh "${ssh_opts[@]}" "$mac" url
-    continue
+    case "$arg" in
+      http://* | https://*)
+        printf '%s' "$arg" | ssh "${ssh_opts[@]}" "$mac" url
+        continue
+        ;;
+      *)
+        echo "open: not a local path or explicit web URL: $arg" >&2
+        exit 1
+        ;;
+    esac
   fi
 
   src="$(realpath "$arg")"
