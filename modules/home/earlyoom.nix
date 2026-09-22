@@ -29,9 +29,12 @@
     };
 
     Service = {
-      # -m 4,2: SIGTERM below 4% available RAM (~5 GiB on a 123 GiB host),
-      #   escalate to SIGKILL below 2%. Absolute headroom is plenty at that
-      #   point; the defaults (10%) would fire with 12 GiB still free.
+      # -m 8,4: SIGTERM below 8% available RAM (~10 GiB on a 123 GiB host),
+      #   escalate to SIGKILL below 4%. The old 4% threshold left too little
+      #   reaction time for highly parallel test processes with no swap.
+      # --sort-by-rss: the default oom_score ordering preferred tiny desktop
+      #   plumbing (and eventually the user manager) over the multi-GiB test
+      #   processes actually consuming memory. RSS ordering targets the hog.
       # --avoid: never pick the session plumbing — killing tmux would take
       #   down every kiro session at once, and sshd/fish/nvim are cheap but
       #   painful losses. Matched against /proc/<pid>/comm, so tmux shows up
@@ -49,20 +52,18 @@
       #   regardless of the report interval.
       ExecStart = ''
         ${pkgs.earlyoom}/bin/earlyoom \
-          -m 4,2 \
+          -m 8,4 \
           -r 3600 \
           --ignore-root-user \
+          --sort-by-rss \
           --avoid '^(tmux.*|sshd|fish|nvim|systemd.*)$' \
           --prefer '^(kiro-cli.*|bun|node)$'
       '';
       Restart = "on-failure";
       RestartSec = 10;
-      # Make sure earlyoom itself is the last thing the kernel would kill,
-      # and give it a slight scheduling edge so it stays responsive under
-      # memory pressure (values chosen from the upstream system unit, minus
-      # the bits that need root).
-      OOMScoreAdjust = -100;
-      Nice = -1;
+      # Negative OOMScoreAdjust and niceness require privileges the systemd
+      # user manager does not have. The previous settings looked protective
+      # in the unit but remained +100 in /proc during the incident.
     };
 
     Install.WantedBy = [ "default.target" ];
