@@ -22,7 +22,10 @@ let
     shift
 
     ${pkgs.coreutils}/bin/touch "$marker" || exit 125
-    exec ${lib.getExe pkgs.fish} "$@"
+    # tmux normally marks its default shell as a login shell through argv[0].
+    # paneShell's shebang loses that marker before reaching fish, so restore
+    # the equivalent mode explicitly.
+    exec ${lib.getExe pkgs.fish} --login "$@"
   '';
 
   paneShell = pkgs.writeShellScriptBin "tmux-pane-shell" ''
@@ -30,7 +33,7 @@ let
 
     # Avoid nesting scopes if a shell recursively starts another login shell.
     if ${pkgs.gnugrep}/bin/grep -q '/tmux-panes\.slice/' /proc/self/cgroup; then
-      exec "$fish" "$@"
+      exec "$fish" --login "$@"
     fi
 
     runtime_dir="''${XDG_RUNTIME_DIR:-/run/user/$(${pkgs.coreutils}/bin/id -u)}"
@@ -39,11 +42,11 @@ let
     # Availability wins over containment: a dead or missing user manager must
     # never make a tmux pane impossible to open.
     if [ ! -x "$systemd_run" ] || [ ! -S "$runtime_dir/bus" ]; then
-      exec "$fish" "$@"
+      exec "$fish" --login "$@"
     fi
 
     marker_dir=$(${pkgs.coreutils}/bin/mktemp -d "$runtime_dir/tmux-pane-scope.XXXXXX") ||
-      exec "$fish" "$@"
+      exec "$fish" --login "$@"
     marker="$marker_dir/started"
 
     pane_memory_high="''${TMUX_PANE_MEMORY_HIGH:-24G}"
@@ -70,7 +73,7 @@ let
     if [ ! -e "$marker" ]; then
       ${pkgs.coreutils}/bin/rmdir "$marker_dir" 2>/dev/null || true
       echo "tmux: systemd pane scope unavailable; starting unbounded shell" >&2
-      exec "$fish" "$@"
+      exec "$fish" --login "$@"
     fi
 
     ${pkgs.coreutils}/bin/rm -f "$marker"
