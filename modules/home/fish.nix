@@ -27,6 +27,11 @@ in
       loginShellInit = ''
         fish_add_path --append $HOME/.nix-profile/bin
         fish_add_path --append $HOME/.cargo/bin
+        # XDG user-executables dir: `pip install --user`, pipx, uv tool, and
+        # hand-written launchers (e.g. codex-astra) land here. Most distros
+        # add it in ~/.profile, but home-manager owns our shell init, so we
+        # have to do it ourselves.
+        fish_add_path --append $HOME/.local/bin
 
         # Export as empty so that the nix-installed `rust-analyzer`
         # doesn't try to use rust stdlib sources from the nix store,
