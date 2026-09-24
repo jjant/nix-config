@@ -4,6 +4,7 @@
     ./zsh.nix
     ./git.nix
     ./ssh.nix
+    ./codex.nix
     ./starship.nix
     ./neovim
     ./tmux
