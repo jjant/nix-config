@@ -38,6 +38,8 @@
     # path and refreshes it on every rebuild, so it's never hardcoded.
     sessionVariables = {
       JAVA_HOME = pkgs.jdk25.home;
+      # Keep Claude Code in the main screen so tmux retains its scrollback.
+      CLAUDE_CODE_DISABLE_ALTERNATE_SCREEN = "1";
     };
 
     file = {
