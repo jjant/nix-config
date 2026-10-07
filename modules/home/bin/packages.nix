@@ -134,6 +134,13 @@ in
     fake.external = [ "ssh" ];
   };
 
+  # Like `code`, but asks the Mac receiver to launch Zed's SSH client.
+  zed = writeShellApp {
+    name = "zed";
+    inputs = with pkgs; [ coreutils ];
+    fake.external = [ "ssh" ];
+  };
+
   brazil-open-package = writeShellApp (withOpen {
     name = "brazil-open-package";
     inputs = [ pkgs.coreutils ];

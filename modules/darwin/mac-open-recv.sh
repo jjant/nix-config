@@ -1,9 +1,9 @@
 # shellcheck shell=bash
-# mac-open-recv — forced-command receiver for the dev-desk `open`/`code` flows.
+# mac-open-recv — receiver for the dev-desk `open`/`code`/`zed` flows.
 #
 # Pinned as the authorized_keys `command="..."` for the dev-desk key, so this is
 # the ONLY thing that key can run — never an arbitrary shell. The clients
-# (modules/home/bin/open.sh and code.sh) send a fixed mode token as the ssh
+# (modules/home/bin/{open,code,zed}.sh) send a fixed mode token as the ssh
 # command and the payload on stdin:
 #   - url:       a URL on stdin; opened on the Mac (web schemes only).
 #   - file:      a zstd-compressed tar on stdin; extracted to a temp dir,
@@ -18,6 +18,7 @@
 #                stdout and opened in the Mac's browser for verification.
 #   - code:      kind + host + path, one per line; VS Code here attaches back
 #                to that host over Remote-SSH and opens the path (no copy).
+#   - zed:       same payload as code; Zed opens an SSH URL for that path.
 #
 # $SSH_ORIGINAL_COMMAND is client-controlled and therefore untrusted: it is only
 # ever matched against the fixed vocabulary below, never executed. Client input
@@ -28,9 +29,9 @@
 # as it reasonably can — web-only URL schemes, extraction into a fresh dir with
 # no client-controlled path, and a com.apple.quarantine tag so Gatekeeper vets
 # anything executable — but it cannot make opening attacker-supplied content
-# fully safe. That residual is inherent to the feature. `code` is kept on the
+# fully safe. That residual is inherent to the feature. Editors are kept on the
 # same leash: every payload field is checked against a closed grammar and the
-# vscode-remote:// URI is assembled here, never accepted pre-built — but
+# editor URI is assembled here, never accepted pre-built — but
 # attaching Remote-SSH to a payload-named host still means trusting that host.
 # `share` never launches the payload: it is re-packed and uploaded to a Drive
 # folder fixed in this script (the client cannot pick the destination, a path,
@@ -38,16 +39,16 @@
 # itself, and its only output is that link.
 #
 # Runs under the writeShellApplication-pinned bash and as the login user (so
-# `open` and `code` reach the desktop session, and `share` finds this user's
+# `open` and the editors reach the desktop session, and `share` finds this user's
 # ~/.midway/cookie). macOS tools are called by absolute path so PATH in the
-# forced-command environment is irrelevant; `zstd`, `jq`, and `code` come from
+# forced-command environment is irrelevant; `zstd`, `jq`, `code`, and `zeditor` come from
 # the writeShellApplication runtimeInputs (macOS's libarchive has no built-in
-# zstd, macOS ships no jq, and VS Code's CLI lives in the user profile, which
+# zstd, macOS ships no jq, and editor CLIs live in the user profile, which
 # sshd's bare forced-command environment doesn't have on PATH).
 
 # Percent-encode a path for embedding in a URI: keep [A-Za-z0-9/._~-], encode
 # every other byte. LC_ALL=C makes ${s:i:1} slice bytes, not characters, so
-# multi-byte UTF-8 comes out as %XX%XX... sequences, which VS Code decodes.
+# multi-byte UTF-8 comes out as %XX%XX... sequences, which both editors decode.
 encode_path() {
   local LC_ALL=C s="$1" out="" ch i
   for ((i = 0; i < ${#s}; i++)); do
@@ -293,8 +294,8 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     # payload itself is never opened. Non-fatal: the share already succeeded.
     /usr/bin/open -- "$share_url" || true
     ;;
-  code)
-    # VS Code Remote-SSH launcher. Three payload lines — kind, host, path —
+  code | zed)
+    # Remote editor launcher. Three payload lines — kind, host, path —
     # are all data, never executed: each is validated against a closed
     # grammar and the URI is assembled here, so no client-controlled string
     # is ever interpreted as a flag, command, or pre-built URI. Under the
@@ -325,8 +326,11 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
       exit 1
     fi
 
-    # `code` is the pinned pkgs.vscode CLI from runtimeInputs. VS Code SSHes
-    # back to $host itself (via ~/.ssh config: wssh proxy + control socket).
+    # Both CLIs are pinned in runtimeInputs. Each editor SSHes back to $host
+    # itself via ~/.ssh config (WSSH proxy + control socket).
+    if [ "$SSH_ORIGINAL_COMMAND" = zed ]; then
+      exec zeditor "ssh://${host}$(encode_path "$path")"
+    fi
     exec code "$flag" "vscode-remote://ssh-remote+${host}$(encode_path "$path")"
     ;;
   *)

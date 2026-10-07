@@ -69,6 +69,7 @@ nix-darwin.lib.darwinSystem {
             ../modules/home
             ../modules/darwin/alacritty.nix
             ../modules/home/vscode.nix
+            ../modules/home/zed.nix
             ({ pkgs, ... }: { home.packages = [ pkgs.htop ]; })
             ({ lib, ... }: {
               # Disable the Spotlight (Cmd-Space) shortcut (symbolic hotkey 64)

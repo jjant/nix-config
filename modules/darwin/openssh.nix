@@ -1,10 +1,10 @@
 # Apple's built-in OpenSSH server (macOS "Remote Login"), enabled declaratively
 # so a Cloud Desktop can reach this Mac back over the reverse tunnel
 # (modules/home/ssh.nix: `RemoteForward 2022 localhost:22`) and invoke the Mac's
-# native `open` (modules/home/bin/open.sh), open VS Code attached back to the
-# desk over Remote-SSH (modules/home/bin/code.sh), or upload a file to Amazon
-# Drive and hand back a share link (`open -s`), via a locked-down forced
-# command.
+# native `open` (modules/home/bin/open.sh), open VS Code or Zed attached back
+# to the desk over SSH (modules/home/bin/{code,zed}.sh), or upload a file to
+# Amazon Drive and hand back a share link (`open -s`), via a locked-down
+# forced command.
 #
 # Policy: enabling Remote Login on a managed Mac is officially sanctioned by IT
 # ("Enable secure shell (SSH) in macOS",
@@ -37,10 +37,13 @@ let
     #    macOS ships no jq.
     #  - vscode: the `code` CLI for the Remote-SSH flow; same pkgs.vscode the
     #    user profile installs (modules/home/vscode.nix via useGlobalPkgs).
+    #  - zed-editor: the `zeditor` CLI for the Zed SSH flow; same package as
+    #    modules/home/zed.nix, available even without a user shell profile.
     runtimeInputs = [
       pkgs.zstd
       pkgs.jq
       pkgs.vscode
+      pkgs.zed-editor
     ];
     text = builtins.readFile ./mac-open-recv.sh;
   };
