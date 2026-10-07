@@ -30,6 +30,11 @@
           "al2-aarch64" = "linux";
           "al2023-x86_64" = "linux";
         };
+        "remote.SSH.defaultExtensions" = [ "ziglang.vscode-zig" ];
+        # Resolve on the host running the extension (Mac or Remote-SSH).
+        "zig.path" = "zig";
+        "zig.zls.path" = "zls";
+        "zig.zls.enabled" = "on";
         # Never prompt for Workspace Trust. Folders opened from the cloud
         # desks over Remote-SSH (the `code` flow above) would otherwise ask
         # on every new folder, and VS Code can't scope this per remote:
@@ -59,6 +64,9 @@
         tamasfe.even-better-toml # TOML / Cargo.toml (taplo-backed)
         serayuzgur.crates # Cargo.toml dependency version hints
         mitsuhiko.insta # cargo-insta snapshot review
+
+        # Zig compiler integration and ZLS.
+        ziglang.vscode-zig
 
         # Python (acs-gpio-client bindings)
         ms-python.python

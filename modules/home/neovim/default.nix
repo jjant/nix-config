@@ -49,6 +49,7 @@ in
           nvim-treesitter-textobjects
           (nvim-treesitter.withPlugins (grammars: [
             grammars.rust
+            grammars.zig
             grammars.nix
             grammars.lua
             grammars.smithy

@@ -53,6 +53,12 @@ vim.lsp.config['ts_ls'] = {
   root_markers = { 'tsconfig.json', 'package.json', '.git' },
 }
 
+vim.lsp.config['zls'] = {
+  cmd = { 'zls' },
+  filetypes = { 'zig', 'zon' },
+  root_markers = { 'build.zig', 'build.zig.zon', '.git' },
+}
+
 vim.filetype.add({ filename = { Config = 'brazil-config' } })
 vim.lsp.config['barium'] = {
   cmd = { 'barium' },
@@ -60,4 +66,4 @@ vim.lsp.config['barium'] = {
   root_markers = { '.git' },
 }
 
-vim.lsp.enable({ 'lua_ls', 'bashls', 'taplo', 'ts_ls', 'barium' })
+vim.lsp.enable({ 'lua_ls', 'bashls', 'taplo', 'ts_ls', 'zls', 'barium' })

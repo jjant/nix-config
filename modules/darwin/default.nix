@@ -203,7 +203,6 @@
       "rpm"
       "smithy-cli"
       "zenoh"
-      "zig"
     ];
 
     casks = [
