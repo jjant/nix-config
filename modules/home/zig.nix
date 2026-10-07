@@ -5,6 +5,8 @@
   ...
 }:
 let
+  # ZLS uses known-folders' native configuration directory on macOS.
+  # https://github.com/ziglibs/known-folders/blob/d6d03830968cca6b7b9f24fd97ee348346a6905d/known-folders.zig#L627
   configDir =
     if pkgs.stdenv.hostPlatform.isDarwin then
       "${config.home.homeDirectory}/Library/Application Support"
