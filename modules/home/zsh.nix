@@ -5,6 +5,12 @@
   ...
 }:
 {
+  # Remote tools start from non-interactive SSH shells, before fish's login
+  # initialization. Make Nix-installed tools available in that environment too.
+  home.sessionPath = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+    "${config.home.profileDirectory}/bin"
+  ];
+
   # Only manage zsh on the Linux cloud desktops.
   #
   # On macOS the login shell is already fish (via `chsh`) and `~/.zshrc` is
@@ -30,12 +36,15 @@
 
       # Hand interactive shells to fish. Non-interactive shells (scp, rsync,
       # `ssh host cmd`) never source this file, so they stay POSIX zsh.
+      # Zed captures the remote environment with `zsh -l -i -c ...`. Keep
+      # those commands in zsh too: exec'ing fish would discard the command.
       #
       # ZSH_AUTO_RAN_FISH does double duty:
       #   1. prevents an exec loop, and
       #   2. is inherited by fish, so running `zsh` from within fish drops you
       #      into a real zsh instead of bouncing straight back to fish.
-      if [[ -z "$ZSH_AUTO_RAN_FISH" ]] && [[ -o interactive ]] && [[ -x "$HOME/.nix-profile/bin/fish" ]]; then
+      if [[ -z "$ZSH_AUTO_RAN_FISH" && -z "$ZSH_EXECUTION_STRING" && -o interactive ]] \
+          && [[ -x "$HOME/.nix-profile/bin/fish" ]]; then
         export ZSH_AUTO_RAN_FISH=YES
         export SHELL="$HOME/.nix-profile/bin/fish"
         exec "$HOME/.nix-profile/bin/fish" --login
