@@ -59,6 +59,23 @@ in
       };
       window = {
         decorations = "none";
+        startup_mode = "Windowed";
+        # Fit the Mac's 1512x949-point usable area at 13.5 pt, leaving
+        # 28-point side margins and room for the macOS menu bar.
+        dimensions = {
+          columns = 180;
+          lines = 54;
+        };
+        # Position uses physical pixels (2x Retina), measured from the
+        # screen's top-left; start below the 33-point macOS menu bar.
+        position = {
+          x = 56;
+          y = 66;
+        };
+        padding = {
+          x = 8;
+          y = 8;
+        };
       };
       font = {
         normal = {
@@ -68,7 +85,7 @@ in
         bold = {
           style = "Semibold";
         };
-        size = 15;
+        size = 13.5;
       };
       keyboard = {
         bindings = tmuxBindings;
