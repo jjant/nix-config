@@ -135,7 +135,7 @@
         autohide-delay = 0.10;
         autohide-time-modifier = 2.0;
       };
-      universalaccess.mouseDriverCursorSize = 1.75;
+      universalaccess.mouseDriverCursorSize = 1.0;
       trackpad.TrackpadRightClick = true;
       finder.QuitMenuItem = true;
       NSGlobalDomain = {
