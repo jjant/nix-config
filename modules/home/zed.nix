@@ -20,6 +20,16 @@
         "al2023-x86_64"
       ];
     };
+    # Cycle tabs in positional order instead of the default MRU tab switcher.
+    userKeymaps = [
+      {
+        context = "Workspace";
+        bindings = {
+          "ctrl-tab" = "pane::ActivateNextItem";
+          "ctrl-shift-tab" = "pane::ActivatePreviousItem";
+        };
+      }
+    ];
   };
 
   # nixpkgs names the CLI `zeditor`; provide the upstream `zed` spelling too.
