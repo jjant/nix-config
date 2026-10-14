@@ -1,5 +1,9 @@
 { pkgs, lib, ... }:
 let
+  # Shared with bin/default.nix, so the popup runs the same tmux-sessionizer
+  # store path regardless of the tmux server's PATH.
+  binScripts = import ../bin/packages.nix { inherit pkgs; };
+
   dracula = {
     plugin = pkgs.tmuxPlugins.dracula;
     extraConfig = ''
@@ -110,6 +114,12 @@ in
     escapeTime = 0;
     extraConfig =
       builtins.readFile ./tmux.conf
+      + ''
+
+        # prefix f: pick or switch project sessions in a popup, from any pane.
+        # Replaces tmux's default find-window binding.
+        bind f display-popup -E -w 80% -h 60% ${binScripts.tmux-sessionizer}/bin/tmux-sessionizer
+      ''
       + (
         if pkgs.stdenv.hostPlatform.isDarwin then
           ''
