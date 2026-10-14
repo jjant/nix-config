@@ -21,13 +21,25 @@
       ];
     };
     # Cycle tabs in positional order instead of the default MRU tab switcher.
+    # cmd-1..8 select tab N and cmd-9 the last one, as in browsers. Zed's
+    # default (from VS Code) focuses pane N, splitting if it doesn't exist.
     userKeymaps = [
       {
         context = "Workspace";
         bindings = {
           "ctrl-tab" = "pane::ActivateNextItem";
           "ctrl-shift-tab" = "pane::ActivatePreviousItem";
-        };
+          "cmd-9" = "pane::ActivateLastItem";
+        }
+        // lib.listToAttrs (
+          lib.genList (
+            i:
+            lib.nameValuePair "cmd-${toString (i + 1)}" [
+              "pane::ActivateItem"
+              i
+            ]
+          ) 8
+        );
       }
     ];
   };
