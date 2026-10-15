@@ -179,11 +179,17 @@
                 # `extra-` so we don't clobber features enabled elsewhere.
                 export NIX_CONFIG="extra-experimental-features = nix-command flakes"
 
+                # Switch to the flake this app came from, not the current
+                # directory: `nix run github:jjant/nix-config#activate` on a
+                # fresh desk runs from $HOME, which has no flake.nix. From a
+                # local clone, `nix run .#activate` makes this that clone.
+                flake=${self}
+
                 if [ "$(uname)" = "Darwin" ]; then
                   if command -v darwin-rebuild &>/dev/null; then
-                    sudo darwin-rebuild switch --flake .#mac-m1 "$@"
+                    sudo darwin-rebuild switch --flake "$flake"#mac-m1 "$@"
                   else
-                    nix run nix-darwin -- switch --flake .#mac-m1 "$@"
+                    nix run nix-darwin -- switch --flake "$flake"#mac-m1 "$@"
                   fi
                 else
                   # Pick the desk's config by short hostname (./hosts). The
@@ -204,9 +210,9 @@
                   fi
 
                   if command -v home-manager &>/dev/null; then
-                    home-manager switch --flake .#"$host" "$@"
+                    home-manager switch --flake "$flake"#"$host" "$@"
                   else
-                    nix run home-manager -- switch --flake .#"$host" "$@"
+                    nix run home-manager -- switch --flake "$flake"#"$host" "$@"
                   fi
                 fi
               ''
