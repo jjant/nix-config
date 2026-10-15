@@ -84,10 +84,24 @@
         inherit value;
       }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) inputs);
 
+      # Every host, keyed by config name; see ./hosts/default.nix.
+      hosts = import ./hosts;
+      isDarwin = host: host.os == "darwin";
+      linuxHosts = lib.filterAttrs (_: host: !isDarwin host) hosts;
+      darwinHosts = lib.filterAttrs (_: isDarwin) hosts;
+
+      # `activate`'s hostname -> config lookup, one case arm per desk.
+      desksCases = lib.concatStringsSep "\n      " (
+        lib.mapAttrsToList (
+          name: host: "${lib.head (lib.splitString "." host.hostname)}) host=${name} ;;"
+        ) (lib.filterAttrs (_: host: host ? hostname) linuxHosts)
+      );
+
       # A Linux cloud desktop. The hosts only differ in platform and prompt
       # tag; everything else lives in ../modules/home.
       mkHome =
-        alias: system:
+        alias:
+        { system, ... }:
         home-manager.lib.homeManagerConfiguration {
           pkgs = import nixpkgs {
             inherit system;
@@ -108,40 +122,38 @@
         };
     in
     {
-      darwinConfigurations.mac-m1 = import ./hosts/mac-m1.nix {
-        inherit
-          self
-          nixpkgs
-          home-manager
-          vimPlugins
-          nix-darwin
-          nix-homebrew
-          ;
-        inherit (inputs) nix-vscode-extensions mac-app-util;
-      };
+      darwinConfigurations = lib.mapAttrs (
+        name: host:
+        import ./hosts/${name}.nix {
+          inherit (host) system;
+          inherit
+            self
+            nixpkgs
+            home-manager
+            vimPlugins
+            nix-darwin
+            nix-homebrew
+            ;
+          inherit (inputs) nix-vscode-extensions mac-app-util;
+        }
+      ) darwinHosts;
 
-      homeConfigurations = lib.mapAttrs mkHome {
-        al2-x86_64 = "x86_64-linux";
-        al2-aarch64 = "aarch64-linux";
-        al2023-x86_64 = "x86_64-linux";
-      };
+      homeConfigurations = lib.mapAttrs mkHome linuxHosts;
 
       darwinPackages = self.darwinConfigurations.mac-m1.pkgs;
 
       # `nix flake check` builds every host that can build on the current
       # platform (same attrs CI builds), so it works as a single local gate.
-      checks = {
-        x86_64-linux = {
-          al2-x86_64 = self.homeConfigurations.al2-x86_64.activationPackage;
-          al2023-x86_64 = self.homeConfigurations.al2023-x86_64.activationPackage;
-        };
-        aarch64-linux = {
-          al2-aarch64 = self.homeConfigurations.al2-aarch64.activationPackage;
-        };
-        aarch64-darwin = {
-          mac-m1 = self.darwinConfigurations.mac-m1.system;
-        };
-      };
+      checks = lib.genAttrs systems (
+        system:
+        lib.mapAttrs (
+          name: host:
+          if isDarwin host then
+            self.darwinConfigurations.${name}.system
+          else
+            self.homeConfigurations.${name}.activationPackage
+        ) (lib.filterAttrs (_: host: host.system == system) hosts)
+      );
 
       # `nix fmt` — official Nix formatting (RFC 166) via the treefmt wrapper,
       # which handles tree-walking (plain nixfmt deprecated directory args).
@@ -173,17 +185,28 @@
                   else
                     nix run nix-darwin -- switch --flake .#mac-m1 "$@"
                   fi
-                elif grep -q "2023" /etc/os-release 2>/dev/null; then
-                  if command -v home-manager &>/dev/null; then
-                    home-manager switch --flake .#al2023-"$(uname -m)" "$@"
-                  else
-                    nix run home-manager -- switch --flake .#al2023-"$(uname -m)" "$@"
-                  fi
                 else
+                  # Pick the desk's config by short hostname (./hosts). The
+                  # config name becomes STARSHIP_HOST_ALIAS, which `code` and
+                  # `zed` use as the ssh destination back to this desk, so a
+                  # guessed config would attach editors to another desk.
+                  # ACTIVATE_HOST=<config> overrides the lookup.
+                  host="''${ACTIVATE_HOST:-}"
+                  if [ -z "$host" ]; then
+                    case "$(hostname -s)" in
+                      ${desksCases}
+                      *)
+                        echo "activate: $(hostname -s) is not in hosts/default.nix;" \
+                          "add it there or set ACTIVATE_HOST=<config>" >&2
+                        exit 1
+                        ;;
+                    esac
+                  fi
+
                   if command -v home-manager &>/dev/null; then
-                    home-manager switch --flake .#al2-"$(uname -m)" "$@"
+                    home-manager switch --flake .#"$host" "$@"
                   else
-                    nix run home-manager -- switch --flake .#al2-"$(uname -m)" "$@"
+                    nix run home-manager -- switch --flake .#"$host" "$@"
                   fi
                 fi
               ''
