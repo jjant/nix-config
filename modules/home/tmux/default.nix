@@ -53,7 +53,9 @@ let
       exec "$fish" --login "$@"
     marker="$marker_dir/started"
 
-    pane_memory_high="''${TMUX_PANE_MEMORY_HIGH:-24G}"
+    # Percentages are of the host's physical RAM, so one config fits every
+    # desk size (40% is ~49 GiB on a 123 GiB desk, ~205 GiB on 512 GiB).
+    pane_memory_high="''${TMUX_PANE_MEMORY_HIGH:-40%}"
     pane_memory_max="''${TMUX_PANE_MEMORY_MAX:-infinity}"
 
     "$systemd_run" \
@@ -88,8 +90,14 @@ in
 {
   # All pane scopes share a host-level safety envelope. MemoryHigh throttles
   # and reclaims first; MemoryMax is deliberately aggregate-only during the
-  # initial rollout so a legitimate large pane may exceed its own 24 GiB soft
+  # initial rollout so a legitimate large pane may exceed its own soft
   # threshold when the rest of the machine is idle.
+  #
+  # Limits are relative to physical RAM rather than fixed sizes: the old
+  # 48G/64G envelope fenced every pane into well under half of a 123 GiB desk,
+  # and two parallel cargo test links throttled against it for over an hour
+  # while ~60 GiB sat free. The ~15% kept outside the slice covers system
+  # daemons, the Nix daemon and the Brazil package cache.
   systemd.user.slices.tmux-panes = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     Unit = {
       Description = "tmux pane memory pool";
@@ -98,8 +106,8 @@ in
       X-RestartIfChanged = false;
     };
     Slice = {
-      MemoryHigh = "48G";
-      MemoryMax = "64G";
+      MemoryHigh = "75%";
+      MemoryMax = "85%";
       MemorySwapMax = "4G";
     };
   };
@@ -149,7 +157,7 @@ in
 
             # Prefix+C opens a pane with a higher soft threshold. It remains
             # subject to the aggregate tmux-panes.slice hard limit.
-            bind C new-window -c "#{pane_current_path}" -e TMUX_PANE_MEMORY_HIGH=48G
+            bind C new-window -c "#{pane_current_path}" -e TMUX_PANE_MEMORY_HIGH=70%
           ''
       );
   };
