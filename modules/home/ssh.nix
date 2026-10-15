@@ -18,8 +18,10 @@ let
     WarnWeakCrypto no-pq-kex
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
 
-  # Dev desktop aliases -> full internal hostnames.
-  hosts = import ./dev-desks.nix;
+  # Dev desktop aliases -> full internal hostnames (../../hosts).
+  hosts = lib.mapAttrs (_: host: host.hostname) (
+    lib.filterAttrs (_: host: host ? hostname) (import ../../hosts)
+  );
 
   # Each alias carries its own ProxyCommand: SSH matches `Host` against the
   # name typed on the command line, not the resolved HostName, so the WSSH

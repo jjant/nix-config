@@ -1,5 +1,6 @@
 # Mac host (darwin + home-manager)
 {
+  system,
   self,
   nixpkgs,
   nix-darwin,
@@ -9,9 +10,6 @@
   nix-vscode-extensions,
   mac-app-util,
 }:
-let
-  system = "aarch64-darwin";
-in
 nix-darwin.lib.darwinSystem {
   pkgs = import nixpkgs {
     inherit system;

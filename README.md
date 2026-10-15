@@ -1,6 +1,7 @@
 # nix-config
 
-Nix configurations for all my hosts.
+Nix configurations for all my hosts. [`hosts/default.nix`](hosts/default.nix)
+is the source of truth for which hosts exist:
 
 | Host | Platform | Type | Use |
 |------|----------|------|-----|
@@ -13,8 +14,9 @@ Nix configurations for all my hosts.
 
 ```
 .
-├── flake.nix           # Inputs, Linux hosts (mkHome), apps
+├── flake.nix           # Inputs; configs, checks, CI matrix derived from hosts/
 ├── hosts/
+│   ├── default.nix     # Host registry: name -> system (+ hostname for desks)
 │   └── mac-m1.nix      # Darwin host entry point
 └── modules/
     ├── home/           # Shared home-manager modules (all hosts)
@@ -25,6 +27,14 @@ Nix configurations for all my hosts.
 The Linux cloud desktops are generated in `flake.nix` by a small `mkHome`
 helper — they only differ in platform and prompt tag.
 
+### Adding a host
+
+Add an entry to `hosts/default.nix`. For a cloud desktop that's its `system`
+and `hostname`: the flake, `nix flake check`, the CI build matrix, `activate`,
+the ssh aliases and the Zed/VS Code remote host lists all derive from it. A
+Darwin host also needs its entry point in `hosts/<name>.nix`. Then add a row
+to the table above.
+
 ## Usage
 
 ### Apply config (any host)
@@ -33,7 +43,10 @@ helper — they only differ in platform and prompt tag.
 nix run .#activate
 ```
 
-Auto-detects Darwin vs AL2 vs AL2023 and applies the right config. Works for both first-time setup and subsequent updates.
+Auto-detects the host and applies its config: Darwin uses `mac-m1`; a cloud
+desktop is matched by `hostname -s` against `hosts/default.nix` (override with
+`ACTIVATE_HOST=<config>`). Works for both first-time setup and subsequent
+updates.
 
 ### Update flake inputs
 

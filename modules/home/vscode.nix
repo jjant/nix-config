@@ -24,8 +24,11 @@
         "files.trimTrailingWhitespace" = true;
         # Skip Remote-SSH's "what OS is this host?" prompt for the dev-desk
         # aliases (modules/home/ssh.nix) that the desks' `code` command
-        # (modules/home/bin/code.sh) attaches back to.
-        "remote.SSH.remotePlatform" = lib.mapAttrs (_: _: "linux") (import ./dev-desks.nix);
+        # (modules/home/bin/code.sh) attaches back to. Remote-SSH wants the OS
+        # half of the Nix system ("x86_64-linux" -> "linux").
+        "remote.SSH.remotePlatform" = lib.mapAttrs (_: host: lib.last (lib.splitString "-" host.system)) (
+          lib.filterAttrs (_: host: host ? hostname) (import ../../hosts)
+        );
         "remote.SSH.defaultExtensions" = [ "ziglang.vscode-zig" ];
         # Resolve on the host running the extension (Mac or Remote-SSH).
         "zig.path" = "zig";

@@ -14,7 +14,9 @@
       };
       # Reuse the WSSH aliases in ssh.nix. Zed installs its matching headless
       # server on the desk automatically when first connecting.
-      ssh_connections = map (host: { inherit host; }) (lib.attrNames (import ./dev-desks.nix));
+      ssh_connections = map (host: { inherit host; }) (
+        lib.attrNames (lib.filterAttrs (_: host: host ? hostname) (import ../../hosts))
+      );
     };
     # Cycle tabs in positional order instead of the default MRU tab switcher.
     # cmd-1..8 select tab N and cmd-9 the last one, as in browsers. Zed's
