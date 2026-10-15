@@ -30,16 +30,17 @@ across several assignments (e.g. `system.foo = ...;` next to a separate
 nix flake check    # builds every host buildable on this platform (same attrs CI builds)
 ```
 
-CI builds each host on a native-platform runner; the matrix comes from
-`nix eval --json .#ciMatrix`, which lists every host in `hosts/default.nix`
-with its closure attribute. Locally, `nix flake check` covers the hosts
-matching your platform. For the other platforms' hosts, `nix eval` the
-attribute's `.drvPath` to at least catch evaluation errors:
+CI builds each host on a native-platform runner (see the matrix in `ci.yml`);
+locally, `nix flake check` covers the hosts matching your platform. For the
+other platforms' hosts, `nix eval` the attribute's `.drvPath` to at least
+catch evaluation errors:
 
-```bash
-nix eval --json .#ciMatrix | jq -r '.[].attr' |
-  xargs -I{} nix eval --raw '.#{}.drvPath'
-```
+| Host           | Attribute                                              |
+| -------------- | ------------------------------------------------------ |
+| mac-m1 (Darwin)| `.#darwinConfigurations.mac-m1.system`                 |
+| al2-x86_64     | `.#homeConfigurations.al2-x86_64.activationPackage`    |
+| al2023-x86_64  | `.#homeConfigurations.al2023-x86_64.activationPackage` |
+| al2-aarch64    | `.#homeConfigurations.al2-aarch64.activationPackage`   |
 
 (e.g. `nix eval --raw .#darwinConfigurations.mac-m1.system.drvPath` works
 from Linux.)

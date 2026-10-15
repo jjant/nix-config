@@ -86,17 +86,9 @@
 
       # Every host, keyed by config name; see ./hosts/default.nix.
       hosts = import ./hosts;
-      isDarwin = host: lib.hasSuffix "-darwin" host.system;
+      isDarwin = host: host.os == "darwin";
       linuxHosts = lib.filterAttrs (_: host: !isDarwin host) hosts;
       darwinHosts = lib.filterAttrs (_: isDarwin) hosts;
-
-      # The attribute that builds a host's full closure.
-      hostAttr =
-        name: host:
-        if isDarwin host then
-          "darwinConfigurations.${name}.system"
-        else
-          "homeConfigurations.${name}.activationPackage";
 
       # `activate`'s hostname -> config lookup, one case arm per desk.
       desksCases = lib.concatStringsSep "\n      " (
@@ -104,13 +96,6 @@
           name: host: "${lib.head (lib.splitString "." host.hostname)}) host=${name} ;;"
         ) (lib.filterAttrs (_: host: host ? hostname) linuxHosts)
       );
-
-      # GitHub runner per Nix platform: every host is built natively.
-      runners = {
-        x86_64-linux = "ubuntu-latest";
-        aarch64-linux = "ubuntu-24.04-arm";
-        aarch64-darwin = "macos-15";
-      };
 
       # A Linux cloud desktop. The hosts only differ in platform and prompt
       # tag; everything else lives in ../modules/home.
@@ -169,13 +154,6 @@
             self.homeConfigurations.${name}.activationPackage
         ) (lib.filterAttrs (_: host: host.system == system) hosts)
       );
-
-      # CI build matrix (`nix eval --json .#ciMatrix`), one entry per host.
-      ciMatrix = lib.mapAttrsToList (name: host: {
-        inherit name;
-        os = runners.${host.system};
-        attr = hostAttr name host;
-      }) hosts;
 
       # `nix fmt` — official Nix formatting (RFC 166) via the treefmt wrapper,
       # which handles tree-walking (plain nixfmt deprecated directory args).

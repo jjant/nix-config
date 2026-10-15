@@ -43,24 +43,8 @@ jobs:
       - run: nix run nixpkgs#statix -- check .
       - run: nix run nixpkgs#deadnix -- -f .
 
-  # One build entry per host in hosts/default.nix, with its native runner
-  # and closure attribute (`ciMatrix` in flake.nix).
-  hosts:
-    runs-on: ubuntu-latest
-    outputs:
-      matrix: ${{ steps.matrix.outputs.matrix }}
-    steps:
-      - uses: actions/checkout@v7
-      - uses: DeterminateSystems/nix-installer-action@v23
-        with:
-          extra-conf: |
-            accept-flake-config = true
-      - name: Evaluate host matrix
-        id: matrix
-        run: echo "matrix=$(nix eval --json .#ciMatrix)" >> "$GITHUB_OUTPUT"
-
   build:
-    needs: [changes, hosts]
+    needs: changes
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -69,7 +53,19 @@ jobs:
         # platform, so the resulting closures get pushed to cachix and
         # `nix run .#activate` on the real machines is a cache pull instead
         # of a local build.
-        include: ${{ fromJSON(needs.hosts.outputs.matrix) }}
+        include:
+          - name: mac-m1
+            os: macos-15 # aarch64-darwin
+            attr: darwinConfigurations.mac-m1.system
+          - name: al2-x86_64
+            os: ubuntu-latest
+            attr: homeConfigurations.al2-x86_64.activationPackage
+          - name: al2023-x86_64
+            os: ubuntu-latest
+            attr: homeConfigurations.al2023-x86_64.activationPackage
+          - name: al2-aarch64
+            os: ubuntu-24.04-arm # aarch64-linux
+            attr: homeConfigurations.al2-aarch64.activationPackage
     name: build (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v7

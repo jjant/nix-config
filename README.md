@@ -14,9 +14,9 @@ is the source of truth for which hosts exist:
 
 ```
 .
-├── flake.nix           # Inputs; configs, checks, CI matrix derived from hosts/
+├── flake.nix           # Inputs; configs and checks derived from hosts/
 ├── hosts/
-│   ├── default.nix     # Host registry: name -> system (+ hostname for desks)
+│   ├── default.nix     # Host registry: name -> os, arch (+ hostname for desks)
 │   └── mac-m1.nix      # Darwin host entry point
 └── modules/
     ├── home/           # Shared home-manager modules (all hosts)
@@ -29,11 +29,12 @@ helper — they only differ in platform and prompt tag.
 
 ### Adding a host
 
-Add an entry to `hosts/default.nix`. For a cloud desktop that's its `system`
-and `hostname`: the flake, `nix flake check`, the CI build matrix, `activate`,
-the ssh aliases and the Zed/VS Code remote host lists all derive from it. A
-Darwin host also needs its entry point in `hosts/<name>.nix`. Then add a row
-to the table above.
+Add an entry to `hosts/default.nix`. For a cloud desktop that's its `os`,
+`arch` and `hostname`: the flake, `nix flake check`, `activate`, the ssh
+aliases and the Zed/VS Code remote host lists all derive from it. A Darwin
+host also needs its entry point in `hosts/<name>.nix`. Then add it to the
+table above, to the build matrix in `.github/workflows/ci.yml` and to the
+host table in `AGENTS.md`.
 
 ## Usage
 
