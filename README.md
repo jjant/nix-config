@@ -94,7 +94,9 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    ```
 3. Activate — flake flags are only needed for this first run (afterwards
    home-manager owns `~/.config/nix/nix.conf`, which enables them). Answer `y`
-   to the substituter prompts to pull from the cache:
+   to the substituter prompts to pull from the cache. `-b backup` moves the
+   desk's stock `~/.zshrc` / `~/.zprofile` aside (to `*.backup`) instead of
+   aborting on them:
    ```bash
-   nix --extra-experimental-features "nix-command flakes" run github:jjant/nix-config#activate
+   nix --extra-experimental-features "nix-command flakes" run github:jjant/nix-config#activate -- -b backup
    ```
