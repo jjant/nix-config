@@ -1,17 +1,3 @@
-# Every host this flake configures, keyed by config name.
-#
-# Plain data, not a module. The flake derives its home-manager and darwin
-# configurations, flake checks and `activate`'s host detection from it;
-# ssh.nix, zed.nix and vscode.nix take their dev desk lists from the hosts
-# that have a `hostname`.
-#
-#   os, arch  Platform halves; `system` ("<arch>-<os>", the Nix platform) is
-#             derived from them below.
-#   hostname  Linux cloud desktops only: the FQDN behind the ssh alias, which
-#             is the config name. `activate` matches its short form against
-#             `hostname -s`, and the config name becomes STARSHIP_HOST_ALIAS,
-#             which `code`/`zed` on the desk use to attach the Mac's editor.
-#             Darwin hosts have their entry point in ./<name>.nix instead.
 builtins.mapAttrs (_: host: host // { system = "${host.arch}-${host.os}"; }) {
   mac-m1 = {
     os = "darwin";

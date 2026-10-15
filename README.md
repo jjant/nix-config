@@ -27,15 +27,6 @@ is the source of truth for which hosts exist:
 The Linux cloud desktops are generated in `flake.nix` by a small `mkHome`
 helper — they only differ in platform and prompt tag.
 
-### Adding a host
-
-Add an entry to `hosts/default.nix`. For a cloud desktop that's its `os`,
-`arch` and `hostname`: the flake, `nix flake check`, `activate`, the ssh
-aliases and the Zed/VS Code remote host lists all derive from it. A Darwin
-host also needs its entry point in `hosts/<name>.nix`. Then add it to the
-table above, to the build matrix in `.github/workflows/ci.yml` and to the
-host table in `AGENTS.md`.
-
 ## Usage
 
 ### Apply config (any host)
