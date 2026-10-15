@@ -19,4 +19,9 @@ builtins.mapAttrs (_: host: host // { system = "${host.arch}-${host.os}"; }) {
     arch = "x86_64";
     hostname = "dev-dsk-jjantdev-1a-0e9604fc.eu-west-1.amazon.com";
   };
+  bigmem = {
+    os = "linux";
+    arch = "x86_64";
+    hostname = "dev-dsk-jjantdev-1a-0a3b1663.eu-west-1.amazon.com";
+  };
 }

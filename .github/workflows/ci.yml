@@ -63,6 +63,9 @@ jobs:
           - name: al2023-x86_64
             os: ubuntu-latest
             attr: homeConfigurations.al2023-x86_64.activationPackage
+          - name: bigmem
+            os: ubuntu-latest
+            attr: homeConfigurations.bigmem.activationPackage
           - name: al2-aarch64
             os: ubuntu-24.04-arm # aarch64-linux
             attr: homeConfigurations.al2-aarch64.activationPackage
