@@ -19,11 +19,7 @@ let
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
 
   # Dev desktop aliases -> full internal hostnames.
-  hosts = {
-    "al2-x86_64" = "dev-dsk-jjantdev-1a-4f02b3bf.eu-west-1.amazon.com";
-    "al2-aarch64" = "dev-dsk-jjantdev-1a-51a25ad7.eu-west-1.amazon.com";
-    "al2023-x86_64" = "dev-dsk-jjantdev-1a-0e9604fc.eu-west-1.amazon.com";
-  };
+  hosts = import ./dev-desks.nix;
 
   # Each alias carries its own ProxyCommand: SSH matches `Host` against the
   # name typed on the command line, not the resolved HostName, so the WSSH

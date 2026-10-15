@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, lib, ... }:
 # VS Code, installed and configured declaratively via home-manager.
 #
 # The app is built from nixpkgs (pkgs.vscode) and lives in the nix store,
@@ -25,11 +25,7 @@
         # Skip Remote-SSH's "what OS is this host?" prompt for the dev-desk
         # aliases (modules/home/ssh.nix) that the desks' `code` command
         # (modules/home/bin/code.sh) attaches back to.
-        "remote.SSH.remotePlatform" = {
-          "al2-x86_64" = "linux";
-          "al2-aarch64" = "linux";
-          "al2023-x86_64" = "linux";
-        };
+        "remote.SSH.remotePlatform" = lib.mapAttrs (_: _: "linux") (import ./dev-desks.nix);
         "remote.SSH.defaultExtensions" = [ "ziglang.vscode-zig" ];
         # Resolve on the host running the extension (Mac or Remote-SSH).
         "zig.path" = "zig";
