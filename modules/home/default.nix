@@ -10,6 +10,7 @@
     ./tmux
     ./bin
     ./earlyoom.nix
+    ./agent-skills
   ];
 
   xdg.enable = true;
