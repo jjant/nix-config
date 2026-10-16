@@ -6,9 +6,12 @@
 }:
 {
   # Remote tools start from non-interactive SSH shells, before fish's login
-  # initialization. Make Nix-installed tools available in that environment too.
+  # initialization. Make Nix-installed tools available in that environment too,
+  # including `nix` itself: a multi-user (daemon) install keeps it in the
+  # default profile, which only the installer's interactive shell hooks add.
   home.sessionPath = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
     "${config.home.profileDirectory}/bin"
+    "/nix/var/nix/profiles/default/bin"
   ];
 
   # Only manage zsh on the Linux cloud desktops.

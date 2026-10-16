@@ -168,54 +168,65 @@
         {
           activate = {
             type = "app";
-            program = toString (
-              pkgs.writeShellScript "activate" ''
-                set -e
+            program = lib.getExe (
+              pkgs.writeShellApplication {
+                name = "activate";
+                # Pinned by flake.lock rather than whatever `nix run
+                # home-manager` resolves through the flake registry, and
+                # without a nested `nix run` that evaluates another flake.
+                runtimeInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
+                  home-manager.packages.${system}.home-manager
+                  pkgs.hostname
+                ];
+                text = ''
+                  # Bootstrap for a machine with no persistent nix.conf yet:
+                  # NIX_CONFIG reaches the nix processes darwin-rebuild /
+                  # home-manager spawn (a CLI flag would not). Accepting flake
+                  # config here applies to this flake's nixConfig (our cache),
+                  # so the switch doesn't stop at the substituter prompts.
+                  export NIX_CONFIG="extra-experimental-features = nix-command flakes
+                  accept-flake-config = true"
 
-                # Bootstrap: make flakes available to the *nested* `nix run` calls
-                # below (nix-darwin / home-manager) on a machine that has no
-                # persistent nix.conf yet. NIX_CONFIG is inherited by child nix
-                # processes; a `--extra-experimental-features` CLI flag is not.
-                # `extra-` so we don't clobber features enabled elsewhere.
-                export NIX_CONFIG="extra-experimental-features = nix-command flakes"
+                  # Switch to the flake this app came from, not the current
+                  # directory: `nix run github:jjant/nix-config#activate` on a
+                  # fresh desk runs from $HOME, which has no flake.nix. From a
+                  # local clone, `nix run .#activate` makes this that clone.
+                  flake=${self}
 
-                # Switch to the flake this app came from, not the current
-                # directory: `nix run github:jjant/nix-config#activate` on a
-                # fresh desk runs from $HOME, which has no flake.nix. From a
-                # local clone, `nix run .#activate` makes this that clone.
-                flake=${self}
-
-                if [ "$(uname)" = "Darwin" ]; then
-                  if command -v darwin-rebuild &>/dev/null; then
-                    sudo darwin-rebuild switch --flake "$flake"#mac-m1 "$@"
+                  if [ "$(uname)" = "Darwin" ]; then
+                    # Absolute path: sudo resets PATH.
+                    sudo ${
+                      lib.optionalString pkgs.stdenv.hostPlatform.isDarwin (
+                        lib.getExe' nix-darwin.packages.${system}.darwin-rebuild "darwin-rebuild"
+                      )
+                    } switch --flake "$flake"#mac-m1 "$@"
                   else
-                    nix run nix-darwin -- switch --flake "$flake"#mac-m1 "$@"
-                  fi
-                else
-                  # Pick the desk's config by short hostname (./hosts). The
-                  # config name becomes STARSHIP_HOST_ALIAS, which `code` and
-                  # `zed` use as the ssh destination back to this desk, so a
-                  # guessed config would attach editors to another desk.
-                  # ACTIVATE_HOST=<config> overrides the lookup.
-                  host="''${ACTIVATE_HOST:-}"
-                  if [ -z "$host" ]; then
-                    case "$(hostname -s)" in
-                      ${desksCases}
-                      *)
-                        echo "activate: $(hostname -s) is not in hosts/default.nix;" \
-                          "add it there or set ACTIVATE_HOST=<config>" >&2
-                        exit 1
-                        ;;
-                    esac
-                  fi
+                    # Pick the desk's config by short hostname (./hosts). The
+                    # config name becomes STARSHIP_HOST_ALIAS, which `code` and
+                    # `zed` use as the ssh destination back to this desk, so a
+                    # guessed config would attach editors to another desk.
+                    # ACTIVATE_HOST=<config> overrides the lookup.
+                    host="''${ACTIVATE_HOST:-}"
+                    if [ -z "$host" ]; then
+                      case "$(hostname -s)" in
+                        ${desksCases}
+                        *)
+                          echo "activate: $(hostname -s) is not in hosts/default.nix;" \
+                            "add it there or set ACTIVATE_HOST=<config>" >&2
+                          exit 1
+                          ;;
+                      esac
+                    fi
 
-                  if command -v home-manager &>/dev/null; then
-                    home-manager switch --flake "$flake"#"$host" "$@"
-                  else
-                    nix run home-manager -- switch --flake "$flake"#"$host" "$@"
+                    # Move files home-manager would clobber (e.g. a fresh desk's
+                    # stock ~/.zshrc) aside instead of aborting. The timestamp
+                    # keeps a later conflict from tripping over an old backup.
+                    home-manager switch \
+                      -b "hm-backup.$(date +%Y%m%d-%H%M%S)" \
+                      --flake "$flake"#"$host" "$@"
                   fi
-                fi
-              ''
+                '';
+              }
             );
           };
           update = {
