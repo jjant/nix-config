@@ -25,6 +25,7 @@ is the source of truth for which hosts exist:
 └── modules/
     ├── home/           # Shared home-manager modules (all hosts)
     │   ├── fish.nix, git.nix, neovim/, tmux/, starship.nix, bin/
+    │   └── agent-skills/  # Skills shared by Claude Code, Codex and Kiro
     └── darwin/         # macOS-only (system defaults, homebrew, skhd, yabai)
 ```
 
