@@ -15,7 +15,10 @@ is the source of truth for which hosts exist:
 
 ```
 .
-├── flake.nix           # Inputs; configs and checks derived from hosts/
+├── flake.nix           # Inputs + flake-parts entry point (systems, formatter)
+├── parts/              # flake-parts modules
+│   ├── hosts.nix       # darwin/home configs + checks, derived from hosts/
+│   └── apps.nix        # `activate` and `update` apps
 ├── hosts/
 │   ├── default.nix     # Host registry: name -> os, arch (+ hostname for desks)
 │   └── mac-m1.nix      # Darwin host entry point
@@ -25,7 +28,7 @@ is the source of truth for which hosts exist:
     └── darwin/         # macOS-only (system defaults, homebrew, skhd, yabai)
 ```
 
-The Linux cloud desktops are generated in `flake.nix` by a small `mkHome`
+The Linux cloud desktops are generated in `parts/hosts.nix` by a small `mkHome`
 helper — they only differ in platform and prompt tag.
 
 ## Usage

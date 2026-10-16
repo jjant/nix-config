@@ -16,6 +16,12 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
 
+    # Module system for the flake's own outputs; see ./parts.
+    flake-parts = {
+      url = "github:hercules-ci/flake-parts";
+      inputs.nixpkgs-lib.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -61,183 +67,30 @@
   };
 
   outputs =
-    inputs@{
-      self,
-      nix-darwin,
-      nix-homebrew,
-      nixpkgs,
-      home-manager,
-      ...
-    }:
-    let
-      inherit (nixpkgs) lib;
-
-      # Platforms this flake's hosts run on.
+    inputs@{ flake-parts, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      # Platforms this flake's hosts run on. perSystem outputs (apps, checks,
+      # formatter) are generated for each.
       systems = [
         "aarch64-darwin"
         "x86_64-linux"
         "aarch64-linux"
       ];
 
-      vimPlugins = lib.mapAttrs' (name: value: {
-        name = lib.removePrefix "vim-plugin:" name;
-        inherit value;
-      }) (lib.filterAttrs (name: _: lib.hasPrefix "vim-plugin:" name) inputs);
-
       # Every host, keyed by config name; see ./hosts/default.nix.
-      hosts = import ./hosts;
-      isDarwin = host: host.os == "darwin";
-      linuxHosts = lib.filterAttrs (_: host: !isDarwin host) hosts;
-      darwinHosts = lib.filterAttrs (_: isDarwin) hosts;
+      _module.args.hosts = import ./hosts;
 
-      # `activate`'s hostname -> config lookup, one case arm per desk.
-      desksCases = lib.concatStringsSep "\n      " (
-        lib.mapAttrsToList (
-          name: host: "${lib.head (lib.splitString "." host.hostname)}) host=${name} ;;"
-        ) (lib.filterAttrs (_: host: host ? hostname) linuxHosts)
-      );
-
-      # A Linux cloud desktop. The hosts only differ in platform and prompt
-      # tag; everything else lives in ../modules/home.
-      mkHome =
-        alias:
-        { system, ... }:
-        home-manager.lib.homeManagerConfiguration {
-          pkgs = import nixpkgs {
-            inherit system;
-            config.allowUnfree = true;
-          };
-          extraSpecialArgs = { inherit vimPlugins; };
-          modules = [
-            ./modules/home
-            {
-              home = {
-                username = "jjantdev";
-                homeDirectory = "/home/jjantdev";
-                stateVersion = "23.11";
-                sessionVariables.STARSHIP_HOST_ALIAS = alias;
-              };
-            }
-          ];
-        };
-    in
-    {
-      darwinConfigurations = lib.mapAttrs (
-        name: host:
-        import ./hosts/${name}.nix {
-          inherit (host) system;
-          inherit
-            self
-            nixpkgs
-            home-manager
-            vimPlugins
-            nix-darwin
-            nix-homebrew
-            ;
-          inherit (inputs) nix-vscode-extensions mac-app-util;
-        }
-      ) darwinHosts;
-
-      homeConfigurations = lib.mapAttrs mkHome linuxHosts;
-
-      darwinPackages = self.darwinConfigurations.mac-m1.pkgs;
-
-      # `nix flake check` builds every host that can build on the current
-      # platform (same attrs CI builds), so it works as a single local gate.
-      checks = lib.genAttrs systems (
-        system:
-        lib.mapAttrs (
-          name: host:
-          if isDarwin host then
-            self.darwinConfigurations.${name}.system
-          else
-            self.homeConfigurations.${name}.activationPackage
-        ) (lib.filterAttrs (_: host: host.system == system) hosts)
-      );
+      imports = [
+        ./parts/hosts.nix
+        ./parts/apps.nix
+      ];
 
       # `nix fmt` — official Nix formatting (RFC 166) via the treefmt wrapper,
       # which handles tree-walking (plain nixfmt deprecated directory args).
-      formatter = lib.genAttrs systems (system: nixpkgs.legacyPackages.${system}.nixfmt-tree);
-
-      # nix run .#activate — auto-detects host type and applies config
-      apps = lib.genAttrs systems (
-        system:
-        let
-          pkgs = import nixpkgs { inherit system; };
-        in
+      perSystem =
+        { pkgs, ... }:
         {
-          activate = {
-            type = "app";
-            program = lib.getExe (
-              pkgs.writeShellApplication {
-                name = "activate";
-                # Pinned by flake.lock rather than whatever `nix run
-                # home-manager` resolves through the flake registry, and
-                # without a nested `nix run` that evaluates another flake.
-                runtimeInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
-                  home-manager.packages.${system}.home-manager
-                  pkgs.hostname
-                ];
-                text = ''
-                  # Bootstrap for a machine with no persistent nix.conf yet:
-                  # NIX_CONFIG reaches the nix processes darwin-rebuild /
-                  # home-manager spawn (a CLI flag would not). Accepting flake
-                  # config here applies to this flake's nixConfig (our cache),
-                  # so the switch doesn't stop at the substituter prompts.
-                  export NIX_CONFIG="extra-experimental-features = nix-command flakes
-                  accept-flake-config = true"
-
-                  # Switch to the flake this app came from, not the current
-                  # directory: `nix run github:jjant/nix-config#activate` on a
-                  # fresh desk runs from $HOME, which has no flake.nix. From a
-                  # local clone, `nix run .#activate` makes this that clone.
-                  flake=${self}
-
-                  if [ "$(uname)" = "Darwin" ]; then
-                    # Absolute path: sudo resets PATH.
-                    sudo ${
-                      lib.optionalString pkgs.stdenv.hostPlatform.isDarwin (
-                        lib.getExe' nix-darwin.packages.${system}.darwin-rebuild "darwin-rebuild"
-                      )
-                    } switch --flake "$flake"#mac-m1 "$@"
-                  else
-                    # Pick the desk's config by short hostname (./hosts). The
-                    # config name becomes STARSHIP_HOST_ALIAS, which `code` and
-                    # `zed` use as the ssh destination back to this desk, so a
-                    # guessed config would attach editors to another desk.
-                    # ACTIVATE_HOST=<config> overrides the lookup.
-                    host="''${ACTIVATE_HOST:-}"
-                    if [ -z "$host" ]; then
-                      case "$(hostname -s)" in
-                        ${desksCases}
-                        *)
-                          echo "activate: $(hostname -s) is not in hosts/default.nix;" \
-                            "add it there or set ACTIVATE_HOST=<config>" >&2
-                          exit 1
-                          ;;
-                      esac
-                    fi
-
-                    # Move files home-manager would clobber (e.g. a fresh desk's
-                    # stock ~/.zshrc) aside instead of aborting. The timestamp
-                    # keeps a later conflict from tripping over an old backup.
-                    home-manager switch \
-                      -b "hm-backup.$(date +%Y%m%d-%H%M%S)" \
-                      --flake "$flake"#"$host" "$@"
-                  fi
-                '';
-              }
-            );
-          };
-          update = {
-            type = "app";
-            program = toString (
-              pkgs.writeShellScript "update" ''
-                nix flake update
-              ''
-            );
-          };
-        }
-      );
+          formatter = pkgs.nixfmt-tree;
+        };
     };
 }
