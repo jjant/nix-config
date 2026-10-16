@@ -4,7 +4,11 @@
   # Spotlight; the Linux desks get bin/zed.sh instead of a GUI installation.
   programs.zed-editor = {
     enable = true;
-    extensions = [ "zig" ];
+    extensions = [
+      "nix"
+      "nu"
+      "zig"
+    ];
     userSettings = {
       auto_update = false;
       # Use the ZLS managed by Nix on the host running the server.
