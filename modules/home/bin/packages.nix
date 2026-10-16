@@ -88,7 +88,10 @@ let
       pv
     ];
     # System ssh carries the user's ~/.ssh config + forwarded agent.
-    fake.external = [ "ssh" ];
+    fake.external = [
+      "ssh"
+      "ssh-add"
+    ];
     # tar/pv can exec in general, but this script never uses them that way.
     execer = [
       "cannot:${pkgs.gnutar}/bin/tar"

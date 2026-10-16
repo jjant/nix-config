@@ -128,6 +128,16 @@ if [ "$#" -eq 0 ]; then
   exit 1
 fi
 
+# The Mac's sshd only accepts the forwarded 1Password key, and without it ssh
+# just says "Permission denied (publickey)". Name the actual problem unless a
+# live connection to the Mac can be reused. Typical cause: this shell's SSH
+# session has no agent, e.g. it came in over the FQDN instead of the alias.
+if ! ssh "${ssh_opts[@]}" -O check "$mac" 2>/dev/null && ! ssh-add -l >/dev/null 2>&1; then
+  echo "open: no forwarded SSH agent in this session (SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-unset})." >&2
+  echo "Reconnect from the Mac with: ssh ${STARSHIP_HOST_ALIAS:-<desk alias>}" >&2
+  exit 1
+fi
+
 for arg in "$@"; do
   # Only explicit web URLs go over the tunnel. Reject typos, bare domains, and
   # unsupported schemes here so they fail immediately instead of waiting for

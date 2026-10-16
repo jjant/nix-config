@@ -60,7 +60,10 @@ in
       # Default-deny agent forwarding; only the dev-dsk aliases above opt in.
       ForwardAgent no
       ControlMaster auto
-      ControlPath ~/.ssh/ssh-%r@%h:%p
+      # %n (the host as typed), not %h (the resolved HostName): a dev-dsk alias
+      # and its FQDN must not share a master, or `ssh <alias>` rides an
+      # FQDN connection that has no agent forwarding or RemoteForward.
+      ControlPath ~/.ssh/ssh-%r@%n:%p
       ControlPersist 30m
   '';
 
