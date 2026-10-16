@@ -174,7 +174,7 @@
                 # Pinned by flake.lock rather than whatever `nix run
                 # home-manager` resolves through the flake registry, and
                 # without a nested `nix run` that evaluates another flake.
-                runtimeInputs = lib.optionals pkgs.stdenv.isLinux [
+                runtimeInputs = lib.optionals pkgs.stdenv.hostPlatform.isLinux [
                   home-manager.packages.${system}.home-manager
                   pkgs.hostname
                 ];
@@ -196,7 +196,7 @@
                   if [ "$(uname)" = "Darwin" ]; then
                     # Absolute path: sudo resets PATH.
                     sudo ${
-                      lib.optionalString pkgs.stdenv.isDarwin (
+                      lib.optionalString pkgs.stdenv.hostPlatform.isDarwin (
                         lib.getExe' nix-darwin.packages.${system}.darwin-rebuild "darwin-rebuild"
                       )
                     } switch --flake "$flake"#mac-m1 "$@"
