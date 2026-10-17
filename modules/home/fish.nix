@@ -32,6 +32,10 @@ in
         # add it in ~/.profile, but home-manager owns our shell init, so we
         # have to do it ourselves.
         fish_add_path --append $HOME/.local/bin
+        # ~/.toolbox/bin (claude and friends). On the desks, zsh's handoff
+        # (zsh.nix) only covers ssh logins; tmux panes start fish directly
+        # and would otherwise depend on the tmux server's inherited PATH.
+        fish_add_path --append $HOME/.toolbox/bin
 
         # Export as empty so that the nix-installed `rust-analyzer`
         # doesn't try to use rust stdlib sources from the nix store,
