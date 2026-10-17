@@ -148,6 +148,11 @@
     };
   };
 
+  # atuin writes a default config.toml whenever it starts without one (the
+  # shell hook runs it on every command), so deleting the file before
+  # activating never sticks; let home-manager replace it.
+  xdg.configFile."atuin/config.toml".force = true;
+
   programs = {
     # Installs the `home-manager` CLI itself into the profile. Without this,
     # only the generated activation package is built; the switcher command
