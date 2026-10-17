@@ -11,9 +11,9 @@ in
   # loopback-only port (./atuin-server.nix) so `atuin sync` works here.
   #
   # Desk-to-desk ssh connects directly and authenticates with the desk's
-  # short-lived SSH certificate (~/.ssh/id_ecdsa-cert.pub, ~20h). An open
-  # tunnel outlives it, but reconnecting needs it renewed on this desk;
-  # until then systemd keeps retrying and history stays local.
+  # short-lived SSH certificate. An open tunnel outlives it, but
+  # reconnecting needs it renewed on this desk; until then systemd keeps
+  # retrying and history stays local.
   #
   # A user service like earlyoom: up while we're logged in to this desk.
   systemd.user.services.atuin-tunnel = {
