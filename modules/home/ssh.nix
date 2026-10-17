@@ -19,7 +19,9 @@ let
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
 
   # Dev desktop aliases -> full internal hostnames (../../hosts).
-  hosts = lib.filterAttrs (_: host: host ? hostname) (import ../../hosts);
+  hosts = lib.mapAttrs (_: host: host.hostname) (
+    lib.filterAttrs (_: host: host ? hostname) (import ../../hosts)
+  );
 
   # Each alias carries its own ProxyCommand: SSH matches `Host` against the
   # name typed on the command line, not the resolved HostName, so the WSSH
@@ -30,22 +32,16 @@ let
   # 1Password on the Mac; only signing requests travel back over the existing
   # SSH connection. Scoped to these trusted hosts only (see `ForwardAgent no`
   # on `Host *` below).
-  hostBlock = alias: host: ''
+  hostBlock = alias: hostname: ''
     Host ${alias}
-      HostName ${host.hostname}
+      HostName ${hostname}
       User ${user}
       ProxyCommand /usr/local/bin/wssh proxy %h
       ForwardAgent yes${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
 
         # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
         # Linux `open` wrapper hand files back to the Mac's native `open`.
-        RemoteForward 2022 localhost:22''}${
-        lib.optionalString (pkgs.stdenv.hostPlatform.isDarwin && host.atuinServer or false) ''
-
-          # The desk's atuin sync server only listens on its loopback
-          # (./atuin-server.nix); expose it to this Mac as localhost:8888.
-          LocalForward 8888 localhost:8888''
-      }
+        RemoteForward 2022 localhost:22''}
       ServerAliveInterval 15
       ServerAliveCountMax 44
   '';

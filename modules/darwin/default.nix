@@ -9,6 +9,7 @@
     ./skhd.nix
     ./yabai.nix
     ./openssh.nix
+    ./atuin-tunnel.nix
   ];
 
   # Newer Nix installers create the `nixbld` group with GID 350 (macOS moved

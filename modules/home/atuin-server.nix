@@ -1,6 +1,6 @@
 { pkgs, config, ... }:
 let
-  # Keep in sync with the LocalForward in ./ssh.nix.
+  # Keep in sync with the Mac's tunnel in ../darwin/atuin-tunnel.nix.
   port = 8888;
   dataDir = "${config.xdg.dataHome}/atuin-server";
 in
@@ -15,12 +15,13 @@ in
   # replication.
   #
   # Bound to loopback only. Other machines reach it through an SSH
-  # LocalForward (see ./ssh.nix), never a wider bind. Open registration is
-  # left on because only local users can reach the port and records are
-  # encrypted with each client's key anyway.
+  # LocalForward (see ../darwin/atuin-tunnel.nix), never a wider bind.
+  # Open registration is left on because only local users can reach the
+  # port and records are encrypted with each client's key anyway.
   #
   # Like earlyoom, this is a user service: it runs while we're logged in
-  # (no linger), which is when the Mac has a tunnel to it anyway.
+  # (no linger). The Mac's tunnel is itself an ssh login, so the server is
+  # up whenever the Mac can reach it.
   systemd.user.services.atuin-server = {
     Unit.Description = "Atuin sync server (loopback only)";
 
