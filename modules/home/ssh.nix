@@ -32,21 +32,38 @@ let
   # 1Password on the Mac; only signing requests travel back over the existing
   # SSH connection. Scoped to these trusted hosts only (see `ForwardAgent no`
   # on `Host *` below).
-  hostBlock = alias: hostname: ''
+  #
+  # `withReverseTunnel = false` drops the RemoteForward, for a second
+  # connection to a desk that an interactive session may already hold it on.
+  hostBlock = withReverseTunnel: alias: hostname: ''
     Host ${alias}
       HostName ${hostname}
       User ${user}
       ProxyCommand /usr/local/bin/wssh proxy %h
-      ForwardAgent yes${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+      ForwardAgent yes${
+        lib.optionalString (withReverseTunnel && pkgs.stdenv.hostPlatform.isDarwin) ''
 
-        # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
-        # Linux `open` wrapper hand files back to the Mac's native `open`.
-        RemoteForward 2022 localhost:22''}
+          # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
+          # Linux `open` wrapper hand files back to the Mac's native `open`.
+          RemoteForward 2022 localhost:22''
+      }
       ServerAliveInterval 15
       ServerAliveCountMax 44
   '';
 
-  hostBlocks = lib.concatStringsSep "\n" (lib.mapAttrsToList hostBlock hosts);
+  # Desks running the atuin sync server (../../hosts).
+  atuinServers = lib.attrNames (
+    lib.filterAttrs (_: host: host.atuinServer or false) (import ../../hosts)
+  );
+
+  hostBlocks = lib.concatStringsSep "\n" (
+    lib.mapAttrsToList (hostBlock true) hosts
+    # `<alias>-atuin-tunnel`: what the Mac's always-on tunnel to the atuin
+    # server connects as (../darwin/atuin-tunnel.nix).
+    ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
+      map (alias: hostBlock false "${alias}-atuin-tunnel" hosts.${alias}) atuinServers
+    )
+  );
 
   includeLine = "Include ~/.ssh/config.d/hosts";
 in

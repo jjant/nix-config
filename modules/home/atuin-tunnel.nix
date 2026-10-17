@@ -10,10 +10,10 @@ in
   # (../darwin/atuin-tunnel.nix): forward localhost:8888 to the server's
   # loopback-only port (./atuin-server.nix) so `atuin sync` works here.
   #
-  # Desk-to-desk ssh needs no wssh; it authenticates with the Midway-signed
-  # ~/.ssh/id_ecdsa-cert.pub (~20h). An open tunnel outlives the cert, but
-  # reconnecting needs a fresh `mwinit` on this desk; until then systemd
-  # just keeps retrying and history stays local.
+  # Desk-to-desk ssh connects directly and authenticates with the desk's
+  # short-lived SSH certificate (~/.ssh/id_ecdsa-cert.pub, ~20h). An open
+  # tunnel outlives it, but reconnecting needs it renewed on this desk;
+  # until then systemd keeps retrying and history stays local.
   #
   # A user service like earlyoom: up while we're logged in to this desk.
   systemd.user.services.atuin-tunnel = {

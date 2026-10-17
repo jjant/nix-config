@@ -2,7 +2,7 @@
 let
   # The desk running the atuin sync server (atuinServer = true in ../../hosts).
   server = lib.head (
-    lib.attrValues (lib.filterAttrs (_: host: host.atuinServer or false) (import ../../hosts))
+    lib.attrNames (lib.filterAttrs (_: host: host.atuinServer or false) (import ../../hosts))
   );
 in
 {
@@ -20,11 +20,9 @@ in
       "ControlMaster=no"
       "-o"
       "ControlPath=none"
-      # The FQDN skips the alias block, whose RemoteForward would collide
-      # with the one an interactive `ssh <alias>` already holds on the desk;
-      # so spell out the alias's ProxyCommand here.
+      # Nothing on the desk needs this connection's agent.
       "-o"
-      "ProxyCommand=/usr/local/bin/wssh proxy %h"
+      "ForwardAgent=no"
       # Exit (and let launchd retry) instead of idling without the forward,
       # prompting nobody can answer, or hanging on a dead connection.
       "-o"
@@ -37,7 +35,8 @@ in
       "ServerAliveCountMax=3"
       "-L"
       "127.0.0.1:8888:localhost:8888"
-      "jjantdev@${server.hostname}"
+      # The desk's alias minus its RemoteForward (../home/ssh.nix).
+      "${server}-atuin-tunnel"
     ];
     KeepAlive = true;
     RunAtLoad = true;
