@@ -307,7 +307,8 @@
         "nixpkgs": "nixpkgs_4",
         "vim-plugin:L3MON4D3/LuaSnip": "vim-plugin:L3MON4D3/LuaSnip",
         "vim-plugin:LunarVim/darkplus.nvim": "vim-plugin:LunarVim/darkplus.nvim",
-        "vim-plugin:rafamadriz/friendly-snippets": "vim-plugin:rafamadriz/friendly-snippets"
+        "vim-plugin:rafamadriz/friendly-snippets": "vim-plugin:rafamadriz/friendly-snippets",
+        "zenoh-ts": "zenoh-ts"
       }
     },
     "systems": {
@@ -421,6 +422,23 @@
       "original": {
         "owner": "rafamadriz",
         "repo": "friendly-snippets",
+        "type": "github"
+      }
+    },
+    "zenoh-ts": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1788793809,
+        "narHash": "sha256-ht9lrbAsoigovE8Yp/rVk0IZO1DgNVQRXCvPUznBtwo=",
+        "owner": "eclipse-zenoh",
+        "repo": "zenoh-ts",
+        "rev": "d46ae6378767b9723842684731942584a4b199a2",
+        "type": "github"
+      },
+      "original": {
+        "owner": "eclipse-zenoh",
+        "ref": "1.10.1",
+        "repo": "zenoh-ts",
         "type": "github"
       }
     }
