@@ -200,9 +200,8 @@
       settings = {
         enter_accept = true;
         # The self-hosted server on bigmem (./atuin-server.nix): local there,
-        # through a launchd ssh tunnel on the Mac (../darwin/atuin-tunnel.nix).
-        # Sync is a no-op until `atuin login`, so desks without a route to it
-        # are unaffected.
+        # through an ssh tunnel elsewhere (./atuin-tunnel.nix,
+        # ../darwin/atuin-tunnel.nix).
         sync_address = "http://localhost:8888";
       };
     };

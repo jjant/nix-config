@@ -39,7 +39,15 @@ let
           };
         }
       ]
-      ++ lib.optional (host.atuinServer or false) ../modules/home/atuin-server.nix;
+      # One desk serves atuin sync; the rest tunnel to it.
+      ++ [
+        (
+          if host.atuinServer or false then
+            ../modules/home/atuin-server.nix
+          else
+            ../modules/home/atuin-tunnel.nix
+        )
+      ];
     };
 in
 {
