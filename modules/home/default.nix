@@ -194,6 +194,16 @@
     atuin = {
       enable = true;
       flags = [ "--disable-up-arrow" ];
+      # atuin rewrites its default config.toml after every shell command, so
+      # an unmanaged one can't be deleted out of home-manager's way.
+      forceOverwriteSettings = true;
+      settings = {
+        enter_accept = true;
+        # The self-hosted server on bigmem (./atuin-server.nix): local there,
+        # through an ssh tunnel elsewhere (./atuin-tunnel.nix,
+        # ../darwin/atuin-tunnel.nix).
+        sync_address = "http://localhost:8888";
+      };
     };
 
     # Owns `j` (was hand-rolled `zoxide init fish --cmd j` in fish.nix); the

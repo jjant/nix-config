@@ -21,7 +21,7 @@ let
   # tag; everything else lives in ../modules/home.
   mkHome =
     alias:
-    { system, ... }:
+    { system, ... }@host:
     home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs {
         inherit system;
@@ -38,6 +38,15 @@ let
             sessionVariables.STARSHIP_HOST_ALIAS = alias;
           };
         }
+      ]
+      # One desk serves atuin sync; the rest tunnel to it.
+      ++ [
+        (
+          if host.atuinServer or false then
+            ../modules/home/atuin-server.nix
+          else
+            ../modules/home/atuin-tunnel.nix
+        )
       ];
     };
 in
