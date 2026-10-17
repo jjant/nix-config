@@ -148,11 +148,6 @@
     };
   };
 
-  # atuin writes a default config.toml whenever it starts without one (the
-  # shell hook runs it on every command), so deleting the file before
-  # activating never sticks; let home-manager replace it.
-  xdg.configFile."atuin/config.toml".force = true;
-
   programs = {
     # Installs the `home-manager` CLI itself into the profile. Without this,
     # only the generated activation package is built; the switcher command
@@ -199,6 +194,9 @@
     atuin = {
       enable = true;
       flags = [ "--disable-up-arrow" ];
+      # atuin rewrites its default config.toml after every shell command, so
+      # an unmanaged one can't be deleted out of home-manager's way.
+      forceOverwriteSettings = true;
       settings = {
         enter_accept = true;
         # The self-hosted server on bigmem (./atuin-server.nix): local there,
