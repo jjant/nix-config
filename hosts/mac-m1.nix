@@ -9,6 +9,7 @@
   vimPlugins,
   nix-vscode-extensions,
   mac-app-util,
+  zenoh-ts,
 }:
 nix-darwin.lib.darwinSystem {
   pkgs = import nixpkgs {
@@ -48,7 +49,6 @@ nix-darwin.lib.darwinSystem {
         trust.taps = [
           "epk/epk"
           "smithy-lang/tap"
-          "eclipse-zenoh/zenoh"
           "goreleaser/tap"
         ];
       };
@@ -56,7 +56,7 @@ nix-darwin.lib.darwinSystem {
     home-manager.darwinModules.home-manager
     {
       home-manager = {
-        extraSpecialArgs = { inherit vimPlugins; };
+        extraSpecialArgs = { inherit vimPlugins zenoh-ts; };
         useGlobalPkgs = true;
         useUserPackages = true;
         sharedModules = [ mac-app-util.homeManagerModules.default ];

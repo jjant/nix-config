@@ -27,7 +27,10 @@ let
         inherit system;
         config.allowUnfree = true;
       };
-      extraSpecialArgs = { inherit vimPlugins; };
+      extraSpecialArgs = {
+        inherit vimPlugins;
+        inherit (inputs) zenoh-ts;
+      };
       modules = [
         ../modules/home
         {
@@ -64,6 +67,7 @@ in
           nix-homebrew
           nix-vscode-extensions
           mac-app-util
+          zenoh-ts
           ;
       }
     ) (lib.filterAttrs (_: isDarwin) hosts);

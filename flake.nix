@@ -50,6 +50,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Source for zenoh-bridge-remote-api (not in nixpkgs); see
+    # modules/home/zenoh.nix. Pinned to a release tag; bump the tag to upgrade.
+    zenoh-ts = {
+      url = "github:eclipse-zenoh/zenoh-ts/1.10.1";
+      flake = false;
+    };
+
     "vim-plugin:LunarVim/darkplus.nvim" = {
       url = "github:LunarVim/darkplus.nvim";
       flake = false;

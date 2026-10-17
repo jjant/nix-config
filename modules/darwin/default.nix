@@ -187,7 +187,6 @@
     taps = [
       "epk/epk"
       "smithy-lang/tap"
-      "eclipse-zenoh/zenoh"
       "goreleaser/tap"
     ];
 
@@ -203,7 +202,6 @@
       "poppler"
       "rpm"
       "smithy-cli"
-      "zenoh"
     ];
 
     casks = [
