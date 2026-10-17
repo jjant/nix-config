@@ -194,6 +194,13 @@
     atuin = {
       enable = true;
       flags = [ "--disable-up-arrow" ];
+      settings = {
+        enter_accept = true;
+        # The self-hosted server on bigmem (./atuin-server.nix): local there,
+        # through the ssh alias's LocalForward on the Mac. Sync is a no-op
+        # until `atuin login`, so desks without a route to it are unaffected.
+        sync_address = "http://localhost:8888";
+      };
     };
 
     # Owns `j` (was hand-rolled `zoxide init fish --cmd j` in fish.nix); the

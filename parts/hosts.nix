@@ -21,7 +21,7 @@ let
   # tag; everything else lives in ../modules/home.
   mkHome =
     alias:
-    { system, ... }:
+    { system, ... }@host:
     home-manager.lib.homeManagerConfiguration {
       pkgs = import nixpkgs {
         inherit system;
@@ -38,7 +38,8 @@ let
             sessionVariables.STARSHIP_HOST_ALIAS = alias;
           };
         }
-      ];
+      ]
+      ++ lib.optional (host.atuinServer or false) ../modules/home/atuin-server.nix;
     };
 in
 {
