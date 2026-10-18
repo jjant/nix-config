@@ -140,11 +140,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792285663,
-        "narHash": "sha256-9kJlMwHLHDi3mNHMKLV9jCL73IBxHbyZbKSRKzaTUxg=",
+        "lastModified": 1792318613,
+        "narHash": "sha256-iLF1Ne8g1zRhjqcCuPuFxJWlxKL/yc1qL8Y4ehOxcpk=",
         "owner": "jjant",
         "repo": "hostctl",
-        "rev": "ce20ee6cbe3c890133cddad03adaf4ca992f8d37",
+        "rev": "29752cadc292685caae9f9b4dad54679614224a7",
         "type": "github"
       },
       "original": {
