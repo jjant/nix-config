@@ -52,12 +52,11 @@ updates.
 hostctl
 ```
 
-Shows which hosts run the configuration on `main` (a dashboard on a terminal,
-`hostctl status` for a table), and activates the ones that don't when asked
-(`a` in the dashboard, or `hostctl activate <host>`). The Mac reaches every
-desk. A desk reaches the Mac only through the reverse tunnel of an ssh session
-from it, and shows it offline otherwise; there it can check the Mac but not
-diff or activate it, so update the Mac on the Mac.
+Shows which hosts run the configuration on `main` (`↑ ahead` for one on a newer
+commit, with its branch), and `hostctl activate <host>` updates one. The Mac
+reaches every desk. A desk reaches the Mac only through the reverse tunnel of an
+ssh session from it, and shows it offline otherwise; there it can check the Mac
+but not diff or activate it, so update the Mac on the Mac.
 
 ### Update flake inputs
 
