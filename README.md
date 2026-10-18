@@ -71,8 +71,8 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    git clone https://github.com/jjant/nix-config.git ~/personal/nix-config
    cd ~/personal/nix-config
    # The official installer doesn't enable flakes yet, so the very first run
-   # needs them passed to the outer `nix`; activate propagates them to the
-   # nested `nix run nix-darwin` call. Subsequent runs can use `nix run .#activate`.
+   # needs them passed to the outer `nix`; the darwin-rebuild that activate
+   # runs enables them itself. Subsequent runs can use `nix run .#activate`.
    nix --extra-experimental-features "nix-command flakes" run .#activate
    ```
 3. Change default shell: `chsh -s /run/current-system/sw/bin/fish`
