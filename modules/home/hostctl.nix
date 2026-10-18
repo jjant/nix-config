@@ -27,11 +27,16 @@
       # StrictHostKeyChecking=accept-new hostctl relies on, and nixpkgs' can't
       # parse AL2023's system config. The desks reach each other directly with
       # their own SSH certificates, and the Mac with the agent forwarded from it.
+      # Per-host ssh settings would go in hosts.<name>.ssh-options. As on the
+      # Mac (./ssh.nix), no warning about AL2's sshd lacking post-quantum key
+      # exchange.
       ssh = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
         command = "${pkgs.openssh}/bin/ssh";
         options = [
           "-F"
           "/dev/null"
+          "-o"
+          "WarnWeakCrypto=no-pq-kex"
         ];
       };
     };
