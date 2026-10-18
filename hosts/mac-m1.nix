@@ -62,10 +62,17 @@ nix-darwin.lib.darwinSystem {
         useUserPackages = true;
         sharedModules = [ mac-app-util.homeManagerModules.default ];
         users.jjantdev = {
-          # hostctl would only assume this is the Mac (the one darwin host);
-          # say so here, not in the shared ../modules/home/hostctl.nix, which
-          # every desk imports too.
-          programs.hostctl.settings.self = "mac-m1";
+          programs.hostctl.settings = {
+            # hostctl would only assume this is the Mac (the one darwin
+            # host); say so here, not in the shared
+            # ../modules/home/hostctl.nix, which every desk imports too.
+            self = "mac-m1";
+            # hostctl's default darwin activation, plus what
+            # ../parts/apps.nix passes for the same reason: under sudo,
+            # darwin-rebuild's nix runs as root, which would ask about the
+            # flake's cache settings.
+            hosts.mac-m1.activate = "sudo /run/current-system/sw/bin/darwin-rebuild switch --option accept-flake-config true --flake {flake}#{name}";
+          };
           home.stateVersion = "23.11";
           home.homeDirectory = nixpkgs.lib.mkForce "/Users/jjantdev";
           imports = [
