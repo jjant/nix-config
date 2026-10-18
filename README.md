@@ -18,7 +18,8 @@ is the source of truth for which hosts exist:
 ├── flake.nix           # Inputs + flake-parts entry point (systems, formatter)
 ├── parts/              # flake-parts modules
 │   ├── hosts.nix       # darwin/home configs + checks, derived from hosts/
-│   └── apps.nix        # `activate` and `update` apps
+│   ├── apps.nix        # `activate` and `update` apps
+│   └── hostctl.nix     # how hostctl reaches each host, derived from hosts/
 ├── hosts/
 │   ├── default.nix     # Host registry: name -> os, arch (+ hostname for desks)
 │   └── mac-m1.nix      # Darwin host entry point
@@ -44,6 +45,19 @@ Auto-detects the host and applies its config: Darwin uses `mac-m1`; a cloud
 desktop is matched by `hostname -s` against `hosts/default.nix` (override with
 `ACTIVATE_HOST=<config>`). Works for both first-time setup and subsequent
 updates.
+
+### Check every host
+
+```bash
+hostctl
+```
+
+Shows which hosts run the configuration on `main` (a dashboard on a terminal,
+`hostctl status` for a table), and activates the ones that don't when asked
+(`a` in the dashboard, or `hostctl activate <host>`). The Mac reaches every
+desk. A desk reaches the Mac only through the reverse tunnel of an ssh session
+from it, and shows it offline otherwise; there it can check the Mac but not
+diff or activate it, so update the Mac on the Mac.
 
 ### Update flake inputs
 

@@ -6,6 +6,7 @@
     ./ssh.nix
     ./zig.nix
     ./zenoh.nix
+    ./hostctl.nix
     ./starship.nix
     ./neovim
     ./tmux

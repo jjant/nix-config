@@ -10,6 +10,7 @@
   nix-vscode-extensions,
   mac-app-util,
   zenoh-ts,
+  hostctl,
 }:
 nix-darwin.lib.darwinSystem {
   pkgs = import nixpkgs {
@@ -56,11 +57,15 @@ nix-darwin.lib.darwinSystem {
     home-manager.darwinModules.home-manager
     {
       home-manager = {
-        extraSpecialArgs = { inherit vimPlugins zenoh-ts; };
+        extraSpecialArgs = { inherit vimPlugins zenoh-ts hostctl; };
         useGlobalPkgs = true;
         useUserPackages = true;
         sharedModules = [ mac-app-util.homeManagerModules.default ];
         users.jjantdev = {
+          # hostctl would only assume this is the Mac (the one darwin host);
+          # say so here, not in the shared ../modules/home/hostctl.nix, which
+          # every desk imports too.
+          programs.hostctl.settings.self = "mac-m1";
           home.stateVersion = "23.11";
           home.homeDirectory = nixpkgs.lib.mkForce "/Users/jjantdev";
           imports = [
