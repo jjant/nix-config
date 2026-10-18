@@ -35,8 +35,9 @@ let
     # environment has no user profile):
     #  - zstd: decompress the `file`/`directory`/`share` transfer stream —
     #    macOS's libarchive has no built-in zstd (see mac-open-recv.sh).
-    #  - jq: build/parse the Drive upload API's JSON in the `share` flow;
-    #    macOS ships no jq.
+    #  - jq: build/parse the Drive upload API's JSON in the `share` flow, and
+    #    read configurationRevision from darwin-version.json in
+    #    `current-system`; macOS ships no jq.
     #  - vscode: the `code` CLI for the Remote-SSH flow; same pkgs.vscode the
     #    user profile installs (modules/home/vscode.nix via useGlobalPkgs).
     #  - zed-editor: the `zeditor` CLI for the Zed SSH flow; same package as
