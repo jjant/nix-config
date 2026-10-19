@@ -202,6 +202,7 @@
       "poppler"
       "rpm"
       "smithy-cli"
+      "ykman"
     ];
 
     casks = [
