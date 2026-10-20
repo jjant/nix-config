@@ -1,7 +1,7 @@
 # Mac host (darwin + home-manager)
 {
   system,
-  self,
+  revision,
   nixpkgs,
   nix-darwin,
   nix-homebrew,
@@ -24,7 +24,7 @@ nix-darwin.lib.darwinSystem {
     # through a backwards-compat shim that sets the legacy `nixpkgs.system`
     # option, which upstream says "will be deprecated in the future".
     { nixpkgs.hostPlatform = system; }
-    { system.configurationRevision = self.rev or self.dirtyRev or null; }
+    { system.configurationRevision = revision; }
     {
       nix.registry.nixpkgs.flake = nixpkgs;
       nix.registry.p.flake = nixpkgs;
