@@ -17,6 +17,13 @@ let
 
   isDarwin = host: host.os == "darwin";
 
+  # The commit with uncommitted changes a configuration is built from
+  # (`<rev>-dirty`). `nix run .#activate` evaluates a dirty tree as a copy
+  # without it, which has it in ../.dirty-rev instead (./apps.nix).
+  dirtyRev =
+    self.dirtyRev
+      or (if builtins.pathExists ../.dirty-rev then lib.fileContents ../.dirty-rev else null);
+
   # A Linux cloud desktop. The hosts only differ in platform and prompt
   # tag; everything else lives in ../modules/home.
   mkHome =
@@ -41,6 +48,14 @@ let
             sessionVariables.STARSHIP_HOST_ALIAS = alias;
           };
         }
+        # How hostctl tells a generation activated from uncommitted changes.
+        # A clean one records no revision, so that a commit that doesn't
+        # change a desk doesn't make it outdated.
+        {
+          home.extraBuilderCommands = lib.optionalString (dirtyRev != null) ''
+            echo -n ${lib.escapeShellArg dirtyRev} > $out/configuration-revision
+          '';
+        }
       ]
       # One desk serves atuin sync; the rest tunnel to it.
       ++ [
@@ -59,7 +74,8 @@ in
       name: host:
       import ../hosts/${name}.nix {
         inherit (host) system;
-        inherit self vimPlugins;
+        inherit vimPlugins;
+        revision = self.rev or dirtyRev;
         inherit (inputs)
           nixpkgs
           home-manager

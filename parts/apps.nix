@@ -11,13 +11,27 @@ let
   # and metadata a bare `${self}` (a `path:` flake) would drop. Without them
   # the Mac's system.configurationRevision (../hosts/mac-m1.nix) is null and
   # its system differs from the one hostctl evaluates at the same revision.
-  # (A dirty tree has no revision to pass, so it still records none.)
+  # A dirty tree has no revision, and `path:` takes no dirtyRev: a copy of it
+  # has that in .dirty-rev instead, for the configurations to record
+  # (./hosts.nix).
   flake =
-    "path:${self}?"
+    pkgs:
+    let
+      source =
+        if self ? dirtyRev then
+          pkgs.runCommandLocal "source" { } ''
+            cp -r ${self} $out
+            chmod u+w $out
+            echo -n ${lib.escapeShellArg self.dirtyRev} > $out/.dirty-rev
+          ''
+        else
+          self;
+    in
+    "path:${source}?"
     + lib.concatStringsSep "&" (
       lib.optional (self ? rev) "rev=${self.rev}"
       ++ lib.optional (self ? lastModified) "lastModified=${toString self.lastModified}"
-      ++ [ "narHash=${lib.escapeURL self.narHash}" ]
+      ++ lib.optional (!self ? dirtyRev) "narHash=${lib.escapeURL self.narHash}"
     );
 
   # `activate`'s hostname -> config lookup, one case arm per desk.
@@ -59,7 +73,7 @@ in
                 # directory: `nix run github:jjant/nix-config#activate` on a
                 # fresh desk runs from $HOME, which has no flake.nix. From a
                 # local clone, `nix run .#activate` makes this that clone.
-                flake='${flake}'
+                flake='${flake pkgs}'
 
                 if [ "$(uname)" = "Darwin" ]; then
                   # Absolute path: sudo resets PATH.
