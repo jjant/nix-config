@@ -133,6 +133,26 @@
         "type": "github"
       }
     },
+    "hostctl": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1792345834,
+        "narHash": "sha256-n8gFieRfuSmTCQlIZloucAzY1684tEiXsnAN6xLyG50=",
+        "owner": "jjant",
+        "repo": "hostctl",
+        "rev": "294d15855ba6426971903208abdc5d5bee70ec5f",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jjant",
+        "repo": "hostctl",
+        "type": "github"
+      }
+    },
     "mac-app-util": {
       "inputs": {
         "cl-nix-lite": "cl-nix-lite",
@@ -300,6 +320,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "home-manager": "home-manager",
+        "hostctl": "hostctl",
         "mac-app-util": "mac-app-util",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",

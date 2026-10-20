@@ -29,7 +29,7 @@ let
       };
       extraSpecialArgs = {
         inherit vimPlugins;
-        inherit (inputs) zenoh-ts;
+        inherit (inputs) zenoh-ts hostctl;
       };
       modules = [
         ../modules/home
@@ -68,6 +68,7 @@ in
           nix-vscode-extensions
           mac-app-util
           zenoh-ts
+          hostctl
           ;
       }
     ) (lib.filterAttrs (_: isDarwin) hosts);

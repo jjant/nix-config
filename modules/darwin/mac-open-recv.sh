@@ -1,10 +1,11 @@
 # shellcheck shell=bash
-# mac-open-recv — receiver for the dev-desk `open`/`code`/`zed` flows.
+# mac-open-recv — receiver for the dev-desk `open`/`code`/`zed` flows, and
+# hostctl's check of which system this Mac runs.
 #
 # Pinned as the authorized_keys `command="..."` for the dev-desk key, so this is
 # the ONLY thing that key can run — never an arbitrary shell. The clients
-# (modules/home/bin/{open,code,zed}.sh) send a fixed mode token as the ssh
-# command and the payload on stdin:
+# (modules/home/bin/{open,code,zed}.sh, and hostctl for `current-system`) send
+# a fixed mode token as the ssh command and any payload on stdin:
 #   - url:       a URL on stdin; opened on the Mac (web schemes only).
 #   - file:      a zstd-compressed tar on stdin; extracted to a temp dir,
 #                opened, and the Mac-side path of the copy echoed on stdout.
@@ -19,6 +20,11 @@
 #   - code:      kind + host + path, one per line; VS Code here attaches back
 #                to that host over Remote-SSH and opens the path (no copy).
 #   - zed:       same payload as code; Zed opens an SSH URL for that path.
+#   - current-system: no payload; prints the running nix-darwin generation
+#                as hostctl's probe lines (its store path, activation time,
+#                generation number and flake revision, plus the profile's
+#                system when a switch left it ahead), for hostctl on a desk
+#                (modules/home/hostctl.nix).
 #
 # $SSH_ORIGINAL_COMMAND is client-controlled and therefore untrusted: it is only
 # ever matched against the fixed vocabulary below, never executed. Client input
@@ -332,6 +338,52 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
       exec zeditor "ssh://${host}$(encode_path "$path")"
     fi
     exec code "$flag" "vscode-remote://ssh-remote+${host}$(encode_path "$path")"
+    ;;
+  current-system)
+    # For hostctl on a desk: which nix-darwin generation this Mac runs, in
+    # hostctl's `key=value` probe format, the way hostctl's own darwin probe
+    # reports it. Read-only and payload-free: it reads the system's links
+    # and its darwin-version.json. A malformed value would make hostctl
+    # reject the whole answer, so each optional line is checked first.
+    current=$(/usr/bin/readlink /run/current-system)
+    printf 'current=%s\n' "$current"
+    # The link's own mtime (BSD stat doesn't follow it): the last switch, or
+    # the last boot if later (nix-darwin's activate-system daemon re-links
+    # it then).
+    activated=$(/usr/bin/stat -f %m /run/current-system || true)
+    case "$activated" in
+      '' | *[!0-9]*) ;;
+      *) printf 'activated=%s\n' "$activated" ;;
+    esac
+    # Its generation: the newest system-N-link to it, usually the profile's.
+    generation=
+    for link in /nix/var/nix/profiles/system-*-link; do
+      number=${link##*/system-}
+      number=${number%-link}
+      case "$number" in '' | *[!0-9]*) continue ;; esac
+      if [ "$link" -ef /run/current-system ] &&
+        { [ -z "$generation" ] || [ "$number" -gt "$generation" ]; }; then
+        generation=$number
+      fi
+    done
+    if [ -n "$generation" ]; then
+      printf 'generation=%s\n' "$generation"
+    fi
+    # A switch that failed to activate leaves the profile a generation
+    # ahead; hostctl shows that one as staged.
+    profile=$(/usr/bin/readlink /nix/var/nix/profiles/system || true)
+    case "$profile" in
+      system-*-link) profile=$(/usr/bin/readlink "/nix/var/nix/profiles/$profile" || true) ;;
+    esac
+    case "$profile" in
+      "$current" | /nix/store/*/*) ;;
+      /nix/store/?*) printf 'profile=%s\n' "$profile" ;;
+    esac
+    # The flake revision it was built from (system.configurationRevision).
+    revision=$(jq -r '.configurationRevision // empty' "$current/darwin-version.json" 2>/dev/null || true)
+    if [ -n "$revision" ]; then
+      printf 'revision=%s\n' "$revision"
+    fi
     ;;
   *)
     printf 'mac-open-recv: unknown mode\n' >&2

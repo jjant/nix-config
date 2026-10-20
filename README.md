@@ -18,7 +18,8 @@ is the source of truth for which hosts exist:
 ├── flake.nix           # Inputs + flake-parts entry point (systems, formatter)
 ├── parts/              # flake-parts modules
 │   ├── hosts.nix       # darwin/home configs + checks, derived from hosts/
-│   └── apps.nix        # `activate` and `update` apps
+│   ├── apps.nix        # `activate` and `update` apps
+│   └── hostctl.nix     # how hostctl reaches each host, derived from hosts/
 ├── hosts/
 │   ├── default.nix     # Host registry: name -> os, arch (+ hostname for desks)
 │   └── mac-m1.nix      # Darwin host entry point
@@ -44,6 +45,18 @@ Auto-detects the host and applies its config: Darwin uses `mac-m1`; a cloud
 desktop is matched by `hostname -s` against `hosts/default.nix` (override with
 `ACTIVATE_HOST=<config>`). Works for both first-time setup and subsequent
 updates.
+
+### Check every host
+
+```bash
+hostctl
+```
+
+Shows which hosts run the configuration on `main` (`↑ ahead` for one on a newer
+commit, with its branch), and `hostctl activate <host>` updates one. The Mac
+reaches every desk. A desk reaches the Mac only through the reverse tunnel of an
+ssh session from it, and shows it offline otherwise; there it can check the Mac
+but not diff or activate it, so update the Mac on the Mac.
 
 ### Update flake inputs
 
@@ -71,8 +84,8 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    git clone https://github.com/jjant/nix-config.git ~/personal/nix-config
    cd ~/personal/nix-config
    # The official installer doesn't enable flakes yet, so the very first run
-   # needs them passed to the outer `nix`; activate propagates them to the
-   # nested `nix run nix-darwin` call. Subsequent runs can use `nix run .#activate`.
+   # needs them passed to the outer `nix`; the darwin-rebuild that activate
+   # runs enables them itself. Subsequent runs can use `nix run .#activate`.
    nix --extra-experimental-features "nix-command flakes" run .#activate
    ```
 3. Change default shell: `chsh -s /run/current-system/sw/bin/fish`

@@ -34,6 +34,14 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Which hosts run this flake's current configuration, and updating the
+    # ones that don't on request; see modules/home/hostctl.nix and
+    # parts/hostctl.nix.
+    hostctl = {
+      url = "github:jjant/hostctl";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # NB: no `follows` — nix-homebrew declares no nixpkgs input.
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
@@ -90,6 +98,7 @@
       imports = [
         ./parts/hosts.nix
         ./parts/apps.nix
+        ./parts/hostctl.nix
       ];
 
       # `nix fmt` — official Nix formatting (RFC 166) via the treefmt wrapper,

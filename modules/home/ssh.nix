@@ -7,8 +7,9 @@ let
   #   older OpenSSH that rejects the option outright ("Bad configuration
   #   option: warnweakcrypto"), which aborts ssh and breaks git clones.
   # - `IdentityAgent` points at the 1Password mac agent socket
-  #   (~/Library/Group Containers/...), a path that only exists on macOS. On
-  #   the dev desks auth goes through the wssh ProxyCommand anyway.
+  #   (~/Library/Group Containers/...), a path that only exists on macOS. The
+  #   dev desks use the agent forwarded from the Mac, or their own SSH
+  #   certificates between desks (see ./atuin-tunnel.nix).
   darwinOnlyOptions = lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
 
     # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
