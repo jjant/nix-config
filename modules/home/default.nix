@@ -218,6 +218,19 @@
       ];
     };
 
+    # `use flake` in a project's .envrc loads its devShell into the current
+    # (fish) shell on cd. nix-direnv caches the env until flake.nix/flake.lock
+    # change and GC-roots it, so the daily nix.gc (modules/darwin) no longer
+    # wipes it — bare `nix develop` roots nothing, so each GC meant a rebuild.
+    direnv = {
+      enable = true;
+      nix-direnv.enable = true;
+      silent = true;
+    };
+
+    # Makes ad-hoc `nix develop` / `nix shell` drop into fish instead of bash.
+    nix-your-shell.enable = true;
+
     gh = {
       enable = true;
       settings.git_protocol = "ssh";

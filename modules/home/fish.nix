@@ -159,6 +159,21 @@ in
             cd $repoRoot
           '';
         };
+        use-flake = {
+          description = "Load this dir's flake devShell via direnv (see direnv in default.nix)";
+          body = ''
+            if not test -e flake.nix
+              echo "No flake.nix in this directory"
+              return 1
+            end
+            if test -e .envrc
+              echo ".envrc already exists, skipping creation"
+              return 1
+            end
+            echo "use flake" > .envrc
+            direnv allow
+          '';
+        };
         brazil-try-again = {
           description = "Amend the commit and run a dry run";
           body = ''

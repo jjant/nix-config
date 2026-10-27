@@ -86,6 +86,8 @@ in
         text = ''
           # IntelliJ files
           *.iml
+          # nix-direnv's per-project cache (see direnv in default.nix)
+          .direnv/
         '';
       }}";
     };
