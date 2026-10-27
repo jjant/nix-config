@@ -144,6 +144,20 @@ in
     fake.external = [ "ssh" ];
   };
 
+  # pbcopy/pbpaste on a dev desk: the Mac's clipboard over the `open` tunnel
+  # (Linux-only install — see default.nix; macOS has the real ones).
+  pbcopy = writeShellApp {
+    name = "pbcopy";
+    inputs = [ ];
+    fake.external = [ "ssh" ];
+  };
+
+  pbpaste = writeShellApp {
+    name = "pbpaste";
+    inputs = [ ];
+    fake.external = [ "ssh" ];
+  };
+
   brazil-open-package = writeShellApp (withOpen {
     name = "brazil-open-package";
     inputs = [ pkgs.coreutils ];

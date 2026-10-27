@@ -25,6 +25,8 @@
 #                generation number and flake revision, plus the profile's
 #                system when a switch left it ahead), for hostctl on a desk
 #                (modules/home/hostctl.nix).
+#   - copy:      text on stdin; put on the Mac's clipboard (dev-desk pbcopy).
+#   - paste:     no payload; prints the Mac's clipboard (dev-desk pbpaste).
 #
 # $SSH_ORIGINAL_COMMAND is client-controlled and therefore untrusted: it is only
 # ever matched against the fixed vocabulary below, never executed. Client input
@@ -338,6 +340,15 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
       exec zeditor "ssh://${host}$(encode_path "$path")"
     fi
     exec code "$flag" "vscode-remote://ssh-remote+${host}$(encode_path "$path")"
+    ;;
+  copy)
+    # Data only: pbcopy stores stdin as text and never interprets it. The
+    # forced-command environment has no LANG, and without a UTF-8 locale
+    # pbcopy/pbpaste mangle anything non-ASCII.
+    LANG=en_US.UTF-8 exec /usr/bin/pbcopy
+    ;;
+  paste)
+    LANG=en_US.UTF-8 exec /usr/bin/pbpaste
     ;;
   current-system)
     # For hostctl on a desk: which nix-darwin generation this Mac runs, in
