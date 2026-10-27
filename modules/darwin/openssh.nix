@@ -3,9 +3,9 @@
 # (modules/home/ssh.nix: `RemoteForward 2022 localhost:22`) and invoke the Mac's
 # native `open` (modules/home/bin/open.sh), open VS Code or Zed attached back
 # to the desk over SSH (modules/home/bin/{code,zed}.sh), upload a file to
-# Amazon Drive and hand back a share link (`open -s`), or tell hostctl which
-# system this Mac runs (modules/home/hostctl.nix), via a locked-down forced
-# command.
+# Amazon Drive and hand back a share link (`open -s`), put text on the Mac's
+# clipboard (modules/home/bin/pbcopy.sh), or tell hostctl which system this Mac
+# runs (modules/home/hostctl.nix), via a locked-down forced command.
 #
 # Policy: enabling Remote Login on a managed Mac is officially sanctioned by IT
 # ("Enable secure shell (SSH) in macOS",
@@ -20,8 +20,9 @@
 #     ListenAddress lines below (they are best-effort), so the `from=` clause is
 #     the real network guard for this key.
 #   - command="…/mac-open-recv" — a forced receiver that can ONLY run its fixed
-#     modes (open/code/zed/share, and the read-only current-system), never an
-#     arbitrary shell, even though the login user authenticates.
+#     modes (open/code/zed/share, the write-only clipboard `copy`, and the
+#     read-only current-system), never an arbitrary shell, even though the
+#     login user authenticates.
 #   - restrict — no port/agent/X11 forwarding, no PTY (the flow needs none).
 { pkgs, ... }:
 let

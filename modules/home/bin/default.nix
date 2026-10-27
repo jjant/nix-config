@@ -20,6 +20,7 @@ in
       scripts.xdg-open
       scripts.code
       scripts.zed
+      scripts.pbcopy
     ];
 
   # For URL-opening flows that honor $BROWSER instead of (or before)
