@@ -1,11 +1,12 @@
 # shellcheck shell=bash
-# mac-open-recv — receiver for the dev-desk `open`/`code`/`zed` flows, and
-# hostctl's check of which system this Mac runs.
+# mac-open-recv — receiver for the dev-desk `open`/`code`/`zed`/`pbcopy`
+# flows, and hostctl's check of which system this Mac runs.
 #
 # Pinned as the authorized_keys `command="..."` for the dev-desk key, so this is
 # the ONLY thing that key can run — never an arbitrary shell. The clients
-# (modules/home/bin/{open,code,zed}.sh, and hostctl for `current-system`) send
-# a fixed mode token as the ssh command and any payload on stdin:
+# (modules/home/bin/{open,code,zed,pbcopy}.sh, and hostctl for
+# `current-system`) send a fixed mode token as the ssh command and any payload
+# on stdin:
 #   - url:       a URL on stdin; opened on the Mac (web schemes only).
 #   - file:      a zstd-compressed tar on stdin; extracted to a temp dir,
 #                opened, and the Mac-side path of the copy echoed on stdout.
@@ -26,7 +27,6 @@
 #                system when a switch left it ahead), for hostctl on a desk
 #                (modules/home/hostctl.nix).
 #   - copy:      text on stdin; put on the Mac's clipboard (dev-desk pbcopy).
-#   - paste:     no payload; prints the Mac's clipboard (dev-desk pbpaste).
 #
 # $SSH_ORIGINAL_COMMAND is client-controlled and therefore untrusted: it is only
 # ever matched against the fixed vocabulary below, never executed. Client input
@@ -342,13 +342,13 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     exec code "$flag" "vscode-remote://ssh-remote+${host}$(encode_path "$path")"
     ;;
   copy)
-    # Data only: pbcopy stores stdin as text and never interprets it. The
-    # forced-command environment has no LANG, and without a UTF-8 locale
-    # pbcopy/pbpaste mangle anything non-ASCII.
-    LANG=en_US.UTF-8 exec /usr/bin/pbcopy
-    ;;
-  paste)
-    LANG=en_US.UTF-8 exec /usr/bin/pbpaste
+    # Data only: pbcopy stores stdin on the pasteboard and runs nothing. It's
+    # plain text unless it starts with an RTF or EPS header, which pbcopy
+    # stores as that type instead. Without a UTF-8 locale pbcopy mangles
+    # anything non-ASCII. sshd has no LANG of its own, but accepts the
+    # client's LANG and LC_* (macOS's `AcceptEnv LANG LC_*`), so a desk's
+    # LC_ALL=C would override a plain LANG: force LC_ALL.
+    LC_ALL=en_US.UTF-8 exec /usr/bin/pbcopy
     ;;
   current-system)
     # For hostctl on a desk: which nix-darwin generation this Mac runs, in

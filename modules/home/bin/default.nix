@@ -21,7 +21,6 @@ in
       scripts.code
       scripts.zed
       scripts.pbcopy
-      scripts.pbpaste
     ];
 
   # For URL-opening flows that honor $BROWSER instead of (or before)

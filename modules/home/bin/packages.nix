@@ -144,18 +144,14 @@ in
     fake.external = [ "ssh" ];
   };
 
-  # pbcopy/pbpaste on a dev desk: the Mac's clipboard over the `open` tunnel
-  # (Linux-only install — see default.nix; macOS has the real ones).
+  # pbcopy on a dev desk: the Mac's clipboard over the `open` tunnel
+  # (Linux-only install — see default.nix; macOS has the real one). nixpkgs'
+  # ssh, not the system one: AL2's OpenSSH 7.4 rejects accept-new.
   pbcopy = writeShellApp {
     name = "pbcopy";
-    inputs = [ ];
-    fake.external = [ "ssh" ];
-  };
-
-  pbpaste = writeShellApp {
-    name = "pbpaste";
-    inputs = [ ];
-    fake.external = [ "ssh" ];
+    inputs = [ pkgs.openssh ];
+    # ssh runs its command on the Mac, never locally.
+    execer = [ "cannot:${pkgs.openssh}/bin/ssh" ];
   };
 
   brazil-open-package = writeShellApp (withOpen {
