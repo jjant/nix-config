@@ -88,6 +88,7 @@
         hyperfine
         postgresql_17
         railway
+        cf # Cloudflare CLI (API + Workers)
         tsx
         mprocs
 
@@ -103,7 +104,11 @@
         cargo-expand
         cargo-fuzz
         cargo-insta
-        cargo-llvm-cov
+        # Tests broken upstream: nixpkgs' rustc writes raw profile format v11
+        # but the llvm-profdata its checks pin reads v10. Only the test suite
+        # uses that llvm; at runtime it's rustup's llvm-tools. Drop the
+        # override once nixpkgs' build passes again.
+        (cargo-llvm-cov.overrideAttrs { doCheck = false; })
         cargo-mutants
         cargo-nextest
         cargo-outdated
