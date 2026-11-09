@@ -224,11 +224,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1794029367,
-        "narHash": "sha256-bhicfDLIXDuyF2slxjpiBTjXD1vOlPOOyn3OYBhhbBM=",
+        "lastModified": 1794115629,
+        "narHash": "sha256-9A5URl1O0ZA8PdUpaJQsEEJBqXJR1ATjtMkpxLeVOsA=",
         "owner": "nix-community",
         "repo": "nix-vscode-extensions",
-        "rev": "d83b8ade36bdf5d1ad97232a38359c7bc54ab124",
+        "rev": "901962d24aef0398f5a11be7ff0a0d6cb94f40e6",
         "type": "github"
       },
       "original": {
@@ -433,11 +433,11 @@
     "vim-plugin:rafamadriz/friendly-snippets": {
       "flake": false,
       "locked": {
-        "lastModified": 1793117060,
-        "narHash": "sha256-SFoTWi4TbFXj3ZIx8opDO+HfouBAtxuyhdInfJEa/R4=",
+        "lastModified": 1794177405,
+        "narHash": "sha256-9MFq/F4T6EzEcPtUHGUmMeqQU/wXjTvGZfMgpCCkRyA=",
         "owner": "rafamadriz",
         "repo": "friendly-snippets",
-        "rev": "b2ea5c41a150ba72fb656eedb4ed0a86d138d945",
+        "rev": "7a1c9f7897a4eb078b157a04c7af81e5869215b1",
         "type": "github"
       },
       "original": {
