@@ -53,9 +53,10 @@ let
       exec "$fish" --login "$@"
     marker="$marker_dir/started"
 
-    # Percentages are of the host's physical RAM, so one config fits every
-    # desk size (40% is ~49 GiB on a 123 GiB desk, ~205 GiB on 512 GiB).
-    pane_memory_high="''${TMUX_PANE_MEMORY_HIGH:-40%}"
+    # No per-pane MemoryHigh: see the slice below for why throttling freezes
+    # panes instead of containing them. OOMPolicy=continue limits an OOM kill
+    # to the offending process, so the shell and anything driving it survive
+    # and see the failure instead of the whole pane being torn down.
     pane_memory_max="''${TMUX_PANE_MEMORY_MAX:-infinity}"
 
     "$systemd_run" \
@@ -66,9 +67,8 @@ let
       --same-dir \
       --slice=tmux-panes.slice \
       --unit="tmux-pane-$PPID-$$" \
-      --property="MemoryHigh=$pane_memory_high" \
       --property="MemoryMax=$pane_memory_max" \
-      --property=OOMPolicy=kill \
+      --property=OOMPolicy=continue \
       -- \
       ${scopedFish} "$marker" "$@"
     status=$?
@@ -88,16 +88,17 @@ let
   '';
 in
 {
-  # All pane scopes share a host-level safety envelope. MemoryHigh throttles
-  # and reclaims first; MemoryMax is deliberately aggregate-only during the
-  # initial rollout so a legitimate large pane may exceed its own soft
-  # threshold when the rest of the machine is idle.
+  # All pane scopes share one hard ceiling, relative to physical RAM. The ~15%
+  # kept outside the slice covers system daemons, the Nix daemon and caches.
   #
-  # Limits are relative to physical RAM rather than fixed sizes: the old
-  # 48G/64G envelope fenced every pane into well under half of a 123 GiB desk,
-  # and two parallel cargo test links throttled against it for over an hour
-  # while ~60 GiB sat free. The ~15% kept outside the slice covers system
-  # daemons, the Nix daemon and the Brazil package cache.
+  # There is deliberately no MemoryHigh, here or on panes. It is not a soft
+  # limit: past memory.high the kernel throttles every task in the cgroup no
+  # matter how much RAM the host has free, and without swap the anonymous and
+  # tmpfs pages cannot be reclaimed, so the throttling never lets up. Panes
+  # froze for over an hour this way, twice, with tens of GiB free on the host,
+  # and the interactive session sharing the pane froze with them. MemoryMax
+  # turns the same overload into an OOM kill of the largest process, which is
+  # visible and recoverable. earlyoom handles host-wide pressure.
   systemd.user.slices.tmux-panes = lib.mkIf pkgs.stdenv.hostPlatform.isLinux {
     Unit = {
       Description = "tmux pane memory pool";
@@ -106,7 +107,6 @@ in
       X-RestartIfChanged = false;
     };
     Slice = {
-      MemoryHigh = "75%";
       MemoryMax = "85%";
       MemorySwapMax = "4G";
     };
@@ -150,14 +150,10 @@ in
             # bounded cgroup while leaving the tmux server itself outside.
             set -g default-shell '${paneShell}/bin/tmux-pane-shell'
 
-            # Preserve the layout and scrollback if systemd kills an offending
-            # pane, and keep the server around even if no sessions remain.
+            # Preserve the layout and scrollback if a pane's shell is killed,
+            # and keep the server around even if no sessions remain.
             set -g remain-on-exit failed
             set -s exit-empty off
-
-            # Prefix+C opens a pane with a higher soft threshold. It remains
-            # subject to the aggregate tmux-panes.slice hard limit.
-            bind C new-window -c "#{pane_current_path}" -e TMUX_PANE_MEMORY_HIGH=70%
           ''
       );
   };
