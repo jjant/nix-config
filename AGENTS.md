@@ -41,6 +41,7 @@ catch evaluation errors:
 | al2-x86_64     | `.#homeConfigurations.al2-x86_64.activationPackage`    |
 | al2023-x86_64  | `.#homeConfigurations.al2023-x86_64.activationPackage` |
 | bigmem         | `.#homeConfigurations.bigmem.activationPackage`        |
+| bigboy         | `.#homeConfigurations.bigboy.activationPackage`        |
 | al2-aarch64    | `.#homeConfigurations.al2-aarch64.activationPackage`   |
 
 (e.g. `nix eval --raw .#darwinConfigurations.mac-m1.system.drvPath` works
