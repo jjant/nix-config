@@ -117,6 +117,7 @@ in
     sensibleOnTop = true;
     clock24 = true;
     keyMode = "vi";
+    mouse = true;
     plugins = [ dracula ];
     historyLimit = 30000;
     escapeTime = 0;
