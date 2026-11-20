@@ -27,8 +27,8 @@ is the source of truth for which hosts exist:
     └── darwin/         # macOS-only (system defaults, homebrew, skhd, yabai)
 ```
 
-`parts/hosts.nix` generates the Home Manager configuration for `bigboy`,
-which also runs the Atuin sync server for both hosts.
+The Linux cloud desktops are generated in `parts/hosts.nix` by a small `mkHome`
+helper — they only differ in platform and prompt tag.
 
 ## Usage
 
@@ -91,7 +91,7 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    downloads the app; it needs a first manual launch (grant permissions, etc.)
    before it works.
 
-### bigboy (AL2023)
+### Cloud desktops (AL2 / AL2023)
 
 1. Install Nix:
    ```bash
