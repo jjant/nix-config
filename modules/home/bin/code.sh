@@ -15,7 +15,7 @@
 # grammar and builds the vscode-remote:// URI itself, so nothing
 # client-controlled rides in a command string.
 #
-# Host identity: STARSHIP_HOST_ALIAS (e.g. "al2023-x86_64") is this desk's
+# Host identity: STARSHIP_HOST_ALIAS (e.g. "bigboy") is this desk's
 # alias in the Mac's ssh config (modules/home/ssh.nix), so VS Code piggybacks
 # on the alias's wssh ProxyCommand and any live ControlMaster socket — usually
 # no fresh Midway auth. Fallback: the FQDN, which the Mac's WSSH-owned

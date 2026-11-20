@@ -6,10 +6,6 @@ is the source of truth for which hosts exist:
 | Host | Platform | Type | Use |
 |------|----------|------|-----|
 | mac-m1 | aarch64-darwin | nix-darwin | Work laptop |
-| al2-x86_64 | x86_64-linux | home-manager | Cloud desktop (AL2) |
-| al2-aarch64 | aarch64-linux | home-manager | Cloud desktop (AL2) |
-| al2023-x86_64 | x86_64-linux | home-manager | Cloud desktop (AL2023) |
-| bigmem | x86_64-linux | home-manager | Cloud desktop (AL2023, m7a.32xlarge, 512 GiB) |
 | bigboy | x86_64-linux | home-manager | Cloud desktop (AL2023, 192 vCPU, 1.5 TiB) |
 
 ## Structure

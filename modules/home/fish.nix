@@ -137,12 +137,7 @@ in
           wraps = "ssh";
           description = "SSH with background color change";
           body = ''
-            switch $argv[-1]
-              case 'al2*' 'al2023*'
-                printf '\e]11;#1a1a2e\a'
-              case '*'
-                printf '\e]11;#2e1a1a\a'
-            end
+            printf '\e]11;#2e1a1a\a'
             command ssh $argv
             printf '\e]111\a'
           '';

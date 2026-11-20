@@ -321,7 +321,7 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
         ;;
     esac
 
-    # Hostname/alias charset only (covers the ssh aliases like al2-x86_64 and
+    # Hostname/alias charset only (covers SSH aliases like bigboy and
     # dev-dsk FQDNs) — nothing that could smuggle in URI structure or flags.
     if ! [[ $host =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]]; then
       printf 'mac-open-recv: bad host\n' >&2
