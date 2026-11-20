@@ -89,7 +89,6 @@
       systems = [
         "aarch64-darwin"
         "x86_64-linux"
-        "aarch64-linux"
       ];
 
       # Every host, keyed by config name; see ./hosts/default.nix.

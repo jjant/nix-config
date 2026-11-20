@@ -6,10 +6,6 @@ is the source of truth for which hosts exist:
 | Host | Platform | Type | Use |
 |------|----------|------|-----|
 | mac-m1 | aarch64-darwin | nix-darwin | Work laptop |
-| al2-x86_64 | x86_64-linux | home-manager | Cloud desktop (AL2) |
-| al2-aarch64 | aarch64-linux | home-manager | Cloud desktop (AL2) |
-| al2023-x86_64 | x86_64-linux | home-manager | Cloud desktop (AL2023) |
-| bigmem | x86_64-linux | home-manager | Cloud desktop (AL2023, m7a.32xlarge, 512 GiB) |
 | bigboy | x86_64-linux | home-manager | Cloud desktop (AL2023, 192 vCPU, 1.5 TiB) |
 
 ## Structure
@@ -31,8 +27,8 @@ is the source of truth for which hosts exist:
     └── darwin/         # macOS-only (system defaults, homebrew, skhd, yabai)
 ```
 
-The Linux cloud desktops are generated in `parts/hosts.nix` by a small `mkHome`
-helper — they only differ in platform and prompt tag.
+`parts/hosts.nix` generates the Home Manager configuration for `bigboy`,
+which also runs the Atuin sync server for both hosts.
 
 ## Usage
 
@@ -95,7 +91,7 @@ Homebrew itself is installed and owned by nix-homebrew during activation
    downloads the app; it needs a first manual launch (grant permissions, etc.)
    before it works.
 
-### Cloud desktops (AL2 / AL2023)
+### bigboy (AL2023)
 
 1. Install Nix:
    ```bash

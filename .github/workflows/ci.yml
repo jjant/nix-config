@@ -57,21 +57,9 @@ jobs:
           - name: mac-m1
             os: macos-15 # aarch64-darwin
             attr: darwinConfigurations.mac-m1.system
-          - name: al2-x86_64
-            os: ubuntu-latest
-            attr: homeConfigurations.al2-x86_64.activationPackage
-          - name: al2023-x86_64
-            os: ubuntu-latest
-            attr: homeConfigurations.al2023-x86_64.activationPackage
-          - name: bigmem
-            os: ubuntu-latest
-            attr: homeConfigurations.bigmem.activationPackage
           - name: bigboy
             os: ubuntu-latest
             attr: homeConfigurations.bigboy.activationPackage
-          - name: al2-aarch64
-            os: ubuntu-24.04-arm # aarch64-linux
-            attr: homeConfigurations.al2-aarch64.activationPackage
     name: build (${{ matrix.name }})
     steps:
       - uses: actions/checkout@v7

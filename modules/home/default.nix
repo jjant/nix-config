@@ -206,9 +206,8 @@
       forceOverwriteSettings = true;
       settings = {
         enter_accept = true;
-        # The self-hosted server on bigmem (./atuin-server.nix): local there,
-        # through an ssh tunnel elsewhere (./atuin-tunnel.nix,
-        # ../darwin/atuin-tunnel.nix).
+        # bigboy runs the sync server locally. The Mac reaches it through
+        # ../darwin/atuin-tunnel.nix.
         sync_address = "http://localhost:8888";
       };
     };
