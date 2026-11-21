@@ -1,6 +1,6 @@
 _: {
   services.skhd = {
-    enable = true;
+    enable = false;
     skhdConfig = ''
       hyper - d : yabai -m window --swap east
       hyper - a : yabai -m window --swap west
