@@ -1,6 +1,7 @@
 { lib, pkgs, ... }:
 let
   user = "jjantdev";
+  inherit (pkgs.stdenv.hostPlatform) isDarwin;
 
   # Options that only make sense on macOS:
   # - `WarnWeakCrypto` only exists in OpenSSH 10+. The cloud desktops ship an
@@ -10,7 +11,7 @@ let
   #   (~/Library/Group Containers/...), a path that only exists on macOS. The
   #   dev desks use the agent forwarded from the Mac, or their own SSH
   #   certificates between desks (see ./atuin-tunnel.nix).
-  darwinOnlyOptions = lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
+  darwinOnlyOptions = lib.optionalString isDarwin ''
 
     # Silence OpenSSH 10's "not using a post-quantum key exchange" warning.
     # The client already prefers PQ KEX; this fires when the server lacks it
@@ -19,52 +20,29 @@ let
     WarnWeakCrypto no-pq-kex
     IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"'';
 
-  # Dev desktop aliases -> full internal hostnames (../../hosts).
-  hosts = lib.mapAttrs (_: host: host.hostname) (
-    lib.filterAttrs (_: host: host ? hostname) (import ../../hosts)
-  );
+  desks = lib.filterAttrs (_: host: host ? hostname) (import ../../hosts);
+  deskBlock =
+    alias: desk:
+    let
+      names = "${alias} ${desk.hostname}";
+      atuin = lib.optionalString (isDarwin && (desk.atuinServer or false)) " ${alias}-atuin-tunnel";
+    in
+    ''
+      Host ${names}${atuin}
+        HostName ${desk.hostname}
+        User ${user}
+        ServerAliveInterval 15
+        ServerAliveCountMax 44
+    ''
+    + lib.optionalString isDarwin ''
+        ProxyCommand /usr/local/bin/wssh proxy %h
 
-  # Each alias carries its own ProxyCommand: SSH matches `Host` against the
-  # name typed on the command line, not the resolved HostName, so the WSSH
-  # `Host dev-dsk-*.amazon.com` block never applies to these aliases.
-  #
-  # `ForwardAgent yes` forwards the local 1Password SSH agent to the dev desks
-  # so they can authenticate Git pushes to GitHub. The private key never leaves
-  # 1Password on the Mac; only signing requests travel back over the existing
-  # SSH connection. Scoped to these trusted hosts only (see `ForwardAgent no`
-  # on `Host *` below).
-  #
-  # `withReverseTunnel = false` drops the RemoteForward, for a second
-  # connection to a desk that an interactive session may already hold it on.
-  hostBlock = withReverseTunnel: alias: hostname: ''
-    Host ${alias}
-      HostName ${hostname}
-      User ${user}
-      ProxyCommand /usr/local/bin/wssh proxy %h
-      ForwardAgent yes${
-        lib.optionalString (withReverseTunnel && pkgs.stdenv.hostPlatform.isDarwin) ''
-
-          # Reverse tunnel so the dev desk can reach this Mac's sshd, letting the
-          # Linux `open` wrapper hand files back to the Mac's native `open`.
-          RemoteForward 2022 localhost:22''
-      }
-      ServerAliveInterval 15
-      ServerAliveCountMax 44
-  '';
-
-  # Desks running the atuin sync server (../../hosts).
-  atuinServers = lib.attrNames (
-    lib.filterAttrs (_: host: host.atuinServer or false) (import ../../hosts)
-  );
-
-  hostBlocks = lib.concatStringsSep "\n" (
-    lib.mapAttrsToList (hostBlock true) hosts
-    # `<alias>-atuin-tunnel`: what the Mac's always-on tunnel to the atuin
-    # server connects as (../darwin/atuin-tunnel.nix).
-    ++ lib.optionals pkgs.stdenv.hostPlatform.isDarwin (
-      map (alias: hostBlock false "${alias}-atuin-tunnel" hosts.${alias}) atuinServers
-    )
-  );
+      Host ${names}
+        # Both names reuse the alias's master, which owns the desk's port 2022.
+        ControlPath ~/.ssh/ssh-%r@${alias}:%p
+        ForwardAgent yes
+        RemoteForward 2022 localhost:22
+    '';
 
   includeLine = "Include ~/.ssh/config.d/hosts";
 in
@@ -73,14 +51,10 @@ in
   # which itself is owned by WSSH and must not be clobbered by home-manager.
   home.file.".ssh/config.d/hosts".text = ''
     # Managed by nix-darwin (modules/home/ssh.nix). Do not edit by hand.
-    ${hostBlocks}
+    ${lib.concatStringsSep "\n" (lib.mapAttrsToList deskBlock desks)}
     Host *${darwinOnlyOptions}
-      # Default-deny agent forwarding; only the dev-dsk aliases above opt in.
       ForwardAgent no
       ControlMaster auto
-      # %n (the host as typed), not %h (the resolved HostName): a dev-dsk alias
-      # and its FQDN must not share a master, or `ssh <alias>` rides an
-      # FQDN connection that has no agent forwarding or RemoteForward.
       ControlPath ~/.ssh/ssh-%r@%n:%p
       ControlPersist 30m
   '';

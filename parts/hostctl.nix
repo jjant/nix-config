@@ -16,11 +16,7 @@
         note = "from a desk, only through the reverse tunnel of an ssh session from the Mac";
       }
     else
-      # The full hostname rather than the ssh alias: every alias's
-      # ProxyCommand (../modules/home/ssh.nix) runs /usr/local/bin/wssh, which
-      # only the Mac has, while the full hostname works everywhere (through
-      # WSSH's own ssh config on the Mac, directly between desks). It also
-      # tells hostctl on each desk which host it is.
+      # hostctl also uses the full hostname to identify the local desk.
       { destination = host.hostname; }
   ) hosts;
 }
