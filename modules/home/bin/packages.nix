@@ -77,25 +77,38 @@ let
     ];
   };
 
+  # Private transport for the Linux commands that call the Mac's receiver.
+  macSsh = writeShellApp {
+    name = "mac-ssh";
+    inputs = [ pkgs.openssh ];
+    execer = [ "cannot:${pkgs.openssh}/bin/ssh" ];
+  };
+  macClient =
+    args:
+    writeShellApp (
+      args
+      // {
+        inputs = (args.inputs or [ ]) ++ [ macSsh ];
+        execer = (args.execer or [ ]) ++ [ "cannot:${macSsh}/bin/mac-ssh" ];
+      }
+    );
+
   # Our reverse-tunnel `open` (installed on Linux only — see default.nix). Bound
   # in the `let` so scripts that call `open` can pin it to this store path.
-  open = writeShellApp {
+  open = macClient {
     name = "open";
     inputs = with pkgs; [
       coreutils
       gnutar
       zstd
       pv
+      openssh # ssh-add checks the forwarded agent
     ];
-    # System ssh carries the user's ~/.ssh config + forwarded agent.
-    fake.external = [
-      "ssh"
-      "ssh-add"
-    ];
-    # tar/pv can exec in general, but this script never uses them that way.
+    # tar/pv do not exec here, and ssh-add -l only lists identities.
     execer = [
       "cannot:${pkgs.gnutar}/bin/tar"
       "cannot:${pkgs.pv}/bin/pv"
+      "cannot:${pkgs.openssh}/bin/ssh-add"
     ];
   };
 
@@ -128,21 +141,14 @@ in
   };
 
   # Open dev-desk paths in Zed on the Mac over SSH.
-  zed = writeShellApp {
+  zed = macClient {
     name = "zed";
     inputs = with pkgs; [ coreutils ];
-    fake.external = [ "ssh" ];
   };
 
   # pbcopy on a dev desk: the Mac's clipboard over the `open` tunnel
-  # (Linux-only install — see default.nix; macOS has the real one). nixpkgs'
-  # ssh, not the system one: AL2's OpenSSH 7.4 rejects accept-new.
-  pbcopy = writeShellApp {
-    name = "pbcopy";
-    inputs = [ pkgs.openssh ];
-    # ssh runs its command on the Mac, never locally.
-    execer = [ "cannot:${pkgs.openssh}/bin/ssh" ];
-  };
+  # (Linux-only install — see default.nix; macOS has the real one).
+  pbcopy = macClient { name = "pbcopy"; };
 
   brazil-open-package = writeShellApp (withOpen {
     name = "brazil-open-package";

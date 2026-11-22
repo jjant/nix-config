@@ -48,11 +48,6 @@
 
 set -euo pipefail
 
-port="${MAC_OPEN_PORT:-2022}"
-mac="${MAC_OPEN_USER:-jjantdev}@localhost"
-ctl="$HOME/.ssh/mac-open-%r@%h:%p"
-ssh_opts=(-p "$port" -o StrictHostKeyChecking=accept-new -o ControlMaster=auto -o "ControlPath=$ctl" -o ControlPersist=10s)
-
 usage() {
   printf '%s\n' \
     'Usage:' \
@@ -130,9 +125,8 @@ fi
 
 # The Mac's sshd only accepts the forwarded 1Password key, and without it ssh
 # just says "Permission denied (publickey)". Name the actual problem unless a
-# live connection to the Mac can be reused. Typical cause: this shell's SSH
-# session has no agent, e.g. it came in over the FQDN instead of the alias.
-if ! ssh "${ssh_opts[@]}" -O check "$mac" 2>/dev/null && ! ssh-add -l >/dev/null 2>&1; then
+# live connection to the Mac can be reused.
+if ! mac-ssh -O check 2>/dev/null && ! ssh-add -l >/dev/null 2>&1; then
   echo "open: no forwarded SSH agent in this session (SSH_AUTH_SOCK=${SSH_AUTH_SOCK:-unset})." >&2
   echo "Reconnect from the Mac with: ssh ${STARSHIP_HOST_ALIAS:-<desk alias>}" >&2
   exit 1
@@ -153,7 +147,7 @@ for arg in "$@"; do
     fi
     case "$arg" in
       http://* | https://*)
-        printf '%s' "$arg" | ssh "${ssh_opts[@]}" "$mac" url
+        printf '%s' "$arg" | mac-ssh url
         continue
         ;;
       *)
@@ -190,13 +184,12 @@ for arg in "$@"; do
   # zstd is fast and stores already-compressed data efficiently. `directory`
   # prepends the basename to open, NUL-delimited so every legal filename except
   # NUL itself remains representable, then archives all sibling assets.
-  # shellcheck disable=SC2029 # $mode is our own fixed token, never user input.
   if [ "$mode" = "directory" ]; then
     {
       printf '%s\0' "$base"
       tar cf - -C "$parent" -- . | pv -btr | zstd
-    } | ssh "${ssh_opts[@]}" "$mac" "$mode"
+    } | mac-ssh "$mode"
   else
-    tar cf - -C "$parent" -- "$base" | pv -btr | zstd | ssh "${ssh_opts[@]}" "$mac" "$mode"
+    tar cf - -C "$parent" -- "$base" | pv -btr | zstd | mac-ssh "$mode"
   fi
 done
