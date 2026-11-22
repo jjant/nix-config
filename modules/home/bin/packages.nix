@@ -127,17 +127,7 @@ in
     execer = [ "cannot:${open}/bin/open" ];
   };
 
-  # `code` on a dev desk: open the given paths in VS Code on the Mac, attached
-  # back to this host over Remote-SSH (Linux-only install — see default.nix;
-  # on macOS `code` must stay VS Code's own CLI).
-  code = writeShellApp {
-    name = "code";
-    inputs = with pkgs; [ coreutils ];
-    # System ssh carries the user's ~/.ssh config + forwarded agent.
-    fake.external = [ "ssh" ];
-  };
-
-  # Like `code`, but asks the Mac receiver to launch Zed's SSH client.
+  # Open dev-desk paths in Zed on the Mac over SSH.
   zed = writeShellApp {
     name = "zed";
     inputs = with pkgs; [ coreutils ];

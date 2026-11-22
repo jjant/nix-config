@@ -45,13 +45,6 @@
     # NB: no `follows` — nix-homebrew declares no nixpkgs input.
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
 
-    # Full VS Code marketplace (+ Open VSX) as a nixpkgs overlay:
-    # pkgs.vscode-marketplace.<publisher>.<name>.
-    nix-vscode-extensions = {
-      url = "github:nix-community/nix-vscode-extensions";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Trampolines so nix-store GUI apps show up in Spotlight/Dock.
     mac-app-util = {
       url = "github:hraban/mac-app-util";

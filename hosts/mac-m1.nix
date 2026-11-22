@@ -7,7 +7,6 @@
   nix-homebrew,
   home-manager,
   vimPlugins,
-  nix-vscode-extensions,
   mac-app-util,
   zenoh-ts,
   hostctl,
@@ -16,8 +15,6 @@ nix-darwin.lib.darwinSystem {
   pkgs = import nixpkgs {
     inherit system;
     config.allowUnfree = true;
-    # Adds pkgs.vscode-marketplace.* (consumed by ../modules/home/vscode.nix).
-    overlays = [ nix-vscode-extensions.overlays.default ];
   };
   modules = [
     # The modern spelling. Passing `system` to `darwinSystem` instead routes
@@ -30,8 +27,7 @@ nix-darwin.lib.darwinSystem {
       nix.registry.p.flake = nixpkgs;
     }
     ../modules/darwin
-    # Trampolines so nix-store GUI apps (VSCode, Alacritty, ...) are indexed by
-    # Spotlight and appear in the Dock.
+    # Trampolines so nix-store GUI apps are indexed by Spotlight and appear in the Dock.
     mac-app-util.darwinModules.default
     nix-homebrew.darwinModules.nix-homebrew
     {
@@ -78,7 +74,6 @@ nix-darwin.lib.darwinSystem {
           imports = [
             ../modules/home
             ../modules/darwin/alacritty.nix
-            ../modules/home/vscode.nix
             ../modules/home/zed.nix
             ({ pkgs, ... }: { home.packages = [ pkgs.htop ]; })
             ({ lib, ... }: {

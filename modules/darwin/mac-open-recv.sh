@@ -1,10 +1,10 @@
 # shellcheck shell=bash
-# mac-open-recv — receiver for the dev-desk `open`/`code`/`zed`/`pbcopy`
+# mac-open-recv — receiver for the dev-desk `open`/`zed`/`pbcopy`
 # flows, and hostctl's check of which system this Mac runs.
 #
 # Pinned as the authorized_keys `command="..."` for the dev-desk key, so this is
 # the ONLY thing that key can run — never an arbitrary shell. The clients
-# (modules/home/bin/{open,code,zed,pbcopy}.sh, and hostctl for
+# (modules/home/bin/{open,zed,pbcopy}.sh, and hostctl for
 # `current-system`) send a fixed mode token as the ssh command and any payload
 # on stdin:
 #   - url:       a URL on stdin; opened on the Mac (web schemes only).
@@ -18,9 +18,8 @@
 #                directory, uploaded to a fixed Amazon Drive folder with this
 #                user's Midway session, and the recipient link echoed on
 #                stdout and opened in the Mac's browser for verification.
-#   - code:      kind + host + path, one per line; VS Code here attaches back
-#                to that host over Remote-SSH and opens the path (no copy).
-#   - zed:       same payload as code; Zed opens an SSH URL for that path.
+#   - zed:       kind (file or folder), host and path, one per line.
+#                Zed opens the path on that host over SSH.
 #   - current-system: no payload; prints the running nix-darwin generation
 #                as hostctl's probe lines (its store path, activation time,
 #                generation number and flake revision, plus the profile's
@@ -37,26 +36,22 @@
 # as it reasonably can — web-only URL schemes, extraction into a fresh dir with
 # no client-controlled path, and a com.apple.quarantine tag so Gatekeeper vets
 # anything executable — but it cannot make opening attacker-supplied content
-# fully safe. That residual is inherent to the feature. Editors are kept on the
-# same leash: every payload field is checked against a closed grammar and the
-# editor URI is assembled here, never accepted pre-built — but
-# attaching Remote-SSH to a payload-named host still means trusting that host.
+# fully safe. The `zed` mode validates each payload field and builds the SSH URI
+# here. Opening that connection still means trusting the host in the payload.
 # `share` never launches the payload: it is re-packed and uploaded to a Drive
 # folder fixed in this script (the client cannot pick the destination, a path,
 # or a URL); the only thing it opens is the https:// share link it built
 # itself, and its only output is that link.
 #
 # Runs under the writeShellApplication-pinned bash and as the login user (so
-# `open` and the editors reach the desktop session, and `share` finds this user's
-# ~/.midway/cookie). macOS tools are called by absolute path so PATH in the
-# forced-command environment is irrelevant; `zstd`, `jq`, `code`, and `zeditor` come from
-# the writeShellApplication runtimeInputs (macOS's libarchive has no built-in
-# zstd, macOS ships no jq, and editor CLIs live in the user profile, which
-# sshd's bare forced-command environment doesn't have on PATH).
+# `open` and Zed reach the desktop session, and `share` finds this user's
+# ~/.midway/cookie). macOS tools are called by absolute path. The
+# writeShellApplication runtimeInputs put `zstd`, `jq` and `zeditor` on PATH
+# in sshd's bare forced-command environment.
 
 # Percent-encode a path for embedding in a URI: keep [A-Za-z0-9/._~-], encode
 # every other byte. LC_ALL=C makes ${s:i:1} slice bytes, not characters, so
-# multi-byte UTF-8 comes out as %XX%XX... sequences, which both editors decode.
+# multi-byte UTF-8 comes out as %XX%XX... sequences, which Zed decodes.
 encode_path() {
   local LC_ALL=C s="$1" out="" ch i
   for ((i = 0; i < ${#s}; i++)); do
@@ -302,7 +297,7 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     # payload itself is never opened. Non-fatal: the share already succeeded.
     /usr/bin/open -- "$share_url" || true
     ;;
-  code | zed)
+  zed)
     # Remote editor launcher. Three payload lines — kind, host, path —
     # are all data, never executed: each is validated against a closed
     # grammar and the URI is assembled here, so no client-controlled string
@@ -313,8 +308,7 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
     IFS= read -r path
 
     case "$kind" in
-      folder) flag="--folder-uri" ;;
-      file) flag="--file-uri" ;;
+      folder | file) ;;
       *)
         printf 'mac-open-recv: bad kind\n' >&2
         exit 1
@@ -334,12 +328,8 @@ case "${SSH_ORIGINAL_COMMAND:-}" in
       exit 1
     fi
 
-    # Both CLIs are pinned in runtimeInputs. Each editor SSHes back to $host
-    # itself via ~/.ssh config (WSSH proxy + control socket).
-    if [ "$SSH_ORIGINAL_COMMAND" = zed ]; then
-      exec zeditor "ssh://${host}$(encode_path "$path")"
-    fi
-    exec code "$flag" "vscode-remote://ssh-remote+${host}$(encode_path "$path")"
+    # Zed connects back to $host using the Mac's SSH config.
+    exec zeditor "ssh://${host}$(encode_path "$path")"
     ;;
   copy)
     # Data only: pbcopy stores stdin on the pasteboard and runs nothing. It's

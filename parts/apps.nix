@@ -66,9 +66,8 @@ in
                   sudo ${lib.optionalString pkgs.stdenv.hostPlatform.isDarwin (lib.getExe' inputs'.nix-darwin.packages.darwin-rebuild "darwin-rebuild")} switch --option accept-flake-config true --flake "$flake"#mac-m1 "$@"
                 else
                   # Pick the desk's config by short hostname (./hosts). The
-                  # config name becomes STARSHIP_HOST_ALIAS, which `code` and
-                  # `zed` use as the ssh destination back to this desk, so a
-                  # guessed config would attach editors to another desk.
+                  # config name becomes STARSHIP_HOST_ALIAS, which `zed` uses
+                  # as its SSH destination back to this desk.
                   # ACTIVATE_HOST=<config> overrides the lookup.
                   host="''${ACTIVATE_HOST:-}"
                   if [ -z "$host" ]; then

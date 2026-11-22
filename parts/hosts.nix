@@ -65,7 +65,6 @@ in
           home-manager
           nix-darwin
           nix-homebrew
-          nix-vscode-extensions
           mac-app-util
           zenoh-ts
           hostctl
