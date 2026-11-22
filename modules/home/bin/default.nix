@@ -18,7 +18,6 @@ in
     ++ lib.optionals pkgs.stdenv.hostPlatform.isLinux [
       scripts.open
       scripts.xdg-open
-      scripts.code
       scripts.zed
       scripts.pbcopy
     ];

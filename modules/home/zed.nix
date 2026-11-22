@@ -24,7 +24,7 @@
     };
     # Cycle tabs in positional order instead of the default MRU tab switcher.
     # cmd-1..8 select tab N and cmd-9 the last one, as in browsers. Zed's
-    # default (from VS Code) focuses pane N, splitting if it doesn't exist.
+    # default focuses pane N, splitting if it doesn't exist.
     userKeymaps = [
       {
         context = "Workspace";

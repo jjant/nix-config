@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 # zed — open a Cloud Desktop path in Zed on the Mac over SSH.
-# Uses the same reverse tunnel and line-framed kind/host/path payload as
-# code.sh. The Mac's forced-command receiver builds the SSH URL; paths never
-# appear in the remote command string and files stay on the Cloud Desktop.
+# Sends the kind, host and path on separate lines through the reverse tunnel.
+# The Mac's forced-command receiver builds the SSH URL. Files stay on the desk.
 #
 # Env overrides: MAC_OPEN_PORT (default 2022), MAC_OPEN_USER (default jjantdev).
 # STARSHIP_HOST_ALIAS selects the Mac's WSSH alias, with the FQDN as fallback.
