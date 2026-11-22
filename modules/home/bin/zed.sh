@@ -19,11 +19,6 @@ case "${1:-}" in
   --) shift ;;
 esac
 
-port="${MAC_OPEN_PORT:-2022}"
-mac="${MAC_OPEN_USER:-jjantdev}@localhost"
-ctl="$HOME/.ssh/mac-open-%r@%h:%p"
-ssh_opts=(-p "$port" -o StrictHostKeyChecking=accept-new -o ControlMaster=auto -o "ControlPath=$ctl" -o ControlPersist=10s)
-
 host="${STARSHIP_HOST_ALIAS:-$(uname -n)}"
 
 if [ "$#" -eq 0 ]; then
@@ -51,5 +46,5 @@ for arg in "$@"; do
   fi
 
   printf '%s\n' "-> opening $src in Zed on the Mac (attached to $host)..." >&2
-  printf '%s\n%s\n%s\n' "$kind" "$host" "$src" | ssh "${ssh_opts[@]}" "$mac" zed
+  printf '%s\n%s\n%s\n' "$kind" "$host" "$src" | mac-ssh zed
 done
